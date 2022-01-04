@@ -1,0 +1,13 @@
+baseURL = "https://letlang.dev/"
+languageCode = "en-us"
+title = "Letlang"
+
+[params.metadata]
+
+icon = "/img/favicon.svg"
+author = "David Delassus"
+description = "General-purpose functional programming language with an expressive type system"
+
+[markup.goldmark.parser.attribute]
+block = true
+title = true

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {{ partial "metadata.html" . }}
+    {{ partial "css.html" . }}
+    {{ partial "scripts.html" . }}
+  </head>
+  <body class="has-navbar-fixed-top has-footer-fixed-bottom">
+    {{ partial "templates.html" . }}
+
+    <ll-navbar></ll-navbar>
+
+    <div class="container is-fluid">
+      {{ block "main" . }}
+      {{ end }}
+    </div>
+
+    <ll-footer></ll-footer>
+  </body>
+</html>

@@ -1,0 +1,17 @@
+{{ $class := .Get "class" }}
+{{ $headerClass := .Get "headerClass" }}
+{{ $title := .Get "title" }}
+
+<div class="card {{ $class }}">
+  {{ with $title }}
+    <header class="card-header {{ $headerClass }}">
+      <p class="card-header-title {{ $headerClass }}">{{ . }}</p>
+    </header>
+  {{ end }}
+
+  <div class="card-content">
+    <div class="content">
+      {{ .Inner }}
+    </div>
+  </div>
+</div>

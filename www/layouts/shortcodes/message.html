@@ -1,0 +1,10 @@
+<article class="message {{ .Get "class" }}">
+  <div class="message-header">
+    <p>{{ .Get "header" }}</p>
+  </div>
+  <div class="message-body">
+    <div class="content">
+      {{ .Inner | markdownify }}
+    </div>
+  </div>
+</article>

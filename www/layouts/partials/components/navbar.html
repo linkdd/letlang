@@ -1,0 +1,35 @@
+<template id="webcomp-navbar">
+  <nav class="navbar is-fixed-top is-success" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item is-uppercase is-family-monospace" href="/">
+        {{ .Site.Title }}
+      </a>
+
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+
+    <div id="navbar" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item has-tooltip-left" href="/book" data-tooltip="Handbook">
+          <i class="fas fa-book"></i>
+        </a>
+
+        <a class="navbar-item has-tooltip-left" href="https://github.com/linkdd/letlang" data-tooltip="Github">
+          <i class="fab fa-github"></i>
+        </a>
+      </div>
+    </div>
+  </nav>
+</template>
+
+<script type="application/javascript">
+  BaseWebComponent.extends({
+    tag: 'll-navbar',
+    template: 'webcomp-navbar',
+    render() {}
+  });
+</script>

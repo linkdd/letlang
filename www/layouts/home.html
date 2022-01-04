@@ -1,0 +1,14 @@
+{{ define "main" }}
+  <section class="section">
+    <p class="has-text-centered is-block book-title">
+      <svg viewBox="0 0 256 256" width="64" height="64" xmlns="http://www.w3.org/2000/svg" class="is-inline-block">
+        <rect width="256" height="256" style="fill: rgb(72, 199, 142);" transform="matrix(0, -1, 1, 0, 0, 256.000004)"/>
+        <text transform="matrix(0.833141, 0, 0, 1.139783, 23.629536, -5.292274)" style="fill: rgb(255, 255, 255); font-family: arial; font-size: 128px; white-space: pre;" x="10.061" y="166.768" bx:origin="0.5 0.500695">LET</text>
+      </svg>
+      <span class="is-size-1 is-inline-block" style="line-height: 64px; vertical-align: top;">lang</span>
+    </p>
+    <div class="content">
+      {{ .Content }}
+    </div>
+  </section>
+{{ end }}

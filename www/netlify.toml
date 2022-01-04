@@ -1,0 +1,8 @@
+[build]
+base = "www/"
+publish = "./public/"
+command = "hugo --minify"
+
+[build.environment]
+
+HUGO_VERSION = "0.91.2"

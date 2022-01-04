@@ -1,5 +1,6 @@
 ---
-title: Unix cat clone
+title: Print file to stdout
+description: Demonstration of effects and argparse module.
 ---
 
 ```letlang

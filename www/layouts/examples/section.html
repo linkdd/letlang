@@ -1,0 +1,33 @@
+{{ define "main" }}
+  <section class="section pb-0">
+    <h1 class="title is-1 has-text-centered">{{ .Title }}</h1>
+
+    <hr />
+  </section>
+
+  <section class="section pt-0">
+    <div class="columns is-centered is-multiline">
+      {{ range .Pages }}
+        <article class="column is-one-third">
+          <div class="card is-radiusless">
+            <header class="card-header is-radiusless has-background-info">
+              <p class="card-header-title has-text-white">{{ .Title }}</p>
+            </header>
+
+            <div class="card-content">
+              <div class="content">
+                {{ .Description | markdownify }}
+
+                <hr />
+
+                <p class="has-text-centered">
+                  <a href="{{ .RelPermalink }}">Read</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </article>
+      {{ end }}
+    </div>
+  </section>
+{{ end }}

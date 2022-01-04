@@ -2,9 +2,9 @@
 {{ $headerClass := .Get "headerClass" }}
 {{ $title := .Get "title" }}
 
-<div class="card {{ $class }}">
+<div class="card is-radiusless {{ $class }}">
   {{ with $title }}
-    <header class="card-header {{ $headerClass }}">
+    <header class="card-header is-radiusless {{ $headerClass }}">
       <p class="card-header-title {{ $headerClass }}">{{ . }}</p>
     </header>
   {{ end }}

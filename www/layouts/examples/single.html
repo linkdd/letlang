@@ -1,0 +1,26 @@
+{{ define "main" }}
+  <section class="section pb-0">
+    <div class="level">
+      <div class="level-left">
+        <a href="{{ .Parent.RelPermalink }}" class="has-tooltip has-tooltip-right has-text-black" data-tooltip="Go back">
+          <i class="fas fa-chevron-left"></i>
+        </a>
+      </div>
+      <div class="level-item">
+        <div class="container">
+          <h1 class="title is-spaced is-1 has-text-centered">{{ .Title }}</h1>
+
+          <h2 class="subtitle has-text-centered">{{ .Description }}</h2>
+        </div>
+      </div>
+    </div>
+
+    <hr />
+  </section>
+
+  <section class="section pt-0">
+    <div class="content">
+      {{ .Content }}
+    </div>
+  </section>
+{{ end }}

@@ -19,7 +19,7 @@ $(() => {
       },
       {
         name: 'atom-literal',
-        match: /^(\:\w+|true|false)/
+        match: /^(\@\w+|true|false)/
       },
       {
         name: 'number-literal',
@@ -27,11 +27,11 @@ $(() => {
       },
       {
         name: 'keyword',
-        match: /^\b(import|as|export|class|check|thereis|forall|func|effect|perform|throw|catch|finally|let|do|match|if|else|is|coro|join|not|in)\b/
+        match: /^\b(module|import|as|export|class|solvable|thereis|forall|func|effect|perform|throw|catch|finally|let|do|match|if|else|is|coro|join|not|in)\b/
       },
       {
         name: 'symbol',
-        match: /^(\=|\=\>|\:\=|\||\-\>|\<|\>|\.|\:|\&|\!|\<\<|\>\>|\/|\*|\+|\-|\|\>|\,)/
+        match: /^(\=|\=\>|\:\=|\||\-\>|\<|\>|\.|\:|\&|\!|\<\<|\>\>|\/|\*|\+|\-|\|\>|\,|\;)/
       },
       {
         name: 'builtin-type',

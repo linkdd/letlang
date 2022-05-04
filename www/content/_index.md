@@ -12,9 +12,9 @@ title: Homepage
 {{< markdown >}}
 **Letlang** is a general purpose functional programming language.
 
-Implemented in *[Rust](https://www.rust-lang.org/)*, it compiles to
-[LLVM IR](https://en.wikipedia.org/wiki/LLVM#Intermediate_representation),
-allowing you to target any platform supported by [LLVM](https://llvm.org).
+Implemented in *[Rust](https://www.rust-lang.org/)* and
+*[Python](https://www.python.org)*, it compiles to Rust, allowing you to target
+any platform supported by [LLVM](https://llvm.org).
 {{< /markdown >}}
 {{< /hero >}}
 
@@ -25,7 +25,8 @@ early stage.
 The documentation and code examples you may find on this website are **NOT**
 definitive and may be subject to change.
 
-If you'd like to contribute, feel free to [contact me by mail](mailto:david.jose.delassus@gmail.com).
+If you'd like to contribute, feel free to
+[contact me by mail](mailto:david.jose.delassus@gmail.com).
 {{< /message >}}
 
 ---
@@ -35,7 +36,7 @@ If you'd like to contribute, feel free to [contact me by mail](mailto:david.jose
 {{< /center >}}
 
 {{< columns >}}
-{{< column class="is-one-third" >}}
+{{< column class="is-one-quarter" >}}
 {{< card title="Handbook" headerClass="has-background-info has-text-white" >}}
 {{< markdown >}}
 Read more about **Letlang**'s features and design.
@@ -45,12 +46,12 @@ A good resource to learn about the language.
 {{< /markdown >}}
 
 {{< center >}}
-[Read](/book)
+[Read](/book/)
 {{< /center >}}
 {{< /card >}}
 {{< /column >}}
 
-{{< column class="is-one-third" >}}
+{{< column class="is-one-quarter" >}}
 {{< card title="Code Examples" headerClass="has-background-warning has-text-black" >}}
 {{< markdown >}}
 Discover code samples from the standard library or implentations of simple UNIX.
@@ -60,12 +61,27 @@ tools.
 {{< /markdown >}}
 
 {{< center >}}
-[Read](/examples)
+[Read](/examples/)
 {{< /center >}}
 {{< /card >}}
 {{< /column >}}
 
-{{< column class="is-one-third" >}}
+{{< column class="is-one-quarter" >}}
+{{< card title="Language Specification" headerClass="has-background-danger has-text-white" >}}
+{{< markdown >}}
+Read the language specification by exploring the different **LEP** (**L**etlang
+**E**nhancement **P**roposal) documents.
+
+---
+{{< /markdown >}}
+
+{{< center >}}
+[Read](/lep/)
+{{< /center >}}
+{{< /card >}}
+{{< /column >}}
+
+{{< column class="is-one-quarter" >}}
 {{< card title="Download (not yet available)" headerClass="has-background-success has-text-white" >}}
 {{< markdown >}}
 Github repository containing the source code and setup instructions to get
@@ -107,12 +123,13 @@ started with **Letlang**.
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-import stdlib as std
+module "example.main";
 
-func main(args: list<string>) -> :ok {
-  std.print("Hello World")
+import "std";
 
-  :ok
+func main(args: list<string>) -> @ok {
+  std.print("Hello World");
+  @ok;
 }
 ```
 {{< /markdown >}}
@@ -141,7 +158,7 @@ Using the `let` keyword, we can define properties:
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-let n: number
+let n: number;
 ```
 {{< /markdown >}}
 {{< /column >}}
@@ -157,7 +174,7 @@ let n: number
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-let n > 0
+let n > 0;
 ```
 {{< /markdown >}}
 {{< /column >}}
@@ -173,13 +190,14 @@ let n > 0
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-let n < 0
+let n < 0;
 ```
 {{< /markdown >}}
 {{< /column >}}
 {{< /columns >}}
 
-Using the `=` comparison operator, we can write equations:
+Using the `=` comparison operator and the `solvable {}` block, we can write
+equations:
 
 {{< columns >}}
 {{< column class="is-half" >}}
@@ -191,8 +209,8 @@ Using the `=` comparison operator, we can write equations:
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-let x: number
-3 + x = 0
+let x: number;
+solvable { 3 + x = 0 };
 ```
 {{< /markdown >}}
 {{< /column >}}
@@ -208,8 +226,8 @@ let x: number
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-let x: number
-1 / x = 0
+let x: number;
+solvable { 1 / x = 0 };
 ```
 {{< /markdown >}}
 {{< /column >}}
@@ -226,8 +244,8 @@ thrown:
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-let x: number
-y := 2 * x + 1
+let x: number;
+y := 2 * x + 1;
 ```
 {{< /markdown >}}
 {{< /column >}}
@@ -261,19 +279,23 @@ Optionnaly, a class can define a predicate. Every value belonging to the class
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-import stdlib as std
+module "example.main";
 
-class int(n: number) check {
-  frac(n) = 0
+import "std";
+
+class int(n: number) {
+  frac(n) = 0;
 }
 
-class even(n: int) check {
-  thereis k: int, n = 2 * k
+class even(n: int) {
+  solvable {
+    thereis k: int, n = 2 * k;
+  };
 }
 
-class odd(n: int & !even)
+class odd(n: int & !even);
 
-class vector(xy: (number, number))
+class vector(xy: (number, number));
 ```
 {{< /markdown >}}
 {{< /column >}}
@@ -282,13 +304,13 @@ class vector(xy: (number, number))
 Using the above definitions, we can assert:
 
 ```letlang
-0.3 is int    # false
-42 is number  # true
-42 is int     # true
-42 is even    # true
-42 is odd     # false
-43 is odd     # true
-43 is even    # false
+0.3 is int;    # false
+42 is number;  # true
+42 is int;     # true
+42 is even;    # true
+42 is odd;     # false
+43 is odd;     # true
+43 is even;    # false
 ```
 
 Furthermore, we can compose types together with the operators `|`, `&` and `!`:
@@ -297,7 +319,7 @@ Furthermore, we can compose types together with the operators `|`, `&` and `!`:
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-let var: number | string
+let var: number | string;
 ```
 {{< /markdown >}}
 {{< /column >}}
@@ -313,7 +335,7 @@ let var: number | string
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-let var: int & !even
+let var: int & !even;
 ```
 {{< /markdown >}}
 {{< /column >}}
@@ -343,10 +365,10 @@ Multiple parameters can be specified.
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-class vector<T>(xy: (T, T))
+class vector<T>(xy: (T, T));
 
 func swap<A, B>(a: A, b: B) -> (B, A) {
-  (b, a)
+  (b, a);
 }
 ```
 {{< /markdown >}}
@@ -365,9 +387,9 @@ But most of the time, the compiler can infer the types.
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-let v: vector<number>
+let v: vector<number>;
 
-x, s := swap("hello", 42)
+x, s := swap("hello", 42);
 ```
 {{< /markdown >}}
 {{< /column >}}
@@ -384,9 +406,9 @@ follows:
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-class ok<T>(v: (:ok, T))
-class err<T>(v: (:error, T))
-class result<T, E>(v: ok<T> | err<E>)
+class ok<T>(v: (@ok, T));
+class err<T>(v: (@error, T));
+class result<T, E>(v: ok<T> | err<E>);
 ```
 {{< /markdown >}}
 {{< /column >}}
@@ -398,7 +420,7 @@ Leading to the following equalities:
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-(:ok, 42) is result<number, string>
+(@ok, 42) is result<number, string>;
 ```
 {{< /markdown >}}
 {{< /column >}}
@@ -414,7 +436,7 @@ Leading to the following equalities:
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-(:ok, 42) is ok<number>
+(@ok, 42) is ok<number>;
 ```
 {{< /markdown >}}
 {{< /column >}}
@@ -430,7 +452,7 @@ Leading to the following equalities:
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-(:error, "wrong") is result<number, string>
+(@error, "wrong") is result<number, string>;
 ```
 {{< /markdown >}}
 {{< /column >}}
@@ -446,7 +468,7 @@ Leading to the following equalities:
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-(:error, "wrong") is ok<number>
+(@error, "wrong") is ok<number>;
 ```
 {{< /markdown >}}
 {{< /column >}}
@@ -461,9 +483,9 @@ Leading to the following equalities:
 Type parameters can also be constrained:
 
 ```letlang
-class blittable(v: number | boolean | atom)
+class blittable(v: number | boolean | atom);
 
-func dump<T: blittable>(v: T) -> :ok {
+func dump<T: blittable>(v: T) -> @ok {
   # do stuff
 }
 
@@ -490,11 +512,11 @@ Such functions can be *unrolled* into a simple loop, this is called
 {{< markdown >}}
 ```letlang
 func count<T>(acc: number, l: list<T>) -> int {
-  [_head | tail] := l
-  count(acc + 1, tail)
+  [_head | tail] := l;
+  count(acc + 1, tail);
 }
 
-count(0, [1, 2, 3, 4, 5]) = 5
+count(0, [1, 2, 3, 4, 5]) = 5;
 ```
 {{< /markdown >}}
 {{< /column >}}
@@ -523,18 +545,20 @@ needed.
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-import stdlib as std
+module "example.main";
+
+import "std";
 
 func count(msg: string) -> string {
-  std.strlen(msg)
+  std.strlen(msg);
 }
 
-func main(args: list<string>) -> :ok {
-  c := coro echo("foo")
+func main(args: list<string>) -> @ok {
+  c := coro echo("foo");
   # do other stuff
-  let 3 = join c
+  let 3 = join c;
 
-  :ok
+  @ok;
 }
 ```
 {{< /markdown >}}
@@ -555,14 +579,14 @@ Write are instantaneous but reads will block until a value has been written.
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-let s: stream<int>
-let v: int
+let s: stream<int>;
+let v: int;
 
 # write a value to the stream
-s << 42
+s |<< 42;
 
 # read a value from the stream to a variable
-s >> v
+s |>> v;
 ```
 {{< /markdown >}}
 {{< /column >}}
@@ -572,40 +596,42 @@ Streams used with coroutines offer a simple synchronization method between
 parallel tasks:
 
 ```letlang
-import stdlib as std
+module "example.main";
 
-func double(s: stream<int>) -> :ok {
-  let x: int
+import "std";
 
-  s >> x
+func double(s: stream<int>) -> @ok {
+  let x: int;
+
+  s |>> x;
 
   match x {
-    -1 => :ok,
+    -1 => @ok,
     _ => {
-      s << (x * 2)
-      double(s)
+      s |<< (x * 2);
+      double(s);
     }
-  }
+  };
 }
 
-func main(args: list<string>) -> :ok {
-  let s: stream<int>
+func main(args: list<string>) -> @ok {
+  let s: stream<int>;
 
-  c := coro double(s)
+  c := coro double(s);
 
-  s << 1 << 2 << 3 << 4 << -1
+  s |<< 1 |<< 2 |<< 3 |<< 4 |<< -1;
 
-  let :ok = join c
+  let @ok = join c;
 
-  let (a, b, c, d): (int, int, int, int)
+  let (a, b, c, d): (int, int, int, int);
 
-  s >> a >> b >> c >> d
-  let a = 2
-  let b = 4
-  let c = 6
-  let d = 8
+  s |>> a |>> b |>> c |>> d;
+  let a = 2;
+  let b = 4;
+  let c = 6;
+  let d = 8;
 
-  :ok
+  @ok;
 }
 ```
 
@@ -656,9 +682,9 @@ Using the `effect` statement, you can declare a new type of side effect:
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-class log_level(lvl: "debug" | "info")
+class log_level(lvl: "debug" | "info");
 
-effect log(log_level, string) -> :ok
+effect log(log_level, string) -> @ok;
 ```
 {{< /markdown >}}
 {{< /column >}}
@@ -677,9 +703,9 @@ This is done with the `perform` keyword followed by a call to the effect:
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-func greet(name: string) -> :ok {
-  res := perform log("info", "Hello ${name}")
-  res
+func greet(name: string) -> @ok {
+  res := perform log("info", "Hello ${name}");
+  res;
 }
 ```
 {{< /markdown >}}
@@ -710,23 +736,25 @@ stacktrace.
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-import stdlib as std
+module "example.main";
 
-func main(args: list<string>) -> :ok {
-  let :ok = do {
-    greet("world")
+import "std";
+
+func main(args: list<string>) -> @ok {
+  let @ok = do {
+    greet("world");
   }
   effect log("debug", _message) {
     # silenced
-    :ok
+    @ok;
   }
   effect log("info", message) {
-    std.print(message)
-    :ok
-  }
+    std.print(message);
+    @ok;
+  };
 
-  perform log("fatal", "won't compile")
-  perform log("debug", "will crash")
+  perform log("fatal", "won't compile");
+  perform log("debug", "will crash");
 }
 ```
 {{< /markdown >}}
@@ -736,22 +764,22 @@ func main(args: list<string>) -> :ok {
 The builtin runtime provides a few effect handlers out of the box:
 
 ```letlang
-effect gettime() -> number
+effect gettime() -> number;
 
-effect println(string, :stdout | :stderr) -> :ok
-effect readline() -> std.result<string, std.errno>
+effect println(string, @stdout | @stderr) -> @ok;
+effect readline() -> std.result<string, std.errno>;
 
-class fmode(m: :w | :wb | :r | :rb | :a)
-effect fopen(string, fmode) -> std.result<std.file, std.errno>
-effect fwrite(std.file, string) -> std.result<(), std.errno>
-effect fread(std.file, number) -> std.result<string, std.errno>
-effect fclose(std.file) -> std.result<(), std.errno>
+class fmode(m: @w | @wb | @r | @rb | @a);
+effect fopen(string, fmode) -> std.result<std.file, std.errno>;
+effect fwrite(std.file, string) -> std.result<(), std.errno>;
+effect fread(std.file, number) -> std.result<string, std.errno>;
+effect fclose(std.file) -> std.result<(), std.errno>;
 
-effect sockbind(std.socket) -> std.result<(), std.errno>
-effect sockaccept(std.socket) -> std.result<std.socket, std.errno>
-effect socksend(std.socket, string) -> std.result<number, std.errno>
-effect sockread(std.socket, number) -> std.result<string, std.errno>
-effect sockclose(std.socket) -> std.result<(), std.errno>
+effect sockbind(std.socket) -> std.result<(), std.errno>;
+effect sockaccept(std.socket) -> std.result<std.socket, std.errno>;
+effect socksend(std.socket, string) -> std.result<number, std.errno>;
+effect sockread(std.socket, number) -> std.result<string, std.errno>;
+effect sockclose(std.socket) -> std.result<(), std.errno>;
 ```
 
 Exceptions are a special kind of effect: **they do not resume**.
@@ -776,20 +804,20 @@ The value returned by the `do {}` block will be the value returned by the
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-func main(args: list<string>) -> :ok {
+func main(args: list<string>) -> @ok {
   err := do {
-    throw (:error, :not_implemented)
-    :never_reached
+    throw (@error, @not_implemented);
+    @never_reached;
   }
-  catch (:error, reason) {
-    reason
-  }
+  catch (@error, reason) {
+    reason;
+  };
 
-  err = :not_implemented
+  err = @not_implemented;
 
-  throw :will_crash
+  throw @will_crash;
 
-  :ok
+  @ok;
 }
 ```
 {{< /markdown >}}
@@ -814,17 +842,17 @@ clause of the caller.
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-func will_fail() -> :ok {
-  resource := create_resource()
+func will_fail() -> @ok {
+  resource := create_resource();
 
   do {
-    throw :did_fail
+    throw @did_fail;
   }
   finally {
-    delete_resource(resource)
-  }
+    delete_resource(resource);
+  };
 
-  :ok
+  @ok;
 }
 ```
 {{< /markdown >}}
@@ -845,8 +873,8 @@ predicate indicating which values are included:
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-Sa := { x: number | x > 0 }
-Sb := { x: Sa | x < 10 }
+Sa := { x: number | x > 0 };
+Sb := { x: Sa | x < 10 };
 ```
 {{< /markdown >}}
 {{< /column >}}
@@ -875,7 +903,7 @@ Sa is set<number>
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-Sb is set<number>
+Sb is set<number>;
 ```
 {{< /markdown >}}
 {{< /column >}}
@@ -892,7 +920,7 @@ Sb is set<number>
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-42 in Sa
+42 in Sa;
 ```
 {{< /markdown >}}
 {{< /column >}}
@@ -908,7 +936,7 @@ Sb is set<number>
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-42 in Sb
+42 in Sb;
 ```
 {{< /markdown >}}
 {{< /column >}}
@@ -933,7 +961,7 @@ Consider the definition on the right, what would be the value of `l[0]`?
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-l := [ x: number | x != 42 ]
+l := [ x: number | x != 42 ];
 ```
 {{< /markdown >}}
 {{< /column >}}
@@ -957,7 +985,7 @@ as:
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-S := { x: set | x not in x }
+S := { x: set | x not in x };
 ```
 {{< /markdown >}}
 {{< /column >}}
@@ -985,7 +1013,7 @@ This is why the type `set` do not exists, only `set<T>`.
 {{< markdown >}}
 ```letlang
 # this will lead to a compilation error
-S := { x: set<number> | x not in x }
+S := { x: set<number> | x not in x };
 ```
 {{< /markdown >}}
 {{< /column >}}
@@ -1005,9 +1033,9 @@ lefthand side as first argument to the function call in the righthand side:
 {{< column class="is-half" >}}
 {{< markdown >}}
 ```letlang
-x |> add(5) |> mul(2)
+x |> add(5) |> mul(2);
 # equivalent to
-mul(add(x, 5), 2)
+mul(add(x, 5), 2);
 ```
 {{< /markdown >}}
 {{< /column >}}

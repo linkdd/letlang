@@ -1,4 +1,4 @@
-<template id="webcomp-toc">
+<template id="webcomp-book-toc">
   <aside class="menu">
     <p class="menu-label">Table of Content</p>
 
@@ -34,8 +34,8 @@
 
 <script type="application/javascript">
   BaseWebComponent.extends({
-    tag: 'll-toc',
-    template: 'webcomp-toc',
+    tag: 'll-book-toc',
+    template: 'webcomp-book-toc',
     render(instance) {
       const menu = instance.find('.menu')[0]
       const active = instance.find('.is-active')[0]

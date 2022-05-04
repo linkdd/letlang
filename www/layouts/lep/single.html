@@ -1,0 +1,77 @@
+{{ define "main" }}
+  <section class="section pb-0">
+    <div class="level">
+      <div class="level-left">
+        <a href="{{ .Parent.RelPermalink }}" class="has-tooltip has-tooltip-right has-text-black" data-tooltip="Go back">
+          <i class="fas fa-chevron-left"></i>
+        </a>
+      </div>
+      <div class="level-item">
+        <div class="container">
+          <h1 class="title is-spaced is-1 has-text-centered">
+            LEP-{{ .File.TranslationBaseName }}: {{ .Title }}
+          </h1>
+
+          <h2 class="subtitle has-text-centered">{{ .Description }}</h2>
+        </div>
+      </div>
+    </div>
+
+    <hr />
+  </section>
+
+  <section class="section py-0">
+    <table class="table is-fullwidth is-hoverable is-bordered">
+      <tr>
+        <th class="is-narrow">Created:</th>
+        <td>{{ .PublishDate.Format "Monday, January 2, 2006" }}</td>
+      </tr>
+      <tr>
+        <th class="is-narrow">Author:</th>
+        <td>{{ .Params.author }}</td>
+      </tr>
+      <tr>
+        <th class="is-narrow">Category:</th>
+        <td>{{ .Params.category }}</td>
+      </tr>
+      <tr>
+        <th class="is-narrow">Status:</th>
+        <td>{{ .Params.status }}</td>
+      </tr>
+    </table>
+    <hr />
+  </section>
+
+  <div class="columns">
+    <div class="column is-one-fifth pt-6">
+      <div class="sticky sticky-5">
+        <aside class="menu">
+          <p class="menu-label">Table of Contents</p>
+          <div class="toc"></div>
+        </aside>
+      </div>
+    </div>
+    <section class="section column is-four-fifths">
+      <div class="content toc-content">
+        {{ .Content }}
+      </div>
+    </section>
+  </div>
+{{ end }}
+
+{{ define "body-script" }}
+  <script type="application/javascript">
+    $(() => {
+      tocbot.init({
+        tocSelector: '.toc',
+        contentSelector: '.toc-content',
+        headingSelector: 'h1, h2',
+        hasInnerContainers: true,
+        listClass: 'menu-list',
+        activeLinkClass: 'is-active',
+        orderedList: false,
+        isCollapsedClass: '',
+      });
+    })
+  </script>
+{{ end }}

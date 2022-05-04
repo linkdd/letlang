@@ -1,0 +1,35 @@
+{{ define "main" }}
+  <section class="section pb-0">
+    <h1 class="title is-1 has-text-centered">{{ .Title }}</h1>
+
+    <hr />
+  </section>
+
+  <section class="section pt-0">
+    <table class="table is-hoverable is-striped is-fullwidth">
+      <thead>
+        <tr>
+          <th class="is-narrow">Index</th>
+          <th class="is-narrow">Status</th>
+          <th class="is-narrow">Category</th>
+          <th>Title</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {{ range .Pages }}
+          <tr>
+            <td>{{ .File.TranslationBaseName }}</td>
+            <td>{{ .Params.status }}</td>
+            <td>{{ .Params.category_code }}</td>
+            <td>
+              <a href="{{ .RelPermalink }}">
+                {{ .Title }}
+              </a>
+            </td>
+          </tr>
+        {{ end }}
+      </tbody>
+    </table>
+  </section>
+{{ end }}

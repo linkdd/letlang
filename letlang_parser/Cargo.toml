@@ -1,0 +1,23 @@
+[package]
+name = "letlang_parser"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "letlang_parser"
+crate-type = ["cdylib"]
+
+[build-dependencies]
+lalrpop = "0.19"
+
+[dependencies]
+pyo3 = { version = "0.16.3", features = ["extension-module"] }
+
+lalrpop-util = "0.19"
+regex = "1"
+logos = "0.12"
+parse_int = "0.6"
+snailquote = "0.3"
+
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"

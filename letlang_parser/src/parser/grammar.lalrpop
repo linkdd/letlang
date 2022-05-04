@@ -1,0 +1,174 @@
+use crate::{
+  ast,
+  ast::Node,
+  parser::{
+    result::ParseError,
+    tokens::Token,
+  },
+};
+
+grammar(filename: &String);
+
+pub Unit: Node<ast::Unit> = {
+  <l:@L> "module" <id:"string"> ";" <stmts:Statement*> <r:@R> => Node::new(
+    filename.clone(), l, r,
+    ast::Unit::new(
+      id,
+      stmts
+    )
+  )
+}
+
+Statement: Node<ast::Statement> = {
+  <l:@L> "import" <path:"string"> ";" <r:@R> => {
+    Node::new(
+      filename.clone(), l, r,
+      ast::Statement::import(path, None)
+    )
+  },
+  <l:@L> "const" <id:"identifier"> ":=" <e:Expr> ";" <r:@R> => {
+    Node::new(
+      filename.clone(), l, r,
+      ast::Statement::constant(id, e)
+    )
+  }
+}
+
+Expr: Node<ast::expression::Expression> = {
+  #[precedence(level="1")]
+  <t: Term> => t,
+
+  #[precedence(level="2")] #[assoc(side="left")]
+  <l:@L> <lhs:Expr> "." <rhs:Expr> <r:@R> => Node::new(
+    filename.clone(), l, r,
+    ast::expression::Expression::binary_op(lhs, ".".to_string(), rhs)
+  )
+}
+
+Term: Node<ast::expression::Expression> = {
+  <l:@L> <lit:Literal> <r:@R> => Node::new(
+    filename.clone(), l, r,
+    ast::expression::Expression::literal(lit)
+  ),
+  <l:@L> <var:"identifier"> <r:@R> => Node::new(
+    filename.clone(), l, r,
+    ast::expression::Expression::identifier(var)
+  ),
+  "(" <e:Expr> ")" => e,
+}
+
+Literal: Node<ast::expression::Literal> = {
+  <l:@L> <n:"int2"> <r:@R> => {
+    Node::new(
+      filename.clone(), l, r,
+      ast::expression::Literal::number(n)
+    )
+  },
+  <l:@L> <n:"int8"> <r:@R> => {
+    Node::new(
+      filename.clone(), l, r,
+      ast::expression::Literal::number(n)
+    )
+  },
+  <l:@L> <n:"int10"> <r:@R> => {
+    Node::new(
+      filename.clone(), l, r,
+      ast::expression::Literal::number(n)
+    )
+  },
+  <l:@L> <n:"int16"> <r:@R> => {
+    Node::new(
+      filename.clone(), l, r,
+      ast::expression::Literal::number(n)
+    )
+  },
+  <l:@L> <n:"float"> <r:@R> => {
+    Node::new(
+      filename.clone(), l, r,
+      ast::expression::Literal::number(n)
+    )
+  },
+}
+
+extern {
+  type Location = usize;
+  type Error = ParseError;
+
+  enum Token {
+    "identifier" => Token::Identifier(<String>),
+    "true" => Token::True,
+    "false" => Token::False,
+    "int2" => Token::IntegerBase2(<f64>),
+    "int8" => Token::IntegerBase8(<f64>),
+    "int10" => Token::IntegerBase10(<f64>),
+    "int16" => Token::IntegerBase16(<f64>),
+    "float" => Token::Float(<f64>),
+    "string" => Token::String(<String>),
+    "atom" => Token::Atom,
+    "module" => Token::StatementModule,
+    "import" => Token::StatementImport,
+    "as" => Token::StatementImportAlias,
+    "const" => Token::StatementConst,
+    "class" => Token::StatementClass,
+    "effect" => Token::StatementEffect,
+    "func" => Token::StatementFunction,
+    "pub" => Token::Public,
+    "check" => Token::BlockCheck,
+    "do" => Token::BlockDo,
+    "catch" => Token::BlockCatchClause,
+    "intercept" => Token::BlockEffectClause,
+    "finally" => Token::BlockFinallyClause,
+    "thereis" => Token::QuantifierThereIs,
+    "forall" => Token::QuantifierForAll,
+    "let" => Token::ExprLet,
+    "throw" => Token::ExprThrow,
+    "perform" => Token::ExprPerform,
+    "resume" => Token::ExprResume,
+    "coro" => Token::ExprCoro,
+    "join" => Token::ExprJoin,
+    "if" => Token::FlowIf,
+    "else" => Token::FlowElse,
+    "match" => Token::FlowMatch,
+    "when" => Token::FlowWhen,
+    "{" => Token::CurlyBracketBegin,
+    "}" => Token::CurlyBracketEnd,
+    "[" => Token::BracketBegin,
+    "]" => Token::BracketEnd,
+    "(" => Token::ParenthesisBegin,
+    ")" => Token::ParenthesisEnd,
+    ";" => Token::StatementSeparator,
+    "," => Token::ExprSeparator,
+    ":" => Token::PairSeparator,
+    "->" => Token::Annotation,
+    "!" => Token::Negation,
+    ":=" => Token::OperatorAssign,
+    "." => Token::OperatorAccess,
+    "<" => Token::OperatorCmpLT,
+    "<=" => Token::OperatorCmpLTE,
+    "=" => Token::OperatorCmpEQ,
+    "!=" => Token::OperatorCmpNE,
+    ">=" => Token::OperatorCmpGTE,
+    ">" => Token::OperatorCmpGT,
+    "not" => Token::OperatorLogicalNot,
+    "and" => Token::OperatorLogicalAnd,
+    "or" => Token::OperatorLogicalOr,
+    "==>" => Token::OperatorLogicalImply,
+    "<==>" => Token::OperatorLogicalBicondition,
+    "+" => Token::OperatorMathAdd,
+    "-" => Token::OperatorMathSub,
+    "*" => Token::OperatorMathMul,
+    "/" => Token::OperatorMathDiv,
+    "%" => Token::OperatorMathMod,
+    "**" => Token::OperatorMathPow,
+    "&" => Token::OperatorBinAnd,
+    "|" => Token::OperatorBinOr,
+    "^" => Token::OperatorBinXor,
+    "<<" => Token::OperatorBinLShift,
+    ">>" => Token::OperatorBinRShift,
+    "|>>" => Token::OperatorStreamRead,
+    "|<<" => Token::OperatorStreamWrite,
+    "|>" => Token::OperatorPipeline,
+    "in" => Token::OperatorIn,
+    "is" => Token::OperatorIs,
+  }
+}

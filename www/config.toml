@@ -11,3 +11,6 @@ description = "General-purpose functional programming language with an expressiv
 [markup.goldmark.parser.attribute]
 block = true
 title = true
+
+[markup.goldmark.renderer]
+unsafe = true

@@ -1,7 +1,6 @@
-[package]
-name = "letlang"
-version = "0.1.0"
-authors = ["David Delassus <david.jose.delassus@gmail.com>"]
-edition = "2018"
+[workspace]
 
-[dependencies]
+members = [
+  "letlang_parser",
+  "letlang_runtime",
+]

@@ -9,9 +9,9 @@
     <table class="table is-hoverable is-striped is-fullwidth">
       <thead>
         <tr>
-          <th class="is-narrow">Index</th>
-          <th class="is-narrow">Status</th>
-          <th class="is-narrow">Category</th>
+          <th class="is-narrow has-text-centered">Index</th>
+          <th class="is-narrow has-text-centered">Status</th>
+          <th class="is-narrow has-text-centered">Category</th>
           <th>Title</th>
         </tr>
       </thead>
@@ -19,9 +19,13 @@
       <tbody>
         {{ range .Pages }}
           <tr>
-            <td>{{ .File.TranslationBaseName }}</td>
-            <td>{{ .Params.status }}</td>
-            <td>{{ .Params.category_code }}</td>
+            <td class="has-text-centered">{{ .File.TranslationBaseName }}</td>
+            <td class="has-text-centered">{{ .Params.status }}</td>
+            <td class="has-text-centered">
+              <span class="has-tooltip has-tooltip-right" data-tooltip="{{ .Params.category }}">
+                {{ .Params.category_code }}
+              </span>
+            </td>
             <td>
               <a href="{{ .RelPermalink }}">
                 {{ .Title }}

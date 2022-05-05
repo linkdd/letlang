@@ -35,7 +35,7 @@ $(() => {
       },
       {
         name: 'builtin-type',
-        match: /^\b(boolean|number|string|atom|stream|set|list)\b/
+        match: /^\b(boolean|number|string|atom|stream|set|list|unknown)\b/
       },
       {
         name: 'string-literal',

@@ -27,7 +27,7 @@ $(() => {
       },
       {
         name: 'keyword',
-        match: /^\b(module|import|as|pub|const|class|solvable|thereis|forall|func|effect|perform|throw|catch|finally|let|do|match|if|else|is|coro|join|not|in)\b/
+        match: /^\b(module|import|as|pub|const|class|solvable|thereis|forall|func|effect|perform|throw|catch|finally|let|do|match|if|else|is|coro|join|not|in|assert)\b/
       },
       {
         name: 'symbol',

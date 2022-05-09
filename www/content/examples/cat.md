@@ -38,10 +38,10 @@ func main(args: std.list<string>) -> std.result<()> {
       do {
         cat_file(opts.file);
       }
-      effect log("info", message) {
+      intercept log("info", message) {
         std.print(message);
       }
-      effect log("debug", message) {
+      intercept log("debug", message) {
         if opts is verbose_mode {
           std.print("DEBUG:", message);
         }

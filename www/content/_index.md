@@ -715,12 +715,12 @@ func greet(name: string) -> @ok {
 {{< columns >}}
 {{< column class="is-half" >}}
 {{< markdown >}}
-Using a `do {}` block and one or more `effect` clause, the caller can handle the
+Using a `do {}` block and one or more `intercept` clause, the caller can handle the
 side effect.
 
-An `effect` clause uses pattern matching to select which effect to handle.
+An `intercept` clause uses pattern matching to select which effect to handle.
 
-The last expression of an `effect` clause will be used as return value of the
+The last expression of an `intercept` clause will be used as return value of the
 `perform` keyword.
 
 > **NB:** Types are also checked at runtime to ensure type safety.
@@ -744,11 +744,11 @@ func main(args: list<string>) -> @ok {
   let @ok = do {
     greet("world");
   }
-  effect log("debug", _message) {
+  intercept log("debug", _message) {
     # silenced
     @ok;
   }
-  effect log("info", message) {
+  intercept log("info", message) {
     std.print(message);
     @ok;
   };
@@ -831,11 +831,7 @@ A `do{}` block can have a `finally` clause to execute code afterwards.
 
 This is useful to free resources allocated within the function in case of error.
 
-If no error occurs, the `finally` clause will be executed after all other
-clauses are done.
-
-If an error occurs, the `finally` clause will be executed before the `catch`
-clause of the caller.
+The `finally` clause will be executed after all other clauses are done.
 {{< /markdown >}}
 {{< /column >}}
 

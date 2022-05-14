@@ -8,8 +8,10 @@ authors = ["David Delassus <david.jose.delassus@gmail.com>"]
 python = "==3.10"
 Jinja2 = "^3.1.2"
 tomli = "^2.0.1"
+tomli-w = "^1.0.0"
 click = "^8.1.3"
 cattrs = "^22.1.0"
+networkx = "^2.8"
 
 [tool.poetry.dev-dependencies]
 ipython = "^8.3.0"
@@ -34,7 +36,7 @@ profile = "black"
 "build:runtime" = [
   { shell = "cargo build --manifest-path letlang_runtime/Cargo.toml" },
   { shell = "mkdir -p ./dist/" },
-  { shell = "cp ./target/debug/libletlang_runtime.* ./dist/" },
+  { shell = "cp -vf ./target/debug/*letlang_runtime.* ./dist/" },
 ]
 "build:compiler" = "poetry run pyinstaller letlang.spec"
 build = ["build:parser", "build:runtime", "build:compiler"]

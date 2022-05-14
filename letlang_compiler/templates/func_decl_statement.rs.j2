@@ -1,0 +1,65 @@
+{% if public %}pub {% endif %}mod symbol_{{symbol_name}} {
+  use llcore_runtime::*;
+
+  #[allow(non_camel_case_types)]
+  {% if type_params %}
+    pub struct func_{{symbol_name}}<'types> {
+      {% for type_param in type_params %}
+        {{type_param}}: &'types dyn Type,
+      {% endfor %}
+    }
+  {% else %}
+    pub struct func_{{symbol_name}};
+  {% endif %}
+
+  impl Function for func_{{symbol_name}} {
+    fn call(&self, context: Arc<Mutex<Context>>, args: Vec<Value>) -> FunctionContinuation {
+      async fn code_block(
+        co: FunctionCoroutine,
+        context: Arc<Mutex<Context>>,
+        args: Vec<Value>,
+      ) -> Value {
+        {% for call_param in call_params %}
+          let paramtype_{{ call_param.name }} = {{ call_param.type_code }};
+        {% endfor %}
+        let args_type = types::TupleType {
+          members_types: vec![
+            {% for call_param in call_params %}
+              &paramtype_{{ call_param.name }},
+            {% endfor %}
+          ],
+        };
+        let return_type = {{ return_type }};
+
+        let args_tuple = Value::Tuple(args);
+        utils::assert_type(
+          &co,
+          context.clone(),
+          &args_type,
+          &args_tuple,
+          format!("function {{symbol_name}} expected {}", args_type.to_string(context.clone())),
+        ).await;
+
+        {% for expression in body %}
+          {% if not loop.last %}
+            {{ expression }};
+          {% else %}
+            let result = {{ expression }};
+
+            utils::assert_type(
+              &co,
+              context.clone(),
+              &return_type,
+              &result,
+              format!("function main should return {}", return_type.to_string(context.clone())),
+            ).await;
+
+            result
+          {% endif %}
+        {% endfor %}
+      }
+
+      FunctionContinuation::new_boxed(|co| code_block(co, context, args))
+    }
+  }
+}

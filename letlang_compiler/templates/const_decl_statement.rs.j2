@@ -1,5 +1,7 @@
-mod symbol_{{symbol_name}} {
+{% if public %}pub {% endif %}mod symbol_{{symbol_name}} {
   use llcore_runtime::*;
 
-  pub const const_{{symbol_name}}: Value = {{value_code}};
+  pub fn const_{{symbol_name}}(context: Arc<Mutex<Context>>) -> Value {
+    {{value_code}}
+  }
 }

@@ -10,13 +10,18 @@ class Package:
     name: str
     version: str
     description: str
-    bin: str | None
+
+
+@attr.define
+class Executable:
+    bin: str
+    module: str
 
 
 @attr.define
 class Toolchain:
     letlang: str
-    rustc: str
+    rust: str
 
 
 @attr.define
@@ -33,6 +38,7 @@ class GitDependency:
 @attr.define
 class Config:
     package: Package
+    executable: Executable | None
     toolchain: Toolchain
     dependencies: dict[str, str | LocalDependency | GitDependency]
 

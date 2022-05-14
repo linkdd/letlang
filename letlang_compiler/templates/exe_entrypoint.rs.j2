@@ -1,0 +1,8 @@
+use llcore_runtime::*;
+extern crate {{main_crate}};
+use {{main_crate}} as main_crate;
+
+fn main() {
+  let func_main = main_crate::symbol_main::func_main{};
+  utils::entrypoint(&func_main);
+}

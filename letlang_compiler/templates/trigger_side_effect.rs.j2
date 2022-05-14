@@ -1,0 +1,8 @@
+co.yield_(FunctionInterruption::Effect {
+  name: {{effect_name}}.to_string(),
+  args: vec![
+    {% for call_param in call_params %}
+      {{ call_param }},
+    {% endfor %}
+  ],
+}).await

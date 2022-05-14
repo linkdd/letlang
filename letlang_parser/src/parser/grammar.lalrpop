@@ -191,6 +191,21 @@ Term: Node<ast::expression::Expression> = {
     ast::expression::Expression::identifier(var)
   ),
   <l:@L>
+    "perform"
+    <effect_name:SymbolPath>
+    <type_params:("<" <TypeRefs> ">")?>
+    "(" <call_params:Exprs> ")"
+  <r:@R> => Node::new(
+    this.filename.clone(), l, r,
+    ast::expression::Expression::effect_call(
+      ast::funcs::EffectCall::new(
+        effect_name,
+        type_params.unwrap_or(vec![]),
+        call_params,
+      )
+    )
+  ),
+  <l:@L>
     <func_name:SymbolPath>
     <type_params:("<" <TypeRefs> ">")?>
     "(" <call_params:Exprs> ")"

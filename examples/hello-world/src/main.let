@@ -1,0 +1,9 @@
+module "hello.main";
+
+import "hello.consts";
+
+pub func main() -> @ok {
+  #std.print("hello world\n");
+  #std.print(a);
+  @ok;
+}

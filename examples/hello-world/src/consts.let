@@ -1,0 +1,3 @@
+module "hello.consts";
+
+const a := 42;

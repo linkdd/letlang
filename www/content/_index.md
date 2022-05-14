@@ -82,7 +82,7 @@ Read the language specification by exploring the different **LEP** (**L**etlang
 {{< /column >}}
 
 {{< column class="is-one-quarter" >}}
-{{< card title="Download (not yet available)" headerClass="has-background-success has-text-white" >}}
+{{< card title="Download" headerClass="has-background-success has-text-white" >}}
 {{< markdown >}}
 Github repository containing the source code and setup instructions to get
 started with **Letlang**.

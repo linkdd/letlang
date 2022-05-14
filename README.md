@@ -32,12 +32,11 @@ $ poetry shell
 
 ```
 (.venv)$ poe run -p ./examples/hello-world/letproject.toml build
-(.venv)$ cd ./examples/hello-world/.llbuild/exe/hello
-(.venv)$ cargo build
+or
+(.venv)$ poe run -p ./examples/hello-world/letproject.toml run
 ```
 
 > **NB:**
->  - The cargo step will be integrated to the compiler later.
 >  - Currently, the generated crates reference the runtime in this source tree,
 >    later it will be replaced by a published version on https://crates.io
 

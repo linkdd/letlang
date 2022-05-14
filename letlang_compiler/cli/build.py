@@ -1,5 +1,6 @@
 from typing import Iterator
 from pathlib import Path
+import subprocess
 import json
 
 import networkx as nx
@@ -88,3 +89,20 @@ def compile(
             dependencies = [crate_name]
             model = CodeGen(project_cfg, target_dir, dependencies)
             model.gen_exe(crate_name)
+
+        model = CodeGen(project_cfg, target_dir, [])
+        members = []
+
+        for crate_name in crates_ast.keys():
+            prefix = "lldep_"
+            crate_folder = crate_name[len(prefix):]
+            members.append(f"modules/{crate_folder}")
+
+        if project_cfg.executable is not None:
+            members.append(f"exe/{project_cfg.executable.bin}")
+
+        model.gen_project(members)
+
+
+def assemble(target_dir: Path, command="build"):
+    subprocess.run(f"cargo {command}", shell=True, check=True, cwd=target_dir)

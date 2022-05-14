@@ -2,6 +2,7 @@ import click
 import sys
 
 from pathlib import Path
+import subprocess
 import json
 
 from letlang_compiler.config import Config
@@ -40,6 +41,7 @@ def build(ctx):
 
     graph, crates_ast = build_steps.validate(ast, project_cfg)
     build_steps.compile(crates_ast, graph, project_cfg, target_dir)
+    build_steps.assemble(target_dir, command=ctx.obj.get("assemble_command", "build"))
 
 
 @cli.command()
@@ -47,7 +49,8 @@ def build(ctx):
 def run(ctx):
     """Build and run Letlang project"""
 
-    build(ctx)
+    ctx.obj["assemble_command"] = "run"
+    ctx.invoke(build)
 
 
 def main():

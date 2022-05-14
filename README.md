@@ -30,10 +30,16 @@ $ poetry shell
 
 **Run with the example:**
 
+Either build:
 ```
 (.venv)$ poe run -p ./examples/hello-world/letproject.toml build
-or
+```
+
+Or run:
+
+```
 (.venv)$ poe run -p ./examples/hello-world/letproject.toml run
+('hello world')
 ```
 
 > **NB:**

@@ -8,7 +8,7 @@ use pyo3::{prelude::*, exceptions::PyRuntimeError};
 
 #[pyfunction]
 fn parse(filename: String) -> PyResult<String> {
-  let parser = parser::Parser::new(&filename);
+  let mut parser = parser::Parser::new(&filename);
   let unit = parser.parse()
     .map_err(|err| {
       PyRuntimeError::new_err(err.to_string())

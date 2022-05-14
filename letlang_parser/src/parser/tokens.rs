@@ -44,8 +44,10 @@ pub enum Token {
   })]
   String(String),
 
-  #[regex(r"@(('(?:[^']|\\')+')|([_a-zA-Z][_a-zA-Z0-9]*))")]
-  Atom,
+  #[regex(r"@(('(?:[^']|\\')+')|([_a-zA-Z][_a-zA-Z0-9]*))", |lex| {
+    lex.slice().parse()
+  })]
+  Atom(String),
 
   // statement keywords
   #[token("module")]

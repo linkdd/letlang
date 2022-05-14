@@ -9,11 +9,16 @@ use serde::Serialize;
 #[derive(Serialize, Clone, Debug, PartialEq)]
 #[serde(tag = "_type")]
 pub enum TypeRef {
+  #[serde(rename = "ValueType")]
   Value(Node<Literal>),
+  #[serde(rename = "ContainerType")]
   Container(Node<Container>),
-  TypeName(String),
+  TypeName { name: String },
+  #[serde(rename = "OneOfType")]
   OneOf(Vec<Node<TypeRef>>),
+  #[serde(rename = "AllOfType")]
   AllOf(Vec<Node<TypeRef>>),
+  #[serde(rename = "NotType")]
   Not(Node<TypeRef>),
 }
 
@@ -27,7 +32,7 @@ impl TypeRef {
   }
 
   pub fn type_name(name: String) -> Box<Self> {
-    Box::new(Self::TypeName(name))
+    Box::new(Self::TypeName { name })
   }
 
   pub fn one_of(types: Vec<Node<TypeRef>>) -> Box<Self> {

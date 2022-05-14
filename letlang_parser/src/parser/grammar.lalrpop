@@ -2,16 +2,17 @@ use crate::{
   ast,
   ast::Node,
   parser::{
+    Parser,
     result::ParseError,
     tokens::Token,
   },
 };
 
-grammar(filename: &String);
+grammar(this: &mut Parser);
 
 pub Unit: Node<ast::Unit> = {
   <l:@L> "module" <id:"string"> ";" <stmts:Statement*> <r:@R> => Node::new(
-    filename.clone(), l, r,
+    this.filename.clone(), l, r,
     ast::Unit::new(
       id,
       stmts
@@ -20,74 +21,264 @@ pub Unit: Node<ast::Unit> = {
 }
 
 Statement: Node<ast::Statement> = {
-  <l:@L> "import" <path:"string"> ";" <r:@R> => {
+  <s:Import> => s,
+  <s:ConstDeclaration> => s,
+  <s:ClassDeclaration> => s,
+  <s:FunctionDeclaration> => s,
+}
+
+Import: Node<ast::Statement> = {
+  <l:@L> "import" <path:"string"> <alias:("as" <"string">)?> ";" <r:@R> => {
     Node::new(
-      filename.clone(), l, r,
-      ast::Statement::import(path, None)
+      this.filename.clone(), l, r,
+      ast::Statement::import(path, alias)
     )
   },
-  <l:@L> "const" <id:"identifier"> ":=" <e:Expr> ";" <r:@R> => {
+}
+
+ConstDeclaration: Node<ast::Statement> = {
+  <l:@L> <public:"pub"?> "const" <id:"identifier"> ":=" <e:Expr> ";" <r:@R> => {
     Node::new(
-      filename.clone(), l, r,
-      ast::Statement::constant(id, e)
+      this.filename.clone(), l, r,
+      ast::Statement::constant(public.is_some(), id, e)
     )
   }
 }
 
+ClassDeclaration: Node<ast::Statement> = {
+  <l:@L>
+    <public:"pub"?>
+    "class" <class_name:"identifier">
+    <type_params:("<" <TypeParams> ">")?>
+    "(" <cons_param:ConsParam> ")"
+    ";"
+  <r:@R> => {
+    Node::new(
+      this.filename.clone(), l, r,
+      ast::Statement::class(
+        public.is_some(),
+        class_name,
+        type_params.unwrap_or(vec![]),
+        cons_param,
+        vec![],
+      )
+    )
+  },
+  <l:@L>
+    <public:"pub"?>
+    "class" <class_name:"identifier">
+    <type_params:("<" <TypeParams> ">")?>
+    "(" <cons_param:ConsParam> ")"
+    "{" <constraints:(<Expr> ";")+> "}"
+  <r:@R> => {
+    Node::new(
+      this.filename.clone(), l, r,
+      ast::Statement::class(
+        public.is_some(),
+        class_name,
+        type_params.unwrap_or(vec![]),
+        cons_param,
+        constraints,
+      )
+    )
+  },
+
+}
+
+FunctionDeclaration: Node<ast::Statement> = {
+  <l:@L>
+    <public:"pub"?>
+    "func" <func_name:"identifier">
+    <type_params:("<" <TypeParams> ">")?>
+    "(" <call_params:CallParams> ")"
+    "->" <return_type:TypeRef> "{"
+    <body:(<Expr> ";")+>
+    "}"
+  <r:@R> => {
+    Node::new(
+      this.filename.clone(), l, r,
+      ast::Statement::function(
+        public.is_some(),
+        func_name,
+        type_params.unwrap_or(vec![]),
+        call_params,
+        return_type,
+        body,
+      )
+    )
+  }
+}
+
+TypeParams = Comma<TypeParam>;
+TypeParam: Node<ast::types::TypeParam> = {
+  <l:@L> <id:"identifier"> <constraint:(":" <TypeRef>)?> <r:@R> => {
+    Node::new(
+      this.filename.clone(), l, r,
+      ast::types::TypeParam::new(id, constraint),
+    )
+  }
+}
+
+ConsParam: Node<ast::class::ConsParam> = {
+  <l:@L> <param_name:"identifier"> ":" <param_type:TypeRef> <r:@R> => {
+    Node::new(
+      this.filename.clone(), l, r,
+      ast::class::ConsParam::new(param_name, param_type),
+    )
+  }
+}
+
+CallParams = Comma<CallParam>;
+CallParam: Node<ast::funcs::CallParam> = {
+  <l:@L> <param_name:"identifier"> ":" <param_type:TypeRef> <r:@R> => {
+    Node::new(
+      this.filename.clone(), l, r,
+      ast::funcs::CallParam::new(param_name, param_type),
+    )
+  }
+}
+
+TypeRefs = Comma<TypeRef>;
+TypeRef: Node<ast::types::TypeRef> = {
+  <l:@L> <value:Literal> <r:@R> => {
+    Node::new(
+      this.filename.clone(), l, r,
+      ast::types::TypeRef::value(value)
+    )
+  }
+}
+
+Exprs = Comma<Expr>;
 Expr: Node<ast::expression::Expression> = {
   #[precedence(level="1")]
   <t: Term> => t,
 
   #[precedence(level="2")] #[assoc(side="left")]
-  <l:@L> <lhs:Expr> "." <rhs:Expr> <r:@R> => Node::new(
-    filename.clone(), l, r,
-    ast::expression::Expression::binary_op(lhs, ".".to_string(), rhs)
+  <l:@L> <lhs:Expr> "*" <rhs:Expr> <r:@R> => Node::new(
+    this.filename.clone(), l, r,
+    ast::expression::Expression::binary_op(lhs, "*".to_string(), rhs)
+  ),
+
+  <l:@L> <lhs:Expr> "/" <rhs:Expr> <r:@R> => Node::new(
+    this.filename.clone(), l, r,
+    ast::expression::Expression::binary_op(lhs, "/".to_string(), rhs)
+  ),
+
+  <l:@L> <lhs:Expr> "%" <rhs:Expr> <r:@R> => Node::new(
+    this.filename.clone(), l, r,
+    ast::expression::Expression::binary_op(lhs, "%".to_string(), rhs)
+  ),
+
+  #[precedence(level="3")] #[assoc(side="left")]
+  <l:@L> <lhs:Expr> "+" <rhs:Expr> <r:@R> => Node::new(
+    this.filename.clone(), l, r,
+    ast::expression::Expression::binary_op(lhs, "+".to_string(), rhs)
+  ),
+
+  <l:@L> <lhs:Expr> "-" <rhs:Expr> <r:@R> => Node::new(
+    this.filename.clone(), l, r,
+    ast::expression::Expression::binary_op(lhs, "-".to_string(), rhs)
   )
 }
 
 Term: Node<ast::expression::Expression> = {
   <l:@L> <lit:Literal> <r:@R> => Node::new(
-    filename.clone(), l, r,
+    this.filename.clone(), l, r,
     ast::expression::Expression::literal(lit)
   ),
-  <l:@L> <var:"identifier"> <r:@R> => Node::new(
-    filename.clone(), l, r,
+  <l:@L> <var:SymbolPath> <r:@R> => Node::new(
+    this.filename.clone(), l, r,
     ast::expression::Expression::identifier(var)
+  ),
+  <l:@L>
+    <func_name:SymbolPath>
+    <type_params:("<" <TypeRefs> ">")?>
+    "(" <call_params:Exprs> ")"
+  <r:@R> => Node::new(
+    this.filename.clone(), l, r,
+    ast::expression::Expression::function_call(
+      ast::funcs::FunctionCall::new(
+        func_name,
+        type_params.unwrap_or(vec![]),
+        call_params,
+      )
+    )
   ),
   "(" <e:Expr> ")" => e,
 }
 
 Literal: Node<ast::expression::Literal> = {
+  <l:@L> "true" <r:@R> => {
+    Node::new(
+      this.filename.clone(), l, r,
+      ast::expression::Literal::boolean(true)
+    )
+  },
+  <l:@L> "false" <r:@R> => {
+    Node::new(
+      this.filename.clone(), l, r,
+      ast::expression::Literal::boolean(false)
+    )
+  },
   <l:@L> <n:"int2"> <r:@R> => {
     Node::new(
-      filename.clone(), l, r,
+      this.filename.clone(), l, r,
       ast::expression::Literal::number(n)
     )
   },
   <l:@L> <n:"int8"> <r:@R> => {
     Node::new(
-      filename.clone(), l, r,
+      this.filename.clone(), l, r,
       ast::expression::Literal::number(n)
     )
   },
   <l:@L> <n:"int10"> <r:@R> => {
     Node::new(
-      filename.clone(), l, r,
+      this.filename.clone(), l, r,
       ast::expression::Literal::number(n)
     )
   },
   <l:@L> <n:"int16"> <r:@R> => {
     Node::new(
-      filename.clone(), l, r,
+      this.filename.clone(), l, r,
       ast::expression::Literal::number(n)
     )
   },
   <l:@L> <n:"float"> <r:@R> => {
     Node::new(
-      filename.clone(), l, r,
+      this.filename.clone(), l, r,
       ast::expression::Literal::number(n)
     )
   },
+  <l:@L> <s:"string"> <r:@R> => {
+    Node::new(
+      this.filename.clone(), l, r,
+      ast::expression::Literal::string(s)
+    )
+  },
+  <l:@L> <a:"atom"> <r:@R> => {
+    Node::new(
+      this.filename.clone(), l, r,
+      ast::expression::Literal::atom(a),
+    )
+  }
+}
+
+SymbolPath: String = {
+  <mut v:(<"identifier"> ".")*> <e:"identifier"> => {
+    v.push(e);
+    v.join(".")
+  }
+}
+
+Comma<T>: Vec<T> = {
+  <mut v:(<T> ",")*> <e:T?> => match e {
+    None => v,
+    Some(e) => {
+      v.push(e);
+      v
+    }
+  }
 }
 
 extern {
@@ -104,7 +295,7 @@ extern {
     "int16" => Token::IntegerBase16(<f64>),
     "float" => Token::Float(<f64>),
     "string" => Token::String(<String>),
-    "atom" => Token::Atom,
+    "atom" => Token::Atom(<String>),
     "module" => Token::StatementModule,
     "import" => Token::StatementImport,
     "as" => Token::StatementImportAlias,

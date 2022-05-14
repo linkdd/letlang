@@ -7,7 +7,6 @@ use crate::ast::{
 use serde::Serialize;
 
 #[derive(Serialize, Clone, Debug, PartialEq)]
-#[serde(tag = "_type")]
 pub struct FunctionCall {
   pub func_name: String,
   pub type_params: Vec<Node<TypeRef>>,
@@ -15,7 +14,6 @@ pub struct FunctionCall {
 }
 
 #[derive(Serialize, Clone, Debug, PartialEq)]
-#[serde(tag = "_type")]
 pub struct EffectCall {
   pub effect_name: String,
   pub type_params: Vec<Node<TypeRef>>,

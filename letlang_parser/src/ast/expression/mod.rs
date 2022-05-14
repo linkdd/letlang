@@ -1,9 +1,11 @@
 mod literal;
 mod container;
+mod formula;
 
 pub use self::{
   literal::Literal,
   container::Container,
+  formula::{Formula, Proposition},
 };
 
 use crate::ast::{
@@ -16,21 +18,23 @@ use serde::Serialize;
 #[derive(Serialize, Clone, Debug, PartialEq)]
 #[serde(tag = "_type")]
 pub enum Expression {
-  Identifier(String),
+  Identifier { identifier: String },
   Literal(Node<Literal>),
   Container(Node<Container>),
-  FunctionCall(Node<FunctionCall>),
-  EffectCall(Node<EffectCall>),
+  FunctionCall(Box<FunctionCall>),
+  EffectCall(Box<EffectCall>),
   //ControlFlow
   //Coroutine
   //Assertion
   UnaryOperation { op: String, expr: Node<Expression> },
   BinaryOperation { lhs: Node<Expression>, op: String, rhs: Node<Expression> },
+  #[serde(rename = "SolvableExpression")]
+  Solvable(Node<Formula>),
 }
 
 impl Expression {
   pub fn identifier(name: String) -> Box<Self> {
-    Box::new(Self::Identifier(name))
+    Box::new(Self::Identifier { identifier: name })
   }
 
   pub fn literal(val: Node<Literal>) -> Box<Self> {
@@ -41,11 +45,11 @@ impl Expression {
     Box::new(Self::Container(val))
   }
 
-  pub fn function_call(call: Node<FunctionCall>) -> Box<Self> {
+  pub fn function_call(call: Box<FunctionCall>) -> Box<Self> {
     Box::new(Self::FunctionCall(call))
   }
 
-  pub fn effect_call(call: Node<EffectCall>) -> Box<Self> {
+  pub fn effect_call(call: Box<EffectCall>) -> Box<Self> {
     Box::new(Self::EffectCall(call))
   }
 
@@ -55,5 +59,9 @@ impl Expression {
 
   pub fn binary_op(lhs: Node<Expression>, op: String, rhs: Node<Expression>) -> Box<Self> {
     Box::new(Self::BinaryOperation { lhs, op, rhs })
+  }
+
+  pub fn solvable(formula: Node<Formula>) -> Box<Self> {
+    Box::new(Self::Solvable(formula))
   }
 }

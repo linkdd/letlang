@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use serde::Serialize;
 
 use crate::ast::{
@@ -15,7 +14,7 @@ pub enum Container {
   List(Vec<Node<Expression>>),
   Set(Vec<Node<Expression>>),
   SetBuilder { identifier: String, source_type: Node<TypeRef>, predicate: Node<Expression> },
-  Map(HashMap<String, Node<Expression>>),
+  Struct(Vec<(String, Node<Expression>)>),
 }
 
 impl Container {
@@ -43,7 +42,7 @@ impl Container {
     Box::new(Self::SetBuilder { identifier, source_type, predicate })
   }
 
-  pub fn map(items: HashMap<String, Node<Expression>>) -> Box<Self> {
-    Box::new(Self::Map(items))
+  pub fn structure(items: Vec<(String, Node<Expression>)>) -> Box<Self> {
+    Box::new(Self::Struct(items))
   }
 }

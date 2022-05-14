@@ -2,7 +2,6 @@ use crate::ast::Node;
 use serde::Serialize;
 
 mod import;
-mod export;
 mod constant;
 mod effect;
 mod class;
@@ -10,7 +9,6 @@ mod func;
 
 pub use self::{
   import::ImportStatement,
-  export::ExportStatement,
   constant::ConstDeclStatement,
   effect::EffectDeclStatement,
   class::ClassDeclStatement,
@@ -21,7 +19,6 @@ pub use self::{
 #[serde(tag = "_type")]
 pub enum Statement {
   Import(ImportStatement),
-  Export(ExportStatement),
   ConstDecl(ConstDeclStatement),
   EffectDecl(EffectDeclStatement),
   ClassDecl(ClassDeclStatement),
@@ -31,7 +28,7 @@ pub enum Statement {
 use crate::ast::{
   expression::Expression,
   types::{TypeParam, TypeRef},
-  class::{ConsParam, Formula},
+  class::ConsParam,
   funcs::CallParam,
 };
 
@@ -40,21 +37,27 @@ impl Statement {
     Box::new(Self::Import(ImportStatement { path, alias}))
   }
 
-  pub fn export(symbol_name: String) -> Box<Self> {
-    Box::new(Self::Export(ExportStatement { symbol_name }))
-  }
-
-  pub fn constant(symbol_name: String, value: Node<Expression>) -> Box<Self> {
-    Box::new(Self::ConstDecl(ConstDeclStatement { symbol_name, value }))
+  pub fn constant(
+    public: bool,
+    symbol_name: String,
+    value: Node<Expression>
+  ) -> Box<Self> {
+    Box::new(Self::ConstDecl(ConstDeclStatement {
+      public,
+      symbol_name,
+      value
+    }))
   }
 
   pub fn effect(
+    public: bool,
     symbol_name: String,
     type_params: Vec<Node<TypeParam>>,
     call_params: Vec<Node<CallParam>>,
     return_type: Node<TypeRef>,
   ) -> Box<Self> {
     Box::new(Self::EffectDecl(EffectDeclStatement {
+      public,
       symbol_name,
       type_params,
       call_params,
@@ -63,20 +66,23 @@ impl Statement {
   }
 
   pub fn class(
+    public: bool,
     symbol_name: String,
     type_params: Vec<Node<TypeParam>>,
-    cons_params: Vec<Node<ConsParam>>,
-    constraints: Node<Formula>,
+    cons_param: Node<ConsParam>,
+    constraints: Vec<Node<Expression>>,
   ) -> Box<Self> {
     Box::new(Self::ClassDecl(ClassDeclStatement {
+      public,
       symbol_name,
       type_params,
-      cons_params,
+      cons_param,
       constraints,
     }))
   }
 
   pub fn function(
+    public: bool,
     symbol_name: String,
     type_params: Vec<Node<TypeParam>>,
     call_params: Vec<Node<CallParam>>,
@@ -84,6 +90,7 @@ impl Statement {
     body: Vec<Node<Expression>>,
   ) -> Box<Self> {
     Box::new(Self::FuncDecl(FuncDeclStatement {
+      public,
       symbol_name,
       type_params,
       call_params,

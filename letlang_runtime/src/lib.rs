@@ -1,28 +1,11 @@
-#[derive(Debug, Clone, PartialEq)]
-pub enum PrimitiveValue {
-  Boolean(bool),
-  Number(f64),
-  String(String),
-  Atom(String),
-}
+extern crate genawaiter;
 
-#[derive(Debug, Clone, PartialEq)]
-pub enum Value {
-  Primitive(PrimitiveValue),
-  Tuple(Vec<Value>),
-}
+mod core;
 
-pub trait Type {
-  fn has(&self, llval: &Value) -> bool;
-}
+pub use self::core::*;
+pub use genawaiter::GeneratorState;
+pub use std::sync::{Arc, Mutex};
 
-pub trait Function {
-  fn call(&self) -> Value;
-}
-
-pub trait Effect {
-  fn perform(&self) -> Value;
-}
-
+pub mod utils;
 pub mod types;
 pub mod operations;

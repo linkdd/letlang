@@ -1,13 +1,22 @@
-use crate::{Value, Type};
+use crate::{Context, Value, Type};
+use std::sync::{Arc, Mutex};
 
 pub struct OneOfType<'t> {
   pub lltypes: Vec<&'t dyn Type>,
 }
 
 impl<'t> Type for OneOfType<'t> {
-  fn has(&self, llval: &Value) -> bool {
+  fn to_string(&self, context: Arc<Mutex<Context>>) -> String {
+    self.lltypes
+      .iter()
+      .map(|lltype| lltype.to_string(context.clone()))
+      .collect::<Vec<String>>()
+      .join(" | ")
+  }
+
+  fn has(&self, context: Arc<Mutex<Context>>, llval: &Value) -> bool {
     for lltype in self.lltypes.iter() {
-      if lltype.has(llval) {
+      if lltype.has(context.clone(), llval) {
         return true;
       }
     }

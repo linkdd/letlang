@@ -1,9 +1,13 @@
-use crate::{Value, PrimitiveValue, Type};
+use crate::{Context, Value, PrimitiveValue, Type};
 
 pub struct NumberType;
 
 impl Type for NumberType {
-  fn has(&self, llval: &Value) -> bool {
+  fn to_string(&self, _context: Arc<Mutex<Context>>) -> String {
+    "number".to_string()
+  }
+
+  fn has(&self, _context: Arc<Mutex<Context>>, llval: &Value) -> bool {
     match llval {
       Value::Primitive(PrimitiveValue::Number(_)) => true,
       _ => false,
@@ -12,9 +16,14 @@ impl Type for NumberType {
 }
 
 pub struct IntegerType;
+use std::sync::{Arc, Mutex};
 
 impl Type for IntegerType {
-  fn has(&self, llval: &Value) -> bool {
+  fn to_string(&self, _context: Arc<Mutex<Context>>) -> String {
+    "int".to_string()
+  }
+
+  fn has(&self, _context: Arc<Mutex<Context>>, llval: &Value) -> bool {
     match llval {
       Value::Primitive(PrimitiveValue::Number(a)) => a.fract() == 0.0,
       _ => false,

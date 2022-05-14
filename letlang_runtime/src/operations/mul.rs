@@ -1,6 +1,7 @@
-use crate::{Value, PrimitiveValue, Type, types};
+use crate::{Context, Value, PrimitiveValue, Type, types};
+use std::sync::{Arc, Mutex};
 
-pub fn mul(a: &Value, b: &Value) -> Result<Value, ()> {
+pub fn mul(context: Arc<Mutex<Context>>, a: &Value, b: &Value) -> Result<Value, ()> {
   let t_int = types::IntegerType {};
 
   match (a, b) {
@@ -15,7 +16,7 @@ pub fn mul(a: &Value, b: &Value) -> Result<Value, ()> {
       Value::Primitive(PrimitiveValue::Number(n)),
     ) => {
 
-      if t_int.has(b) {
+      if t_int.has(context, b) {
         let mut res = String::new();
         let mut count = 0;
 

@@ -1,6 +1,7 @@
-use crate::{Value, PrimitiveValue};
+use crate::{Context, Value, PrimitiveValue};
+use std::sync::{Arc, Mutex};
 
-pub fn add(a: &Value, b: &Value) -> Result<Value, ()> {
+pub fn add(_context: Arc<Mutex<Context>>, a: &Value, b: &Value) -> Result<Value, ()> {
   match (a, b) {
     (
       Value::Primitive(PrimitiveValue::Number(a)),

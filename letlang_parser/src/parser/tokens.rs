@@ -125,7 +125,7 @@ pub enum Token {
   #[token("match")]
   FlowMatch,
 
-  #[token("when")]
+  #[token("=>")]
   FlowWhen,
 
   // bracket symbols

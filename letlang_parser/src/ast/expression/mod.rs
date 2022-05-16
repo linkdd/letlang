@@ -1,11 +1,13 @@
 mod literal;
 mod container;
 mod formula;
+mod control_flow;
 
 pub use self::{
   literal::Literal,
   container::Container,
   formula::{Formula, Proposition},
+  control_flow::{FlowMatch, FlowMatchClause},
 };
 
 use crate::ast::{
@@ -24,6 +26,7 @@ pub enum Expression {
   FunctionCall(Box<FunctionCall>),
   EffectCall(Box<EffectCall>),
   //ControlFlow
+  FlowMatch(Box<FlowMatch>),
   //Coroutine
   //Assertion
   UnaryOperation { op: String, expr: Node<Expression> },
@@ -51,6 +54,10 @@ impl Expression {
 
   pub fn effect_call(call: Box<EffectCall>) -> Box<Self> {
     Box::new(Self::EffectCall(call))
+  }
+
+  pub fn flow_match(block: Box<FlowMatch>) -> Box<Self> {
+    Box::new(Self::FlowMatch(block))
   }
 
   pub fn unary_op(op: String, expr: Node<Expression>) -> Box<Self> {

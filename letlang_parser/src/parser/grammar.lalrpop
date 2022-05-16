@@ -196,34 +196,17 @@ Term: Node<ast::expression::Expression> = {
     this.filename.clone(), l, r,
     ast::expression::Expression::identifier(var)
   ),
-  <l:@L>
-    "perform"
-    <effect_name:SymbolPath>
-    <type_params:("<" <TypeRefs> ">")?>
-    "(" <call_params:Exprs> ")"
-  <r:@R> => Node::new(
+  <l:@L> <effect:EffectCall> <r:@R> => Node::new(
     this.filename.clone(), l, r,
-    ast::expression::Expression::effect_call(
-      ast::funcs::EffectCall::new(
-        effect_name,
-        type_params.unwrap_or(vec![]),
-        call_params,
-      )
-    )
+    ast::expression::Expression::effect_call(effect)
   ),
-  <l:@L>
-    <func_name:SymbolPath>
-    <type_params:("<" <TypeRefs> ">")?>
-    "(" <call_params:Exprs> ")"
-  <r:@R> => Node::new(
+  <l:@L> <func:FunctionCall> <r:@R> => Node::new(
     this.filename.clone(), l, r,
-    ast::expression::Expression::function_call(
-      ast::funcs::FunctionCall::new(
-        func_name,
-        type_params.unwrap_or(vec![]),
-        call_params,
-      )
-    )
+    ast::expression::Expression::function_call(func)
+  ),
+  <l:@L> <match_block:FlowMatch> <r:@R> => Node::new(
+    this.filename.clone(), l, r,
+    ast::expression::Expression::flow_match(match_block)
   ),
   "(" <e:Expr> ")" => e,
 }
@@ -292,6 +275,48 @@ SymbolPath: String = {
   }
 }
 
+EffectCall: Box<ast::funcs::EffectCall> = {
+  "perform" <effect_name:SymbolPath> <type_params:("<" <TypeRefs> ">")?> "(" <call_params:Exprs> ")" => {
+    ast::funcs::EffectCall::new(
+      effect_name,
+      type_params.unwrap_or(vec![]),
+      call_params,
+    )
+  }
+}
+
+FunctionCall: Box<ast::funcs::FunctionCall> = {
+  <func_name:SymbolPath> <type_params:("<" <TypeRefs> ">")?> "(" <call_params:Exprs> ")" => {
+    ast::funcs::FunctionCall::new(
+      func_name,
+      type_params.unwrap_or(vec![]),
+      call_params,
+    )
+  }
+}
+
+FlowMatch: Box<ast::expression::FlowMatch> = {
+  "match" <value:Expr> "{" <clauses:FlowMatchClauses> "}" => {
+    ast::expression::FlowMatch::new(value, clauses)
+  }
+}
+
+FlowMatchClauses = Comma<FlowMatchClause>;
+FlowMatchClause: Node<ast::expression::FlowMatchClause> = {
+  <l:@L> <pattern:TypeRef> "=>" <expr:Expr> <r:@R> => {
+    Node::new(
+      this.filename.clone(), l, r,
+      ast::expression::FlowMatchClause::new(pattern, vec![expr]),
+    )
+  },
+  <l:@L> <pattern:TypeRef> "=>" <body:(<Expr> ";")+> <r:@R> => {
+    Node::new(
+      this.filename.clone(), l, r,
+      ast::expression::FlowMatchClause::new(pattern, body),
+    )
+  }
+}
+
 Comma<T>: Vec<T> = {
   <mut v:(<T> ",")*> <e:T?> => match e {
     None => v,
@@ -341,7 +366,7 @@ extern {
     "if" => Token::FlowIf,
     "else" => Token::FlowElse,
     "match" => Token::FlowMatch,
-    "when" => Token::FlowWhen,
+    "=>" => Token::FlowWhen,
     "{" => Token::CurlyBracketBegin,
     "}" => Token::CurlyBracketEnd,
     "[" => Token::BracketBegin,

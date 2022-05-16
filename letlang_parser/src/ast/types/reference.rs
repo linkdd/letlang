@@ -13,7 +13,7 @@ pub enum TypeRef {
   Value(Node<Literal>),
   #[serde(rename = "ContainerType")]
   Container(Node<Container>),
-  TypeName { name: String },
+  TypeName { name: String, type_params: Vec<Node<TypeRef>> },
   #[serde(rename = "OneOfType")]
   OneOf(Vec<Node<TypeRef>>),
   #[serde(rename = "AllOfType")]
@@ -31,8 +31,8 @@ impl TypeRef {
     Box::new(Self::Container(val))
   }
 
-  pub fn type_name(name: String) -> Box<Self> {
-    Box::new(Self::TypeName { name })
+  pub fn type_name(name: String, type_params: Vec<Node<TypeRef>>) -> Box<Self> {
+    Box::new(Self::TypeName { name, type_params })
   }
 
   pub fn one_of(types: Vec<Node<TypeRef>>) -> Box<Self> {

@@ -145,6 +145,12 @@ TypeRef: Node<ast::types::TypeRef> = {
       this.filename.clone(), l, r,
       ast::types::TypeRef::value(value)
     )
+  },
+  <l:@L> <type_name:SymbolPath> <type_params:("<" <TypeRefs> ">")?> <r:@R> => {
+    Node::new(
+      this.filename.clone(), l, r,
+      ast::types::TypeRef::type_name(type_name, type_params.unwrap_or(vec![]))
+    )
   }
 }
 

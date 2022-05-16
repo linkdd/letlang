@@ -1,7 +1,5 @@
 module "hello.main";
 
-import "hello.consts";
-
 pub func main() -> @ok {
   perform debug("hello world");
   @ok;

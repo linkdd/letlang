@@ -32,14 +32,20 @@ class StatementMixin:
         )
 
     def walk_FuncDeclStatement(self, node, scope):
+        func_scope = deepcopy(scope)
+
         public = node["data"]["public"]
         symbol_name = node["data"]["symbol_name"]
         type_params = []
-        call_params = []
-        return_type = self.walk(node["data"]["return_type"], scope=scope)
+        call_params = [
+            self.walk(call_param, scope=func_scope)
+            for call_param in node["data"]["call_params"]
+        ]
+        return_type = self.walk(node["data"]["return_type"], scope=func_scope)
 
-        func_scope = deepcopy(scope)
         scope[symbol_name] = ("func", func_scope)
+        func_scope[symbol_name] = ("func", func_scope)
+
         body = [
             self.walk(expr, scope=func_scope)
             for expr in node["data"]["body"]

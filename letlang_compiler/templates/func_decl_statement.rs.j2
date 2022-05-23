@@ -21,24 +21,19 @@
       ) -> Value {
         {% for call_param in call_params %}
           let paramtype_{{ call_param.name }} = {{ call_param.type_code }};
+          let paramval_{{ call_param.name }} = &args[{{ loop.index0 }}];
+          utils::assert_type(
+            &co,
+            context.clone(),
+            &paramtype_{{ call_param.name }},
+            &paramval_{{ call_param.name }},
+            format!(
+              "function param {{ call_param.name }} expects {}",
+              paramtype_{{ call_param.name }}.to_string(context.clone()),
+            ),
+          ).await;
         {% endfor %}
-        let args_type = types::TupleType {
-          members_types: vec![
-            {% for call_param in call_params %}
-              &paramtype_{{ call_param.name }},
-            {% endfor %}
-          ],
-        };
         let return_type = {{ return_type }};
-
-        let args_tuple = Value::Tuple(args);
-        utils::assert_type(
-          &co,
-          context.clone(),
-          &args_type,
-          &args_tuple,
-          format!("function {{symbol_name}} expected {}", args_type.to_string(context.clone())),
-        ).await;
 
         {% for expression in body %}
           {% if not loop.last %}
@@ -51,7 +46,10 @@
               context.clone(),
               &return_type,
               &result,
-              format!("function main should return {}", return_type.to_string(context.clone())),
+              format!(
+                "function {{ symbol_name }} should return {}",
+                return_type.to_string(context.clone()),
+              ),
             ).await;
 
             result

@@ -43,5 +43,12 @@ class Semantic(Model):
         if node["data"]["type_params"]:
             raise NotImplementedError("Function generics not yet supported")
 
-        if node["data"]["call_params"]:
-            raise NotImplementedError("Function parameters not yet supported")
+        for call_param in node["data"]["call_params"]:
+            self.walk(call_param, deps=deps)
+
+    def walk_CallParam(self, node, deps):
+        self.walk(node["data"]["param_type"], deps=deps)
+
+    def walk_TypeName(self, node, deps):
+        if node["data"]["type_params"]:
+            raise NotImplementedError("Type generics not yet supported")

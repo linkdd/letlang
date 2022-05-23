@@ -9,6 +9,9 @@ from letlang_compiler.model import Model
 from .project import ProjectMixin
 from .exe import ExecutableMixin
 from .literal import LiteralMixin
+from .vars import VariablesMixin
+from .binop import BinaryOperationMixin
+from .control_flow import ControlFlowMixin
 from .statements import StatementMixin
 from .function import FunctionMixin
 from .typing import TypingMixin
@@ -22,6 +25,9 @@ class CodeGen(
     ProjectMixin,
     ExecutableMixin,
     LiteralMixin,
+    VariablesMixin,
+    BinaryOperationMixin,
+    ControlFlowMixin,
     StatementMixin,
     FunctionMixin,
     TypingMixin,

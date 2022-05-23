@@ -2,12 +2,13 @@ module "fib.main";
 
 func fib(n: int) -> int {
   match n {
-    0 | 1 => 1,
-    n => fib(n - 1) + fib(n - 2),
+    0 => 1,
+    1 => 1,
+    int => fib(n - 1) + fib(n - 2),
   };
 }
 
-func main() -> @ok {
+pub func main() -> @ok {
   perform debug(fib(5));
   @ok;
 }

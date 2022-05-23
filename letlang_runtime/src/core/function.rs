@@ -2,6 +2,7 @@ pub use genawaiter::sync::{Gen, Co};
 
 use crate::{Value, Context};
 
+#[derive(Clone)]
 pub enum FunctionInterruption {
   Effect { name: String, args: Vec<Value> },
   Exception(Value),

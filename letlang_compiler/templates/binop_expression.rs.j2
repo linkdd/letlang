@@ -1,0 +1,29 @@
+{
+  let lhs = {{ lhs }};
+  let rhs = {{ rhs }};
+  let op_res = {{ fn_op }}(
+    context.clone(),
+    &lhs,
+    &rhs,
+  );
+
+  match op_res {
+    Ok(val) => val,
+    Err(()) => {
+      let exc = Value::Tuple(vec![
+        Value::Primitive(PrimitiveValue::Atom(
+          context.lock().unwrap().get_atom("@binop_error")
+        )),
+        Value::Primitive(PrimitiveValue::String(
+          format!(
+            "operation {:?} {{ op }} {:?} not supported",
+            lhs,
+            rhs,
+          )
+        )),
+      ]);
+      co.yield_(FunctionInterruption::Exception(exc)).await;
+      unreachable!();
+    }
+  }
+}

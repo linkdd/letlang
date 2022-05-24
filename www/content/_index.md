@@ -489,7 +489,7 @@ func dump<T: blittable>(v: T) -> @ok {
   # do stuff
 }
 
-dump<string>("won't compile")
+dump::<string>("won't compile")
 ```
 
 ## Recursion and Tail Call Optimization
@@ -512,8 +512,13 @@ Such functions can be *unrolled* into a simple loop, this is called
 {{< markdown >}}
 ```letlang
 func count<T>(acc: number, l: list<T>) -> int {
-  [_head | tail] := l;
-  count(acc + 1, tail);
+  match l {
+    [] => acc,
+    list<T> => {
+      [_head | tail] := l;
+      count(acc + 1, tail);
+    },
+  };
 }
 
 count(0, [1, 2, 3, 4, 5]) = 5;
@@ -607,7 +612,7 @@ func double(s: stream<int>) -> @ok {
 
   match x {
     -1 => @ok,
-    _ => {
+    int => {
       s |<< (x * 2);
       double(s);
     }

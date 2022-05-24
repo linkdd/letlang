@@ -15,11 +15,11 @@ pub enum TypeRef {
   Container(Node<Container>),
   TypeName { name: String, type_params: Vec<Node<TypeRef>> },
   #[serde(rename = "OneOfType")]
-  OneOf(Vec<Node<TypeRef>>),
+  OneOf { typerefs: Vec<Node<TypeRef>> },
   #[serde(rename = "AllOfType")]
-  AllOf(Vec<Node<TypeRef>>),
+  AllOf { typerefs: Vec<Node<TypeRef>> },
   #[serde(rename = "NotType")]
-  Not(Node<TypeRef>),
+  Not { typeref: Node<TypeRef> },
 }
 
 impl TypeRef {
@@ -35,15 +35,15 @@ impl TypeRef {
     Box::new(Self::TypeName { name, type_params })
   }
 
-  pub fn one_of(types: Vec<Node<TypeRef>>) -> Box<Self> {
-    Box::new(Self::OneOf(types))
+  pub fn one_of(typerefs: Vec<Node<TypeRef>>) -> Box<Self> {
+    Box::new(Self::OneOf { typerefs })
   }
 
-  pub fn all_of(types: Vec<Node<TypeRef>>) -> Box<Self> {
-    Box::new(Self::AllOf(types))
+  pub fn all_of(typerefs: Vec<Node<TypeRef>>) -> Box<Self> {
+    Box::new(Self::AllOf { typerefs })
   }
 
-  pub fn not(type_ref: Node<TypeRef>) -> Box<Self> {
-    Box::new(Self::Not(type_ref))
+  pub fn not(typeref: Node<TypeRef>) -> Box<Self> {
+    Box::new(Self::Not { typeref })
   }
 }

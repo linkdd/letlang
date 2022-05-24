@@ -157,6 +157,9 @@ pub enum Token {
   #[token(":")]
   PairSeparator,
 
+  #[token("::")]
+  GenericSpecifier,
+
   #[token("->")]
   Annotation,
 

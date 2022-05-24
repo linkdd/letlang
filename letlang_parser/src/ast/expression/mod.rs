@@ -13,6 +13,7 @@ pub use self::{
 use crate::ast::{
   Node,
   funcs::{FunctionCall, EffectCall},
+  types::TypeRef,
 };
 
 use serde::Serialize;
@@ -31,6 +32,7 @@ pub enum Expression {
   //Assertion
   UnaryOperation { op: String, expr: Node<Expression> },
   BinaryOperation { lhs: Node<Expression>, op: String, rhs: Node<Expression> },
+  TypeCheck { lhs: Node<Expression>, rhs: Node<TypeRef> },
   #[serde(rename = "SolvableExpression")]
   Solvable(Node<Formula>),
 }
@@ -66,6 +68,10 @@ impl Expression {
 
   pub fn binary_op(lhs: Node<Expression>, op: String, rhs: Node<Expression>) -> Box<Self> {
     Box::new(Self::BinaryOperation { lhs, op, rhs })
+  }
+
+  pub fn typecheck(lhs: Node<Expression>, rhs: Node<TypeRef>) -> Box<Self> {
+    Box::new(Self::TypeCheck { lhs, rhs })
   }
 
   pub fn solvable(formula: Node<Formula>) -> Box<Self> {

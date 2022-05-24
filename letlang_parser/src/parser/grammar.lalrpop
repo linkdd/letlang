@@ -140,18 +140,49 @@ CallParam: Node<ast::funcs::CallParam> = {
 
 TypeRefs = Comma<TypeRef>;
 TypeRef: Node<ast::types::TypeRef> = {
+  #[precedence(level="1")]
+  <t:TypeRefTerm> => t,
+
+  #[precedence(level="2")] #[assoc(side="right")]
+  <l:@L> "!" <t:TypeRefTerm> <r:@R> => {
+    Node::new(
+      this.filename.clone(), l, r,
+      ast::types::TypeRef::not(t)
+    )
+  },
+
+  #[precedence(level="3")] #[assoc(side="left")]
+  <l:@L> <lhs:TypeRef> "&" <rhs:TypeRef> <r:@R> => {
+    Node::new(
+      this.filename.clone(), l, r,
+      ast::types::TypeRef::all_of(vec![lhs, rhs])
+    )
+  },
+
+  #[precedence(level="4")] #[assoc(side="left")]
+  <l:@L> <lhs:TypeRef> "|" <rhs:TypeRef> <r:@R> => {
+    Node::new(
+      this.filename.clone(), l, r,
+      ast::types::TypeRef::one_of(vec![lhs, rhs])
+    )
+  }
+}
+TypeRefTerm: Node<ast::types::TypeRef> = {
   <l:@L> <value:Literal> <r:@R> => {
     Node::new(
       this.filename.clone(), l, r,
       ast::types::TypeRef::value(value)
     )
   },
+
   <l:@L> <type_name:SymbolPath> <type_params:("<" <TypeRefs> ">")?> <r:@R> => {
     Node::new(
       this.filename.clone(), l, r,
       ast::types::TypeRef::type_name(type_name, type_params.unwrap_or(vec![]))
     )
-  }
+  },
+
+  "(" <t:TypeRef> ")" => t,
 }
 
 Exprs = Comma<Expr>;
@@ -159,7 +190,18 @@ Expr: Node<ast::expression::Expression> = {
   #[precedence(level="1")]
   <t: Term> => t,
 
-  #[precedence(level="2")] #[assoc(side="left")]
+  #[precedence(level="2")] #[assoc(side="right")]
+  <l:@L> "-" <t:Term> <r:@R> => Node::new(
+    this.filename.clone(), l, r,
+    ast::expression::Expression::unary_op("-".to_string(), t)
+  ),
+
+  <l:@L> "not" <t:Term> <r:@R> => Node::new(
+    this.filename.clone(), l, r,
+    ast::expression::Expression::unary_op("not".to_string(), t)
+  ),
+
+  #[precedence(level="3")] #[assoc(side="left")]
   <l:@L> <lhs:Expr> "*" <rhs:Expr> <r:@R> => Node::new(
     this.filename.clone(), l, r,
     ast::expression::Expression::binary_op(lhs, "*".to_string(), rhs)
@@ -175,7 +217,7 @@ Expr: Node<ast::expression::Expression> = {
     ast::expression::Expression::binary_op(lhs, "%".to_string(), rhs)
   ),
 
-  #[precedence(level="3")] #[assoc(side="left")]
+  #[precedence(level="4")] #[assoc(side="left")]
   <l:@L> <lhs:Expr> "+" <rhs:Expr> <r:@R> => Node::new(
     this.filename.clone(), l, r,
     ast::expression::Expression::binary_op(lhs, "+".to_string(), rhs)
@@ -184,6 +226,67 @@ Expr: Node<ast::expression::Expression> = {
   <l:@L> <lhs:Expr> "-" <rhs:Expr> <r:@R> => Node::new(
     this.filename.clone(), l, r,
     ast::expression::Expression::binary_op(lhs, "-".to_string(), rhs)
+  ),
+
+  #[precedence(level="5")] #[assoc(side="left")]
+  <l:@L> <lhs:Expr> "<" <rhs:Expr> <r:@R> => Node::new(
+    this.filename.clone(), l, r,
+    ast::expression::Expression::binary_op(lhs, "<".to_string(), rhs)
+  ),
+
+  <l:@L> <lhs:Expr> "<=" <rhs:Expr> <r:@R> => Node::new(
+    this.filename.clone(), l, r,
+    ast::expression::Expression::binary_op(lhs, "<=".to_string(), rhs)
+  ),
+
+  <l:@L> <lhs:Expr> ">" <rhs:Expr> <r:@R> => Node::new(
+    this.filename.clone(), l, r,
+    ast::expression::Expression::binary_op(lhs, ">=".to_string(), rhs)
+  ),
+
+  <l:@L> <lhs:Expr> ">=" <rhs:Expr> <r:@R> => Node::new(
+    this.filename.clone(), l, r,
+    ast::expression::Expression::binary_op(lhs, ">=".to_string(), rhs)
+  ),
+
+  #[precedence(level="6")] #[assoc(side="left")]
+  <l:@L> <lhs:Expr> "=" <rhs:Expr> <r:@R> => Node::new(
+    this.filename.clone(), l, r,
+    ast::expression::Expression::binary_op(lhs, "=".to_string(), rhs)
+  ),
+
+  <l:@L> <lhs:Expr> "!=" <rhs:Expr> <r:@R> => Node::new(
+    this.filename.clone(), l, r,
+    ast::expression::Expression::binary_op(lhs, "!=".to_string(), rhs)
+  ),
+
+  #[precedence(level="7")] #[assoc(side="left")]
+  <l:@L> <lhs:Expr> "and" <rhs:Expr> <r:@R> => Node::new(
+    this.filename.clone(), l, r,
+    ast::expression::Expression::binary_op(lhs, "and".to_string(), rhs)
+  ),
+
+  #[precedence(level="8")] #[assoc(side="left")]
+  <l:@L> <lhs:Expr> "or" <rhs:Expr> <r:@R> => Node::new(
+    this.filename.clone(), l, r,
+    ast::expression::Expression::binary_op(lhs, "or".to_string(), rhs)
+  ),
+
+  #[precedence(level="9")] #[assoc(side="left")]
+  <l:@L> <lhs:Expr> "==>" <rhs:Expr> <r:@R> => Node::new(
+    this.filename.clone(), l, r,
+    ast::expression::Expression::binary_op(lhs, "==>".to_string(), rhs)
+  ),
+
+  <l:@L> <lhs:Expr> "<==>" <rhs:Expr> <r:@R> => Node::new(
+    this.filename.clone(), l, r,
+    ast::expression::Expression::binary_op(lhs, "<==>".to_string(), rhs)
+  ),
+
+  #[precedence(level="10")] #[assoc(side="left")]
+  <l:@L> <lhs:Expr> "is" <rhs:TypeRef> <r:@R> => Node::new(
+    this.filename.clone(), l, r,
+    ast::expression::Expression::typecheck(lhs, rhs)
   )
 }
 
@@ -276,7 +379,7 @@ SymbolPath: String = {
 }
 
 EffectCall: Box<ast::funcs::EffectCall> = {
-  "perform" <effect_name:SymbolPath> <type_params:("<" <TypeRefs> ">")?> "(" <call_params:Exprs> ")" => {
+  "perform" <effect_name:SymbolPath> <type_params:("::" "<" <TypeRefs> ">")?> "(" <call_params:Exprs> ")" => {
     ast::funcs::EffectCall::new(
       effect_name,
       type_params.unwrap_or(vec![]),
@@ -286,7 +389,7 @@ EffectCall: Box<ast::funcs::EffectCall> = {
 }
 
 FunctionCall: Box<ast::funcs::FunctionCall> = {
-  <func_name:SymbolPath> <type_params:("<" <TypeRefs> ">")?> "(" <call_params:Exprs> ")" => {
+  <func_name:SymbolPath> <type_params:("::" "<" <TypeRefs> ">")?> "(" <call_params:Exprs> ")" => {
     ast::funcs::FunctionCall::new(
       func_name,
       type_params.unwrap_or(vec![]),
@@ -376,6 +479,7 @@ extern {
     ";" => Token::StatementSeparator,
     "," => Token::ExprSeparator,
     ":" => Token::PairSeparator,
+    "::" => Token::GenericSpecifier,
     "->" => Token::Annotation,
     "!" => Token::Negation,
     ":=" => Token::OperatorAssign,

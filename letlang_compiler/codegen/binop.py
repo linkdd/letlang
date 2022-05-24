@@ -11,6 +11,12 @@ class BinaryOperationMixin:
             case "-":
                 fn_op = "operations::sub"
 
+            case "%":
+                fn_op = "operations::modulo"
+
+            case "=":
+                fn_op = "operations::equal"
+
             case op:
                 raise NotImplementedError(f"Operator {op} not yet supported")
 

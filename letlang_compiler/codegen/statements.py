@@ -31,6 +31,36 @@ class StatementMixin:
             value_code=value_code,
         )
 
+    def walk_ClassDeclStatement(self, node, scope):
+        class_scope = deepcopy(scope)
+
+        public = node["data"]["public"]
+        symbol_name = node["data"]["symbol_name"]
+        type_params = []
+        cons_param = self.walk(node["data"]["cons_param"], scope=class_scope)
+        constraints = [
+            self.walk(constraint, scope=class_scope)
+            for constraint in node["data"]["constraints"]
+        ]
+
+        scope[symbol_name] = ("class", class_scope)
+
+        template = self.get_template("class_decl_statement.rs.j2")
+        return template.render(
+            public=public,
+            symbol_name=symbol_name,
+            type_params=type_params,
+            cons_param=cons_param,
+            constraints=constraints,
+        )
+
+    def walk_ConsParam(self, node, scope):
+        param_name = node["data"]["param_name"]
+        scope[param_name] = ("arg", {})
+        param_type = self.walk(node["data"]["param_type"], scope=scope)
+
+        return dict(name=param_name, type_code=param_type)
+
     def walk_FuncDeclStatement(self, node, scope):
         func_scope = deepcopy(scope)
 

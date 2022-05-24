@@ -39,6 +39,10 @@ class Semantic(Model):
         base_crate_name = unit_id.replace(".", "_")
         deps.append(f"lldep_{base_crate_name}")
 
+    def walk_ClassDeclStatement(self, node, deps):
+        if node["data"]["type_params"]:
+            raise NotImplementedError("Class generics not yet supported")
+
     def walk_FuncDeclStatement(self, node, deps):
         if node["data"]["type_params"]:
             raise NotImplementedError("Function generics not yet supported")

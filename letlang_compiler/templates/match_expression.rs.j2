@@ -6,7 +6,7 @@
 
   {% for clause in clauses %}
     {% if loop.first %}
-      if clause_{{ loop.index }}.has(context.clone(), &val) {
+      if clause_{{ loop.index }}.has(&co, context.clone(), &val).await {
         {% for expression in clause.body %}
           {% if not loop.last %}
             {{ expression }};
@@ -16,7 +16,7 @@
         {% endfor %}
       }
     {% else %}
-      else if clause_{{ loop.index }}.has(context.clone(), &val) {
+      else if clause_{{ loop.index }}.has(&co, context.clone(), &val).await {
         {% for expression in clause.body %}
           {% if not loop.last %}
             {{ expression }};

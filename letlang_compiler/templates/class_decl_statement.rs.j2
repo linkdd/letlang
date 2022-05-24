@@ -1,0 +1,48 @@
+{% if public %}pub {% endif %}mod symbol_{{symbol_name}} {
+  #[allow(unused_variables)]
+  #[allow(dead_code)]
+  use llcore_runtime::*;
+
+  #[allow(non_camel_case_types)]
+  {% if type_params %}
+    pub struct class_{{symbol_name}} {
+      {% for type_param in type_params %}
+        {{type_param}}: Box<dyn Type>,
+      {% endfor %}
+    }
+  {% else %}
+    pub struct class_{{symbol_name}};
+  {% endif %}
+
+  #[async_trait]
+  impl Type for class_{{symbol_name}} {
+    fn to_string(&self, _context: Arc<Mutex<Context>>) -> String {
+      "{{symbol_name}}".to_string()
+    }
+
+    async fn has(&self, co: &FunctionCoroutine, context: Arc<Mutex<Context>>, llval: &Value) -> bool {
+      let cons_param_type = {{cons_param.type_code}};
+      let paramval_{{cons_param.name}} = llval;
+
+      if cons_param_type.has(co, context.clone(), paramval_{{cons_param.name}}).await {
+        {% if constraints|length == 0 %}
+          true
+        {% else %}
+          let true_type = types::ValueType { llval: PrimitiveValue::Boolean(true) };
+
+          {% for expression in constraints %}
+            {% if not loop.last %}
+              {{ expression }};
+            {% else %}
+              let result = {{ expression }};
+              true_type.has(co, context.clone(), &result).await
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      }
+      else {
+        false
+      }
+    }
+  }
+}

@@ -2,10 +2,11 @@
   let lhs = {{ lhs }};
   let rhs = {{ rhs }};
   let op_res = {{ fn_op }}(
+    &co,
     context.clone(),
     &lhs,
     &rhs,
-  );
+  ).await;
 
   match op_res {
     Ok(val) => val,

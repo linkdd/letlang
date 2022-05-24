@@ -3,9 +3,9 @@
 
   #[allow(non_camel_case_types)]
   {% if type_params %}
-    pub struct func_{{symbol_name}}<'types> {
+    pub struct func_{{symbol_name}} {
       {% for type_param in type_params %}
-        {{type_param}}: &'types dyn Type,
+        {{type_param}}: Box<dyn Type>,
       {% endfor %}
     }
   {% else %}

@@ -1,0 +1,13 @@
+{
+  {% for typeref in typerefs %}
+    let type_{{loop.index}} = Box::new({{typeref}});
+  {% endfor %}
+
+  types::TupleType {
+    members_types: vec![
+      {% for typeref in typerefs %}
+        type_{{loop.index}},
+      {% endfor %}
+    ]
+  }
+}

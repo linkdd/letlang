@@ -35,7 +35,7 @@ class ModuleMixin:
                     package="letlang_runtime",
                 ),
                 "genawaiter": "0.99",
-                "string-interner": "0.14",
+                "async-trait": "0.1",
             }
 
             for dep_name in self.dependencies:

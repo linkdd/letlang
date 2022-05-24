@@ -5,7 +5,7 @@ block_cipher = None
 
 
 a = Analysis(
-    ['letlang_compiler\\cli.py'],
+    ['letlang_compiler\\cli\\__main__.py'],
     pathex=[],
     binaries=[],
     datas=[],

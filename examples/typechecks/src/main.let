@@ -1,0 +1,15 @@
+module "typecheck.main";
+
+class even(n: int) {
+  n % 2 = 0;
+}
+
+class odd(n: int & !even);
+
+pub func main() -> @ok {
+  perform debug(42 is even);
+  perform debug(43 is even);
+  perform debug(42 is odd);
+  perform debug(43 is odd);
+  @ok;
+}

@@ -1,11 +1,13 @@
-use crate::{Context, Value, Type};
+use crate::{FunctionCoroutine, Context, Value, Type};
 use std::sync::{Arc, Mutex};
+use async_trait::async_trait;
 
-pub struct AllOfType<'t> {
-  pub lltypes: Vec<&'t dyn Type>,
+pub struct AllOfType {
+  pub lltypes: Vec<Box<dyn Type>>,
 }
 
-impl<'t> Type for AllOfType<'t> {
+#[async_trait]
+impl Type for AllOfType {
   fn to_string(&self, context: Arc<Mutex<Context>>) -> String {
     self.lltypes
       .iter()
@@ -14,9 +16,9 @@ impl<'t> Type for AllOfType<'t> {
       .join(" & ")
   }
 
-  fn has(&self, context: Arc<Mutex<Context>>, llval: &Value) -> bool {
+  async fn has(&self, co: &FunctionCoroutine, context: Arc<Mutex<Context>>, llval: &Value) -> bool {
     for lltype in self.lltypes.iter() {
-      if !lltype.has(context.clone(), llval) {
+      if !lltype.has(co, context.clone(), llval).await {
         return false;
       }
     }

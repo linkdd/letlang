@@ -7,7 +7,7 @@ pub async fn assert_type(
   llval: &Value,
   err_reason: String,
 ) {
-  if !lltype.has(context.clone(), llval) {
+  if !lltype.has(co, context.clone(), llval).await {
     let exc = Value::Tuple(vec![
       Value::Primitive(PrimitiveValue::Atom(
         context.lock().unwrap().get_atom("@type_error")

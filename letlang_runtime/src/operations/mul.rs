@@ -1,7 +1,7 @@
-use crate::{Context, Value, PrimitiveValue, Type, types};
+use crate::{FunctionCoroutine, Context, Value, PrimitiveValue, Type, types};
 use std::sync::{Arc, Mutex};
 
-pub fn mul(context: Arc<Mutex<Context>>, a: &Value, b: &Value) -> Result<Value, ()> {
+pub async fn mul(co: &FunctionCoroutine, context: Arc<Mutex<Context>>, a: &Value, b: &Value) -> Result<Value, ()> {
   let t_int = types::IntegerType {};
 
   match (a, b) {
@@ -16,7 +16,7 @@ pub fn mul(context: Arc<Mutex<Context>>, a: &Value, b: &Value) -> Result<Value, 
       Value::Primitive(PrimitiveValue::Number(n)),
     ) => {
 
-      if t_int.has(context, b) {
+      if t_int.has(co, context, b).await {
         let mut res = String::new();
         let mut count = 0;
 

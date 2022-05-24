@@ -4,10 +4,13 @@ mod mul;
 mod div;
 mod modulo;
 
+mod equal;
+
 pub use self::{
-  add::add,
-  sub::sub,
-  mul::mul,
-  div::div,
-  modulo::modulo,
+  add::*,
+  sub::*,
+  mul::*,
+  div::*,
+  modulo::*,
+  equal::*,
 };

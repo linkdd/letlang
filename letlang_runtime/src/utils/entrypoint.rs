@@ -41,20 +41,19 @@ pub fn entrypoint(func: &dyn Function) {
         std::process::exit(2);
       },
       GeneratorState::Complete(val) => {
-        let ok_type = types::ValueType {
-          llval: PrimitiveValue::Atom(
-            context.lock().unwrap().get_atom("@ok")
-          )
-        };
-
-        if !ok_type.has(context.clone(), val) {
-          eprintln!(
-            "Main function returned non-ok result: {}",
-            context.lock().unwrap().format_value(val),
-          );
-          std::process::exit(1);
+        let ok_atom = context.lock().unwrap().get_atom("@ok");
+        match val {
+          Value::Primitive(PrimitiveValue::Atom(atom)) if *atom == ok_atom => {
+            break;
+          },
+          _ => {
+            eprintln!(
+              "Main function returned non-ok result: {}",
+              context.lock().unwrap().format_value(val),
+            );
+            std::process::exit(1);
+          }
         }
-        break;
       }
     }
   }

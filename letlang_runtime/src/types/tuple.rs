@@ -1,11 +1,13 @@
-use crate::{Context, Value, Type};
+use crate::{FunctionCoroutine, Context, Value, Type};
 use std::sync::{Arc, Mutex};
+use async_trait::async_trait;
 
-pub struct TupleType<'t> {
-  pub members_types: Vec<&'t dyn Type>,
+pub struct TupleType {
+  pub members_types: Vec<Box<dyn Type>>,
 }
 
-impl<'t> Type for TupleType<'t> {
+#[async_trait]
+impl Type for TupleType {
   fn to_string(&self, context: Arc<Mutex<Context>>) -> String {
     let members = self.members_types
       .iter()
@@ -16,7 +18,7 @@ impl<'t> Type for TupleType<'t> {
     format!("({})", members)
   }
 
-  fn has(&self, context: Arc<Mutex<Context>>, llval: &Value) -> bool {
+  async fn has(&self, co: &FunctionCoroutine, context: Arc<Mutex<Context>>, llval: &Value) -> bool {
     match llval {
       Value::Tuple(members) => {
         if members.len() != self.members_types.len() {
@@ -28,7 +30,7 @@ impl<'t> Type for TupleType<'t> {
           .zip(self.members_types.iter());
 
         for (member, member_type) in pairs {
-          if !member_type.has(context.clone(), member) {
+          if !member_type.has(co, context.clone(), member).await {
             return false;
           }
         }

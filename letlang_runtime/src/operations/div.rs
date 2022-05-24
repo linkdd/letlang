@@ -1,7 +1,7 @@
-use crate::{Context, Value, PrimitiveValue};
+use crate::{FunctionCoroutine, Context, Value, PrimitiveValue};
 use std::sync::{Arc, Mutex};
 
-pub fn div(_context: Arc<Mutex<Context>>, a: &Value, b: &Value) -> Result<Value, ()> {
+pub async fn div(_co: &FunctionCoroutine, _context: Arc<Mutex<Context>>, a: &Value, b: &Value) -> Result<Value, ()> {
   match (a, b) {
     (
       Value::Primitive(PrimitiveValue::Number(a)),

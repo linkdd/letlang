@@ -1,16 +1,18 @@
-use crate::{Context, Value, Type};
+use crate::{FunctionCoroutine, Context, Value, Type};
 use std::sync::{Arc, Mutex};
+use async_trait::async_trait;
 
-pub struct NotType<'t> {
-  pub lltype: &'t dyn Type,
+pub struct NotType {
+  pub lltype: Box<dyn Type>,
 }
 
-impl<'t> Type for NotType<'t> {
+#[async_trait]
+impl Type for NotType {
   fn to_string(&self, context: Arc<Mutex<Context>>) -> String {
     format!("!{}", self.lltype.to_string(context))
   }
 
-  fn has(&self, context: Arc<Mutex<Context>>, llval: &Value) -> bool {
-    !self.lltype.has(context, llval)
+  async fn has(&self, co: &FunctionCoroutine, context: Arc<Mutex<Context>>, llval: &Value) -> bool {
+    !self.lltype.has(co, context, llval).await
   }
 }

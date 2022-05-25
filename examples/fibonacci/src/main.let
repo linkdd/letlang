@@ -6,13 +6,12 @@ class natural(n: int) {
 
 func fib(n: natural) -> natural {
   match n {
-    0 => 1,
-    1 => 1,
+    0 | 1 => 1,
     natural => fib(n - 1) + fib(n - 2),
   };
 }
 
 pub func main() -> @ok {
-  perform debug(fib(-5));
+  perform debug(fib(5));
   @ok;
 }

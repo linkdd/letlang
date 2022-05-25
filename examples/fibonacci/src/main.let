@@ -1,14 +1,18 @@
 module "fib.main";
 
-func fib(n: int) -> int {
+class natural(n: int) {
+  n > 0;
+}
+
+func fib(n: natural) -> natural {
   match n {
     0 => 1,
     1 => 1,
-    int => fib(n - 1) + fib(n - 2),
+    natural => fib(n - 1) + fib(n - 2),
   };
 }
 
 pub func main() -> @ok {
-  perform debug(fib(5));
+  perform debug(fib(-5));
   @ok;
 }

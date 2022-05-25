@@ -1,16 +1,9 @@
-mod add;
-mod sub;
-mod mul;
-mod div;
-mod modulo;
-
-mod equal;
+mod arithmetic;
+mod compare;
+mod bool;
 
 pub use self::{
-  add::*,
-  sub::*,
-  mul::*,
-  div::*,
-  modulo::*,
-  equal::*,
+  arithmetic::*,
+  compare::*,
+  bool::*,
 };

@@ -11,6 +11,7 @@ from .exe import ExecutableMixin
 from .literal import LiteralMixin
 from .vars import VariablesMixin
 from .binop import BinaryOperationMixin
+from .unop import UnaryOperationMixin
 from .control_flow import ControlFlowMixin
 from .statements import StatementMixin
 from .function import FunctionMixin
@@ -27,6 +28,7 @@ class CodeGen(
     LiteralMixin,
     VariablesMixin,
     BinaryOperationMixin,
+    UnaryOperationMixin,
     ControlFlowMixin,
     StatementMixin,
     FunctionMixin,

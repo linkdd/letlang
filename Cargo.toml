@@ -3,4 +3,5 @@
 members = [
   "letlang_parser",
   "letlang_runtime",
+  "letlang_compiler",
 ]

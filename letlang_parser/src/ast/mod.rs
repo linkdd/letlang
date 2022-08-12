@@ -1,28 +1,24 @@
 pub mod types;
 pub mod expression;
-pub mod funcs;
-pub mod class;
-pub mod statement;
 pub mod unit;
+pub mod statement;
+pub mod params;
 
 pub use self::{
   statement::Statement,
   unit::Unit,
 };
 
-use serde::Serialize;
+pub type LocationInfo = (usize, usize);
 
-#[derive(Serialize, Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Node<T> {
-  pub filename: String,
-  pub start: usize,
-  pub end: usize,
-
+  pub location: LocationInfo,
   pub data: Box<T>,
 }
 
 impl<T> Node<T> {
-  pub fn new(filename: String, start: usize, end: usize, data: Box<T>) -> Self {
-    Self { filename, start, end, data }
+  pub fn new(location: LocationInfo, data: Box<T>) -> Self {
+    Self { location, data }
   }
 }

@@ -1,7 +1,4 @@
-use serde::Serialize;
-
-#[derive(Serialize, Clone, Debug, PartialEq)]
-#[serde(tag = "_type", content = "value")]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Literal {
   Boolean(bool),
   Number(f64),

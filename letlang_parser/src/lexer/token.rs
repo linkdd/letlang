@@ -2,6 +2,7 @@ use std::fmt;
 use logos::Logos;
 use snailquote::unescape;
 
+
 #[derive(Logos, Clone, Debug, PartialEq)]
 pub enum Token {
   // literals
@@ -49,84 +50,75 @@ pub enum Token {
   })]
   Atom(String),
 
-  // statement keywords
+  // keywords
   #[token("module")]
-  StatementModule,
+  KeywordModule,
 
   #[token("import")]
-  StatementImport,
+  KeywordImport,
 
   #[token("as")]
-  StatementImportAlias,
-
-  #[token("const")]
-  StatementConst,
+  KeywordAlias,
 
   #[token("class")]
-  StatementClass,
+  KeywordClass,
 
   #[token("effect")]
-  StatementEffect,
+  KeywordEffect,
 
   #[token("func")]
-  StatementFunction,
+  KeywordFunction,
 
   #[token("pub")]
-  Public,
-
-  // block keywords
-  #[token("check")]
-  BlockCheck,
+  KeywordPublic,
 
   #[token("do")]
-  BlockDo,
+  KeywordDo,
 
   #[token("catch")]
-  BlockCatchClause,
+  KeywordCatch,
 
   #[token("intercept")]
-  BlockEffectClause,
+  KeywordIntercept,
 
   #[token("finally")]
-  BlockFinallyClause,
-
-  // expression keywords
-  #[token("thereis")]
-  QuantifierThereIs,
-
-  #[token("forall")]
-  QuantifierForAll,
+  KeywordFinally,
 
   #[token("let")]
-  ExprLet,
+  KeywordLet,
 
   #[token("throw")]
-  ExprThrow,
+  KeywordThrow,
 
   #[token("perform")]
-  ExprPerform,
+  KeywordPerform,
 
-  #[token("resume")]
-  ExprResume,
+  #[token("spawn")]
+  KeywordSpawn,
 
-  #[token("coro")]
-  ExprCoro,
+  #[token("receive")]
+  KeywordReceive,
 
-  #[token("join")]
-  ExprJoin,
+  #[token("after")]
+  KeywordAfter,
 
-  // control flow keywords
-  #[token("if")]
-  FlowIf,
+  #[token("cond")]
+  KeywordCond,
 
   #[token("else")]
-  FlowElse,
+  KeywordElse,
 
   #[token("match")]
-  FlowMatch,
+  KeywordMatch,
+
+  #[token("loop")]
+  KeywordLoop,
+
+  #[token("break")]
+  KeywordBreak,
 
   #[token("=>")]
-  FlowWhen,
+  FatArrow,
 
   // bracket symbols
   #[token("{")]
@@ -149,19 +141,19 @@ pub enum Token {
 
   // symbols
   #[token(";")]
-  StatementSeparator,
+  Semicolon,
 
   #[token(",")]
-  ExprSeparator,
+  Comma,
 
   #[token(":")]
-  PairSeparator,
+  Colon,
 
   #[token("::")]
-  GenericSpecifier,
+  DoubleColon,
 
   #[token("->")]
-  Annotation,
+  Arrow,
 
   #[token("!")]
   Negation,
@@ -200,12 +192,6 @@ pub enum Token {
   #[token("or")]
   OperatorLogicalOr,
 
-  #[token("==>")]
-  OperatorLogicalImply,
-
-  #[token("<==>")]
-  OperatorLogicalBicondition,
-
   #[token("+")]
   OperatorMathAdd,
 
@@ -241,12 +227,6 @@ pub enum Token {
 
   #[token(">>")]
   OperatorBinRShift,
-
-  #[token("|>>")]
-  OperatorStreamRead,
-
-  #[token("|<<")]
-  OperatorStreamWrite,
 
   #[token("|>")]
   OperatorPipeline,

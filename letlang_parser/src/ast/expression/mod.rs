@@ -1,80 +1,172 @@
 mod literal;
-mod container;
-mod formula;
-mod control_flow;
+mod pattern;
 
 pub use self::{
   literal::Literal,
-  container::Container,
-  formula::{Formula, Proposition},
-  control_flow::{FlowMatch, FlowMatchClause},
+  pattern::Pattern,
 };
 
 use crate::ast::{
   Node,
-  funcs::{FunctionCall, EffectCall},
   types::TypeRef,
+  statement::Proposition,
 };
 
-use serde::Serialize;
-
-#[derive(Serialize, Clone, Debug, PartialEq)]
-#[serde(tag = "_type")]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Expression {
-  Identifier { identifier: String },
   Literal(Node<Literal>),
-  Container(Node<Container>),
-  FunctionCall(Box<FunctionCall>),
-  EffectCall(Box<EffectCall>),
-  //ControlFlow
-  FlowMatch(Box<FlowMatch>),
-  //Coroutine
-  //Assertion
-  UnaryOperation { op: String, expr: Node<Expression> },
-  BinaryOperation { lhs: Node<Expression>, op: String, rhs: Node<Expression> },
-  TypeCheck { lhs: Node<Expression>, rhs: Node<TypeRef> },
-  #[serde(rename = "SolvableExpression")]
-  Solvable(Node<Formula>),
+  Structure {
+    members: Vec<(String, Node<Expression>)>,
+  },
+  Tuple {
+    members: Vec<Node<Expression>>,
+  },
+  List {
+    items: Vec<Node<Expression>>,
+  },
+  Symbol(Vec<String>),
+  EffectCall {
+    effect_name: Vec<String>,
+    params: Vec<Node<Expression>>,
+  },
+  FunctionCall {
+    func: Node<Expression>,
+    params: Vec<Node<Expression>>,
+  },
+  SpawnCall {
+    func: Node<Expression>,
+    params: Vec<Node<Expression>>,
+  },
+  GenericResolve {
+    symbol: Node<Expression>,
+    type_params: Vec<Node<TypeRef>>,
+  },
+  MemberAccess {
+    lhs: Node<Expression>,
+    rhs: String,
+  },
+  TypeCheck {
+    lhs: Node<Expression>,
+    rhs: Node<TypeRef>
+  },
+  UnaryOperation {
+    op: &'static str,
+    expr: Node<Expression>,
+  },
+  BinaryOperation {
+    lhs: Node<Expression>,
+    op: &'static str,
+    rhs: Node<Expression>,
+  },
+  PatternMatch {
+    lhs: Node<Pattern>,
+    rhs: Node<Expression>,
+  },
+  Loop {
+    label: String,
+    body: Vec<Node<Proposition>>,
+  },
+  Break {
+    label: String,
+    value: Node<Expression>,
+  },
+  FlowMatch {
+    expr: Node<Expression>,
+    cases: Vec<(Node<Pattern>, Vec<Node<Proposition>>)>,
+  },
+  FlowConditional {
+    cases: Vec<(Node<Expression>, Vec<Node<Proposition>>)>,
+    else_case: Vec<Node<Proposition>>,
+  },
+  Receive {
+    cases: Vec<(Node<Pattern>, Vec<Node<Proposition>>)>,
+    after: Option<(Node<Expression>, Vec<Node<Proposition>>)>,
+  },
 }
 
 impl Expression {
-  pub fn identifier(name: String) -> Box<Self> {
-    Box::new(Self::Identifier { identifier: name })
+  pub fn literal(node: Node<Literal>) -> Box<Self> {
+    Box::new(Self::Literal(node))
   }
 
-  pub fn literal(val: Node<Literal>) -> Box<Self> {
-    Box::new(Self::Literal(val))
+  pub fn structure(members: Vec<(String, Node<Expression>)>) -> Box<Self> {
+    Box::new(Self::Structure { members })
   }
 
-  pub fn container(val: Node<Container>) -> Box<Self> {
-    Box::new(Self::Container(val))
+  pub fn tuple(members: Vec<Node<Expression>>) -> Box<Self> {
+    Box::new(Self::Tuple { members })
   }
 
-  pub fn function_call(call: Box<FunctionCall>) -> Box<Self> {
-    Box::new(Self::FunctionCall(call))
+  pub fn list(items: Vec<Node<Expression>>) -> Box<Self> {
+    Box::new(Self::List { items })
   }
 
-  pub fn effect_call(call: Box<EffectCall>) -> Box<Self> {
-    Box::new(Self::EffectCall(call))
+  pub fn symbol(path: Vec<String>) -> Box<Self> {
+    Box::new(Self::Symbol(path))
   }
 
-  pub fn flow_match(block: Box<FlowMatch>) -> Box<Self> {
-    Box::new(Self::FlowMatch(block))
+  pub fn effect_call(effect_name: Vec<String>, params: Vec<Node<Expression>>) -> Box<Self> {
+    Box::new(Self::EffectCall { effect_name, params })
   }
 
-  pub fn unary_op(op: String, expr: Node<Expression>) -> Box<Self> {
-    Box::new(Self::UnaryOperation { op, expr })
+  pub fn function_call(func: Node<Expression>, params: Vec<Node<Expression>>) -> Box<Self> {
+    Box::new(Self::FunctionCall { func, params })
   }
 
-  pub fn binary_op(lhs: Node<Expression>, op: String, rhs: Node<Expression>) -> Box<Self> {
-    Box::new(Self::BinaryOperation { lhs, op, rhs })
+  pub fn spawn_call(func: Node<Expression>, params: Vec<Node<Expression>>) -> Box<Self> {
+    Box::new(Self::SpawnCall { func, params })
   }
 
-  pub fn typecheck(lhs: Node<Expression>, rhs: Node<TypeRef>) -> Box<Self> {
+  pub fn generic_resolve(symbol: Node<Expression>, type_params: Vec<Node<TypeRef>>) -> Box<Self> {
+    Box::new(Self::GenericResolve { symbol, type_params })
+  }
+
+  pub fn member_access(lhs: Node<Expression>, rhs: String) -> Box<Self> {
+    Box::new(Self::MemberAccess { lhs, rhs })
+  }
+
+  pub fn type_check(lhs: Node<Expression>, rhs: Node<TypeRef>) -> Box<Self> {
     Box::new(Self::TypeCheck { lhs, rhs })
   }
 
-  pub fn solvable(formula: Node<Formula>) -> Box<Self> {
-    Box::new(Self::Solvable(formula))
+  pub fn unary_op(op: &'static str, expr: Node<Expression>) -> Box<Self> {
+    Box::new(Self::UnaryOperation { op, expr })
+  }
+
+  pub fn binary_op(op: &'static str, lhs: Node<Expression>, rhs: Node<Expression>) -> Box<Self> {
+    Box::new(Self::BinaryOperation { lhs, op, rhs })
+  }
+
+  pub fn pattern_match(lhs: Node<Pattern>, rhs: Node<Expression>) -> Box<Self> {
+    Box::new(Self::PatternMatch { lhs, rhs })
+  }
+
+  pub fn loop_block(label: String, body: Vec<Node<Proposition>>) -> Box<Self> {
+    Box::new(Self::Loop { label, body })
+  }
+
+  pub fn loop_break(label: String, value: Node<Expression>) -> Box<Self> {
+    Box::new(Self::Break { label, value })
+  }
+
+  pub fn flow_match(
+    expr: Node<Expression>,
+    cases: Vec<(Node<Pattern>, Vec<Node<Proposition>>)>,
+  ) -> Box<Self> {
+    Box::new(Self::FlowMatch { expr, cases })
+  }
+
+  pub fn flow_conditional(
+    cases: Vec<(Node<Expression>, Vec<Node<Proposition>>)>,
+    else_case: Vec<Node<Proposition>>,
+  ) -> Box<Self> {
+    Box::new(Self::FlowConditional { cases, else_case })
+  }
+
+  pub fn receive(
+    cases: Vec<(Node<Pattern>, Vec<Node<Proposition>>)>,
+    after: Option<(Node<Expression>, Vec<Node<Proposition>>)>,
+  ) -> Box<Self> {
+    Box::new(Self::Receive { cases, after })
   }
 }

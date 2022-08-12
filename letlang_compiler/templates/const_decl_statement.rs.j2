@@ -1,7 +1,0 @@
-{% if public %}pub {% endif %}mod symbol_{{symbol_name}} {
-  use llcore_runtime::*;
-
-  pub async fn const_{{symbol_name}}(co: &FunctionCoroutine, context: Arc<Mutex<Context>>) -> Value {
-    {{value_code}}
-  }
-}

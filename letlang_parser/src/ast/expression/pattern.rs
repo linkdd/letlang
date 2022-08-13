@@ -1,30 +1,42 @@
 use crate::ast::{
   Node,
-  expression::Literal,
+  expression::{Symbol, Literal},
 };
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Pattern {
-  Symbol(String),
+  Symbol(Symbol),
   Literal(Node<Literal>),
-  Tuple {
-    members: Vec<Node<Pattern>>,
-  },
-  Struct {
-    members: Vec<(String, Node<Pattern>)>,
-  },
-  List {
-    items: Vec<Node<Pattern>>,
-  },
-  ListHeadTail {
-    head: Node<Pattern>,
-    tail: Node<Pattern>,
-  },
+  Tuple(TuplePattern),
+  Struct(StructPattern),
+  List(ListPattern),
+  ListHeadTail(ListHeadTailPattern),
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct TuplePattern {
+  pub members: Vec<Node<Pattern>>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct StructPattern {
+  pub members: Vec<(String, Node<Pattern>)>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct ListPattern {
+  pub items: Vec<Node<Pattern>>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct ListHeadTailPattern {
+  pub head: Node<Pattern>,
+  pub tail: Node<Pattern>
 }
 
 impl Pattern {
   pub fn symbol(sym: String) -> Box<Self> {
-    Box::new(Self::Symbol(sym))
+    Box::new(Self::Symbol(Symbol(vec![sym])))
   }
 
   pub fn literal(node: Node<Literal>) -> Box<Self> {
@@ -32,18 +44,18 @@ impl Pattern {
   }
 
   pub fn tuple(members: Vec<Node<Pattern>>) -> Box<Self> {
-    Box::new(Self::Tuple { members })
+    Box::new(Self::Tuple(TuplePattern { members }))
   }
 
   pub fn structure(members: Vec<(String, Node<Pattern>)>) -> Box<Self> {
-    Box::new(Self::Struct { members })
+    Box::new(Self::Struct(StructPattern { members }))
   }
 
   pub fn list(items: Vec<Node<Pattern>>) -> Box<Self> {
-    Box::new(Self::List { items })
+    Box::new(Self::List(ListPattern { items }))
   }
 
   pub fn list_head_tail(head: Node<Pattern>, tail: Node<Pattern>) -> Box<Self> {
-    Box::new(Self::ListHeadTail { head, tail })
+    Box::new(Self::ListHeadTail(ListHeadTailPattern { head, tail }))
   }
 }

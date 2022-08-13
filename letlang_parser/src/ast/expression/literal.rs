@@ -1,3 +1,5 @@
+use crate::ast::{Node, expression::Expression};
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum Literal {
   Boolean(bool),
@@ -21,5 +23,12 @@ impl Literal {
 
   pub fn string(repr: String) -> Box<Self> {
     Box::new(Self::String(repr))
+  }
+}
+
+
+impl Expression {
+  pub fn literal(node: Node<Literal>) -> Box<Self> {
+    Box::new(Self::Literal(node))
   }
 }

@@ -12,7 +12,7 @@ pub use self::{
 pub type LocationInfo = (usize, usize);
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct Node<T> {
+pub struct Node<T: 'static> {
   pub location: LocationInfo,
   pub data: Box<T>,
 }

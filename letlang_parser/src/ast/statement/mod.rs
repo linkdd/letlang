@@ -12,7 +12,7 @@ pub use self::{
   effect::EffectDeclStatement,
   class::ClassDeclStatement,
   func::FuncDeclStatement,
-  proposition::Proposition,
+  proposition::{Proposition, Constraint},
 };
 
 #[derive(Clone, Debug, PartialEq)]

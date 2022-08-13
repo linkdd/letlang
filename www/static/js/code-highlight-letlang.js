@@ -27,15 +27,15 @@ $(() => {
       },
       {
         name: 'keyword',
-        match: /^\b(module|import|as|pub|const|class|solvable|thereis|forall|func|effect|perform|throw|intercept|catch|finally|let|do|match|if|else|is|coro|join|not|in|assert)\b/
+        match: /^\b(module|import|as|pub|const|class|func|effect|perform|throw|intercept|catch|let|do|match|cond|else|is|spawn|not|in|receive|after)\b/
       },
       {
         name: 'symbol',
-        match: /^(\=|\=\>|\:\=|\||\-\>|\<|\>|\.|\:|\&|\!|\<\<|\>\>|\/|\*|\+|\-|\|\>|\,|\;|\%)/
+        match: /^(\=|\=\>|\:\=|\||\-\>|\<|\>|\.|\:|\&|\!|\<\<|\>\>|\/|\*|\+|\-|\|\>|\,|\;|\%|\{|\}|\(|\))/
       },
       {
         name: 'builtin-type',
-        match: /^\b(boolean|number|string|atom|stream|set|list|unknown)\b/
+        match: /^\b(boolean|int|number|string|atom|pid|list)\b/
       },
       {
         name: 'string-literal',

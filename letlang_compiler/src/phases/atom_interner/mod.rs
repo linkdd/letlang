@@ -1,6 +1,6 @@
 use crate::prelude::*;
 use crate::semantics::Visitor;
-use letlang_parser::ast::expression::Literal;
+use letlang_parser::ast::expression::Atom;
 
 use string_interner::{
   StringInterner,
@@ -20,22 +20,14 @@ impl AtomInternerPhase {
 
 impl Visitor for AtomInternerPhase {
   fn match_node(&self, node: &dyn std::any::Any) -> bool {
-    if let Some(lit) = node.downcast_ref::<Literal>() {
-      match lit {
-        Literal::Atom(_) => {
-          true
-        },
-        _ => false,
-      }
-    }
-    else {
-      false
+    match node.downcast_ref::<Atom>() {
+      Some(_) => true,
+      None => false,
     }
   }
 
   fn visit_node(&mut self, node: &dyn std::any::Any) -> CompilationResult<()> {
-    let lit = node.downcast_ref::<Literal>().unwrap();
-    if let Literal::Atom(a) = lit {
+    if let Some(Atom(a)) = node.downcast_ref::<Atom>() {
       self.interner.get_or_intern(a);
     }
 

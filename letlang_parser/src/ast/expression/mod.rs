@@ -9,7 +9,7 @@ mod messaging;
 
 pub use self::{
   symbol::Symbol,
-  literal::Literal,
+  literal::{Literal, Atom},
   containers::{
     Structure,
     Tuple,

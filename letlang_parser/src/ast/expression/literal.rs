@@ -1,10 +1,13 @@
 use crate::ast::{Node, expression::Expression};
 
 #[derive(Debug, Clone, PartialEq)]
+pub struct Atom(pub String);
+
+#[derive(Debug, Clone, PartialEq)]
 pub enum Literal {
   Boolean(bool),
   Number(f64),
-  Atom(String),
+  Atom(Atom),
   String(String),
 }
 
@@ -18,7 +21,7 @@ impl Literal {
   }
 
   pub fn atom(repr: String) -> Box<Self> {
-    Box::new(Self::Atom(repr))
+    Box::new(Self::Atom(Atom(repr)))
   }
 
   pub fn string(repr: String) -> Box<Self> {

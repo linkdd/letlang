@@ -8,7 +8,7 @@ impl<V: Visitor> Model<V> {
   pub fn visit_structure(&mut self, structure: &Structure) -> CompilationResult<()> {
     self.call_visitor(structure)?;
 
-    for (member_name, member_val) in structure.members.iter() {
+    for (_, member_val) in structure.members.iter() {
       self.visit_expression(member_val)?;
     }
 

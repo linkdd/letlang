@@ -4,7 +4,7 @@ use crate::prelude::*;
 use letlang_parser::{ast, ast::{LocationInfo, Node}};
 
 
-pub trait Visitor {
+pub trait Visitor: Clone {
   fn match_node(&self, node: &dyn std::any::Any) -> bool;
   fn visit_node(&mut self, node: &dyn std::any::Any) -> CompilationResult<()>;
 }

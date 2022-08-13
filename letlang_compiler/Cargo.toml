@@ -7,3 +7,4 @@ edition = "2021"
 letlang_parser = { path = "../letlang_parser" }
 
 string-interner = "0.14"
+codegen = "0.1"

@@ -3,7 +3,7 @@ use crate::{ast, ast::Node};
 
 //#region Grammar
 peg::parser!{
-  grammar unit_parser<'source>() for TokenStream<'source> {
+  pub grammar unit_parser<'source>() for TokenStream<'source> {
     //#region Unit
     pub rule unit() -> Node<ast::Unit>
       = l:position!() module:module() stmts:statement()* r:position!()
@@ -1260,14 +1260,3 @@ peg::parser!{
   }
 }
 //#endregion
-
-pub fn parse_string(filename: &str, input: &str) -> Result<Node<ast::Unit>, Box<dyn std::error::Error>> {
-  let stream = TokenStream::new(filename, input);
-  let ast = unit_parser::unit(&stream)?;
-  Ok(ast)
-}
-
-pub fn parse_file(filename: &str) -> Result<Node<ast::Unit>, Box<dyn std::error::Error>> {
-  let input = std::fs::read_to_string(filename)?;
-  parse_string(filename, &input)
-}

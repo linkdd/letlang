@@ -17,10 +17,10 @@ impl CompilationError {
   pub fn new_located(location: &LocationInfo, message: String) -> Self {
     Self {
       message: format!(
-        "{}",
-        /*location.filename.clone(),
-        location.linecol.0,
-        location.linecol.1,*/
+        "[{};{}] {}",
+        //location.filename.clone(),
+        location.0,
+        location.1,
         message
       ),
       located: true,

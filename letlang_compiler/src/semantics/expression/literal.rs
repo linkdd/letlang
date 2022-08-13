@@ -1,5 +1,5 @@
 use crate::prelude::*;
-pub use super::Model;
+pub use super::{Model, Visitor};
 
 use letlang_parser::ast::{
   Node,
@@ -7,16 +7,11 @@ use letlang_parser::ast::{
 };
 
 
-impl Model {
+impl<V: Visitor> Model<V> {
   pub fn visit_literal(&mut self, node: &Node<Literal>) -> CompilationResult<()> {
-    match node.data.as_ref() {
-      Literal::Atom(val) => {
-        self.interner.get_or_intern(val);
-        Ok(())
-      },
-      _ => {
-        Ok(())
-      }
-    }
+    Self::locate_error(
+      self.call_visitor(node.data.as_ref()),
+      &node.location,
+    )
   }
 }

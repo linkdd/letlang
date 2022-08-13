@@ -18,7 +18,6 @@ impl CompilationError {
     Self {
       message: format!(
         "[{};{}] {}",
-        //location.filename.clone(),
         location.0,
         location.1,
         message

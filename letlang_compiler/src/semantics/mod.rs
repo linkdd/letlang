@@ -6,7 +6,7 @@ use letlang_parser::{ast, ast::{LocationInfo, Node}};
 
 pub trait Visitor {
   fn match_node(&self, node: &dyn std::any::Any) -> bool;
-  fn visit_node(&self, node: &dyn std::any::Any) -> CompilationResult<()>;
+  fn visit_node(&mut self, node: &dyn std::any::Any) -> CompilationResult<()>;
 }
 
 
@@ -17,6 +17,10 @@ pub struct Model<V: Visitor> {
 impl<V: Visitor> Model<V> {
   pub fn new(visitor: V) -> Self {
     Self { visitor }
+  }
+
+  pub fn get_visitor(&mut self) -> &V {
+    &self.visitor
   }
 
   pub fn locate_error(
@@ -36,14 +40,6 @@ impl<V: Visitor> Model<V> {
   pub fn call_visitor(&mut self, data: &dyn std::any::Any) -> CompilationResult<()> {
     if self.visitor.match_node(data) {
       self.visitor.visit_node(data)?;
-    }
-
-    Ok(())
-  }
-
-  pub fn visit(&mut self, units: &Vec<Node<ast::Unit>>) -> CompilationResult<()> {
-    for unit in units.iter() {
-      self.visit_unit(unit)?;
     }
 
     Ok(())

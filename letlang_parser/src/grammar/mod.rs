@@ -173,22 +173,22 @@ peg::parser!{
 
     rule call_param() -> Node<ast::params::CallParam>
       = l:position!()
-          name:identifier()
-          [Token::Colon]
-          type_ref:type_ref()
+        name:identifier()
+        [Token::Colon]
+        type_ref:type_ref()
         r:position!()
-        {
-          Node::new(
-            (l, r),
-            ast::params::CallParam::new(name, type_ref)
-          )
-        }
+      {
+        Node::new(
+          (l, r),
+          ast::params::CallParam::new(name, type_ref)
+        )
+      }
     //#endregion
 
     //#region Proposition
     rule proposition() -> Node<ast::statement::Proposition>
-      = proposition_evaluation()
-      / proposition_constraint()
+      = proposition_constraint()
+      / proposition_evaluation()
 
     rule proposition_evaluation() -> Node<ast::statement::Proposition>
       = l:position!() expr:expression() [Token::Semicolon] r:position!()
@@ -241,57 +241,30 @@ peg::parser!{
       { type_refs }
 
     //#region Precedence Climbing
-    #[cache_left_rec]
-    rule type_ref() -> Node<ast::types::TypeRef>
-      = type_ref_expr1()
-
-    #[cache_left_rec]
-    rule type_ref_expr1() -> Node<ast::types::TypeRef>
-      = l:position!()
-        lhs:type_ref_expr1() [Token::OperatorBinOr] rhs:type_ref_expr2()
-        r:position!()
-        {
-          Node::new(
-            (l, r),
-            ast::types::TypeRef::one_of(vec![lhs, rhs])
-          )
-        }
-
-    #[cache_left_rec]
-    rule type_ref_expr2() -> Node<ast::types::TypeRef>
-      = l:position!()
-        lhs:type_ref_expr2() [Token::OperatorBinAnd] rhs:type_ref_expr3()
-        r:position!()
-        {
-          Node::new(
-            (l, r),
-            ast::types::TypeRef::all_of(vec![lhs, rhs])
-          )
-        }
-
-    #[cache_left_rec]
-    rule type_ref_expr3() -> Node<ast::types::TypeRef>
-      = l:position!()
-        [Token::Negation] t:type_ref_expr4()
-        r:position!()
-        {
-          Node::new(
-            (l, r),
-            ast::types::TypeRef::not(t)
-          )
-        }
-
-    #[cache_left_rec]
-    rule type_ref_expr4() -> Node<ast::types::TypeRef>
-      = type_ref_term()
-      / type_ref_recursion()
-
-    rule type_ref_recursion() -> Node<ast::types::TypeRef>
-      = [Token::ParenthesisBegin] t:type_ref() [Token::ParenthesisEnd] { t }
+    rule type_ref() -> Node<ast::types::TypeRef> = precedence!{
+      l:position!() data:@ r:position!() {
+        Node::new((l, r), data)
+      }
+      --
+      lhs:(@) [Token::OperatorBinOr] rhs:@ {
+        ast::types::TypeRef::one_of(vec![lhs, rhs])
+      }
+      --
+      lhs:(@) [Token::OperatorBinAnd] rhs:@ {
+        ast::types::TypeRef::all_of(vec![lhs, rhs])
+      }
+      --
+      [Token::Negation] t:(@) {
+        ast::types::TypeRef::not(t)
+      }
+      --
+      t:type_ref_term() { t }
+      [Token::ParenthesisBegin] t:type_ref() [Token::ParenthesisEnd] { t.data }
+    }
     //#endregion
 
     //#region Terms
-    rule type_ref_term() -> Node<ast::types::TypeRef>
+    rule type_ref_term() -> Box<ast::types::TypeRef>
       = type_ref_term_generic_symbol()
       / type_ref_term_concrete_symbol()
       / type_ref_term_struct_def()
@@ -299,68 +272,34 @@ peg::parser!{
       / type_ref_term_function_signature()
       / type_ref_term_literal()
 
-    rule type_ref_term_generic_symbol() -> Node<ast::types::TypeRef>
-      = l:position!()
-        type_name:symbol_path() type_params:type_params_specialization()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::types::TypeRef::type_name(type_name, type_params)
-        )
-      }
+    rule type_ref_term_generic_symbol() -> Box<ast::types::TypeRef>
+      = type_name:symbol_path() type_params:type_params_specialization()
+      { ast::types::TypeRef::type_name(type_name, type_params) }
 
-    rule type_ref_term_concrete_symbol() -> Node<ast::types::TypeRef>
-      = l:position!() type_name:symbol_path() r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::types::TypeRef::type_name(type_name, vec![])
-        )
-      }
+    rule type_ref_term_concrete_symbol() -> Box<ast::types::TypeRef>
+      = type_name:symbol_path()
+      { ast::types::TypeRef::type_name(type_name, vec![]) }
 
-    rule type_ref_term_struct_def() -> Node<ast::types::TypeRef>
-      = l:position!() struct_def:structure_definition() r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::types::TypeRef::struct_definition(struct_def)
-        )
-      }
+    rule type_ref_term_struct_def() -> Box<ast::types::TypeRef>
+      = struct_def:structure_definition()
+      { ast::types::TypeRef::struct_definition(struct_def) }
 
-    rule type_ref_term_tuple_def() -> Node<ast::types::TypeRef>
-      = l:position!() members:tuple_definition() r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::types::TypeRef::tuple_definition(members)
-        )
-      }
+    rule type_ref_term_tuple_def() -> Box<ast::types::TypeRef>
+      = members:tuple_definition()
+      { ast::types::TypeRef::tuple_definition(members) }
 
-    rule type_ref_term_function_signature() -> Node<ast::types::TypeRef>
-      = l:position!()
-        [Token::KeywordFunction]
+    rule type_ref_term_function_signature() -> Box<ast::types::TypeRef>
+      = [Token::KeywordFunction]
         [Token::BracketBegin]
           [Token::ParenthesisBegin] params:type_refs() [Token::ParenthesisEnd]
           [Token::Arrow]
           return_type:type_ref()
         [Token::BracketEnd]
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::types::TypeRef::function_signature(params, return_type)
-        )
-      }
+      { ast::types::TypeRef::function_signature(params, return_type) }
 
-    rule type_ref_term_literal() -> Node<ast::types::TypeRef>
-      = l:position!() value:literal() r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::types::TypeRef::value(value)
-        )
-      }
+    rule type_ref_term_literal() -> Box<ast::types::TypeRef>
+      = value:literal()
+      { ast::types::TypeRef::value(value) }
     //#endregion
 
     //#region Structure Definition
@@ -394,370 +333,128 @@ peg::parser!{
       { exprs }
 
     //#region Precedence Climbing
-    rule expression() -> Node<ast::expression::Expression>
-      = expression_1()
-
-    #[cache_left_rec]
-    rule expression_1() -> Node<ast::expression::Expression>
-      = l:position!()
-        lhs:pattern() [Token::OperatorAssign] rhs:expression_1()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::pattern_match(lhs, rhs)
-        )
+    rule expression() -> Node<ast::expression::Expression> = precedence!{
+      l:position!() data:@ r:position!() {
+        Node::new((l, r), data)
       }
-      / expression_2()
-
-    #[cache_left_rec]
-    rule expression_2() -> Node<ast::expression::Expression>
-      = l:position!()
-        lhs:expression_2() [Token::OperatorIs] rhs:type_ref()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::type_check(lhs, rhs)
-        )
+      --
+      lhs:pattern() [Token::OperatorAssign] rhs:(@) {
+        ast::expression::Expression::pattern_match(lhs, rhs)
       }
-      / l:position!()
-        lhs:expression_2() [Token::OperatorIs] [Token::OperatorLogicalNot] rhs:type_ref()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::unary_op("not", Node::new(
-            (l, r),
-            ast::expression::Expression::type_check(lhs, rhs)
-          ))
-        )
+      --
+      lhs:(@) [Token::OperatorIs] rhs:type_ref() {
+        ast::expression::Expression::type_check(lhs, rhs, false)
       }
-      / expression_3()
-
-    #[cache_left_rec]
-    rule expression_3() -> Node<ast::expression::Expression>
-      = l:position!()
-        lhs:expression_3() [Token::OperatorPipeline] rhs:expression_4()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::binary_op("|>", lhs, rhs)
-        )
+      lhs:(@) [Token::OperatorIs] [Token::OperatorLogicalNot] rhs:type_ref() {
+        ast::expression::Expression::type_check(lhs, rhs, true)
       }
-
-    #[cache_left_rec]
-    rule expression_4() -> Node<ast::expression::Expression>
-      = l:position!()
-        [Token::KeywordThrow] e:expression_4()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::unary_op("throw", e)
-        )
+      --
+      lhs:(@) [Token::OperatorPipeline] rhs:@ {
+        ast::expression::Expression::binary_op("|>", lhs, rhs)
       }
-      / expression_5()
-
-    #[cache_left_rec]
-    rule expression_5() -> Node<ast::expression::Expression>
-      = l:position!()
-        lhs:expression_5() [Token::OperatorLogicalOr] rhs:expression_6()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::binary_op("or", lhs, rhs)
-        )
+      --
+      [Token::KeywordThrow] e:(@) {
+        ast::expression::Expression::unary_op("throw", e)
       }
-
-    #[cache_left_rec]
-    rule expression_6() -> Node<ast::expression::Expression>
-      = l:position!()
-        lhs:expression_6() [Token::OperatorLogicalAnd] rhs:expression_7()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::binary_op("and", lhs, rhs)
-        )
+      --
+      lhs:(@) [Token::OperatorLogicalOr] rhs:@ {
+        ast::expression::Expression::binary_op("or", lhs, rhs)
       }
-
-    #[cache_left_rec]
-    rule expression_7() -> Node<ast::expression::Expression>
-      = l:position!()
-        lhs:expression_7() [Token::OperatorBinOr] rhs:expression_8()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::binary_op("|", lhs, rhs)
-        )
+      --
+      lhs:(@) [Token::OperatorLogicalAnd] rhs:@ {
+        ast::expression::Expression::binary_op("and", lhs, rhs)
       }
-
-    #[cache_left_rec]
-    rule expression_8() -> Node<ast::expression::Expression>
-      = l:position!()
-        lhs:expression_8() [Token::OperatorBinXor] rhs:expression_9()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::binary_op("^", lhs, rhs)
-        )
+      --
+      lhs:(@) [Token::OperatorBinOr] rhs:@ {
+        ast::expression::Expression::binary_op("|", lhs, rhs)
       }
-
-    #[cache_left_rec]
-    rule expression_9() -> Node<ast::expression::Expression>
-      = l:position!()
-        lhs:expression_9() [Token::OperatorBinAnd] rhs:expression_10()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::binary_op("&", lhs, rhs)
-        )
+      --
+      lhs:(@) [Token::OperatorBinXor] rhs:@ {
+        ast::expression::Expression::binary_op("^", lhs, rhs)
       }
-
-    #[cache_left_rec]
-    rule expression_10() -> Node<ast::expression::Expression>
-      = l:position!()
-        lhs:expression_10() [Token::OperatorIn] rhs:expression_11()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::binary_op("in", lhs, rhs)
-        )
+      --
+      lhs:(@) [Token::OperatorBinAnd] rhs:@ {
+        ast::expression::Expression::binary_op("&", lhs, rhs)
       }
-      / l:position!()
-        lhs:expression_10() [Token::OperatorLogicalNot] [Token::OperatorIn] rhs:expression_11()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::unary_op("not", Node::new(
-            (l, r),
-            ast::expression::Expression::binary_op("in", lhs, rhs)
-          ))
-        )
+      --
+      lhs:(@) [Token::OperatorIn] rhs:@ {
+        ast::expression::Expression::binary_op("in", lhs, rhs)
       }
-
-    #[cache_left_rec]
-    rule expression_11() -> Node<ast::expression::Expression>
-      = l:position!()
-        lhs:expression_11() [Token::OperatorCmpEQ] rhs:expression_12()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::binary_op("=", lhs, rhs)
-        )
+      lhs:(@) [Token::OperatorLogicalNot] [Token::OperatorIn] rhs:@ {
+        ast::expression::Expression::binary_op("nin", lhs, rhs)
       }
-      / l:position!()
-        lhs:expression_11() [Token::OperatorCmpNE] rhs:expression_12()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::binary_op("!=", lhs, rhs)
-        )
+      --
+      lhs:(@) [Token::OperatorCmpEQ] rhs:@ {
+        ast::expression::Expression::binary_op("=", lhs, rhs)
       }
-
-    #[cache_left_rec]
-    rule expression_12() -> Node<ast::expression::Expression>
-      = l:position!()
-        lhs:expression_12() [Token::OperatorCmpLT] rhs:expression_13()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::binary_op("<", lhs, rhs)
-        )
+      lhs:(@) [Token::OperatorCmpNE] rhs:@ {
+        ast::expression::Expression::binary_op("!=", lhs, rhs)
       }
-      / l:position!()
-        lhs:expression_12() [Token::OperatorCmpLTE] rhs:expression_13()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::binary_op("<=", lhs, rhs)
-        )
+      --
+      lhs:(@) [Token::OperatorCmpLT] rhs:@ {
+        ast::expression::Expression::binary_op("<", lhs, rhs)
       }
-      / l:position!()
-        lhs:expression_12() [Token::OperatorCmpGTE] rhs:expression_13()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::binary_op(">=", lhs, rhs)
-        )
+      lhs:(@) [Token::OperatorCmpLTE] rhs:@ {
+        ast::expression::Expression::binary_op("<=", lhs, rhs)
       }
-      / l:position!()
-        lhs:expression_12() [Token::OperatorCmpGT] rhs:expression_13()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::binary_op(">", lhs, rhs)
-        )
+      lhs:(@) [Token::OperatorCmpGTE] rhs:@ {
+        ast::expression::Expression::binary_op(">=", lhs, rhs)
       }
-
-    #[cache_left_rec]
-    rule expression_13() -> Node<ast::expression::Expression>
-      = l:position!()
-        lhs:expression_13() [Token::OperatorBinLShift] rhs:expression_14()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::binary_op("<<", lhs, rhs)
-        )
+      lhs:(@) [Token::OperatorCmpGT] rhs:@ {
+        ast::expression::Expression::binary_op(">", lhs, rhs)
       }
-      / l:position!()
-        lhs:expression_13() [Token::OperatorBinRShift] rhs:expression_14()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::binary_op(">>", lhs, rhs)
-        )
+      --
+      lhs:(@) [Token::OperatorBinLShift] rhs:@ {
+        ast::expression::Expression::binary_op("<<", lhs, rhs)
       }
-
-    #[cache_left_rec]
-    rule expression_14() -> Node<ast::expression::Expression>
-      = l:position!()
-        lhs:expression_14() [Token::OperatorMathAdd] rhs:expression_15()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::binary_op("+", lhs, rhs)
-        )
+      lhs:(@) [Token::OperatorBinRShift] rhs:@ {
+        ast::expression::Expression::binary_op(">>", lhs, rhs)
       }
-      / l:position!()
-        lhs:expression_14() [Token::OperatorMathSub] rhs:expression_15()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::binary_op("-", lhs, rhs)
-        )
+      --
+      lhs:(@) [Token::OperatorMathAdd] rhs:@ {
+        ast::expression::Expression::binary_op("+", lhs, rhs)
       }
-
-    #[cache_left_rec]
-    rule expression_15() -> Node<ast::expression::Expression>
-      = l:position!()
-        lhs:expression_15() [Token::OperatorMathMul] rhs:expression_16()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::binary_op("*", lhs, rhs)
-        )
+      lhs:(@) [Token::OperatorMathSub] rhs:@ {
+        ast::expression::Expression::binary_op("-", lhs, rhs)
       }
-      / l:position!()
-        lhs:expression_15() [Token::OperatorMathDiv] rhs:expression_16()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::binary_op("/", lhs, rhs)
-        )
+      --
+      lhs:(@) [Token::OperatorMathMul] rhs:@ {
+        ast::expression::Expression::binary_op("*", lhs, rhs)
       }
-      / l:position!()
-        lhs:expression_15() [Token::OperatorMathMod] rhs:expression_16()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::binary_op("%", lhs, rhs)
-        )
+      lhs:(@) [Token::OperatorMathDiv] rhs:@ {
+        ast::expression::Expression::binary_op("/", lhs, rhs)
       }
-
-    #[cache_left_rec]
-    rule expression_16() -> Node<ast::expression::Expression>
-      = l:position!()
-        lhs:expression_16() [Token::OperatorMathPow] rhs:expression_17()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::binary_op("**", lhs, rhs)
-        )
+      lhs:(@) [Token::OperatorMathMod] rhs:@ {
+        ast::expression::Expression::binary_op("%", lhs, rhs)
       }
-
-    #[cache_left_rec]
-    rule expression_17() -> Node<ast::expression::Expression>
-      = l:position!()
-        [Token::OperatorMathSub] e:expression_term()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::unary_op("-", e)
-        )
+      --
+      lhs:(@) [Token::OperatorMathPow] rhs:@ {
+        ast::expression::Expression::binary_op("**", lhs, rhs)
       }
-      / l:position!()
-        [Token::OperatorLogicalNot] e:expression_term()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::unary_op("not", e)
-        )
+      --
+      [Token::OperatorMathSub] e:(@) {
+        ast::expression::Expression::unary_op("-", e)
       }
-      / l:position!()
-        [Token::OperatorBinNot] e:expression_term()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::unary_op("~", e)
-        )
+      [Token::OperatorLogicalNot] e:(@) {
+        ast::expression::Expression::unary_op("not", e)
       }
-      / expression_18()
-
-    #[cache_left_rec]
-    rule expression_18() -> Node<ast::expression::Expression>
-      = l:position!()
-        lhs:expression_18() [Token::OperatorAccess] rhs:identifier()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::member_access(lhs, rhs)
-        )
+      [Token::OperatorBinNot] e:(@) {
+        ast::expression::Expression::unary_op("~", e)
       }
-      / l:position!()
-        func:expression_18()
-        [Token::ParenthesisBegin] params:expressions() [Token::ParenthesisEnd]
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::function_call(func, params)
-        )
+      --
+      lhs:(@) [Token::OperatorAccess] rhs:identifier() {
+        ast::expression::Expression::member_access(lhs, rhs)
       }
-      / l:position!()
-        symbol:expression_18() type_params:type_params_specialization()
-        r:position!()
-      {
-        Node::new(
-          (l, r),
-          ast::expression::Expression::generic_resolve(symbol, type_params)
-        )
+      func:(@) [Token::ParenthesisBegin] params:expressions() [Token::ParenthesisEnd] {
+        ast::expression::Expression::function_call(func, params)
       }
-      / expression_19()
-
-    #[cache_left_rec]
-    rule expression_19() -> Node<ast::expression::Expression>
-      = expression_term()
-      / expression_recursion()
-
-    rule expression_recursion() -> Node<ast::expression::Expression>
-      = [Token::ParenthesisBegin] e:expression() [Token::ParenthesisEnd] { e }
+      symbol:(@) type_params:type_params_specialization() {
+        ast::expression::Expression::generic_resolve(symbol, type_params)
+      }
+      --
+      t:expression_term() { t.data }
+      [Token::ParenthesisBegin] e:expression() [Token::ParenthesisEnd] { e.data }
+    }
     //#endregion
 
     //#region Terms

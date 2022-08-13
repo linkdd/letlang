@@ -19,7 +19,8 @@ pub struct MemberAccess {
 #[derive(Debug, Clone, PartialEq)]
 pub struct TypeCheck {
   pub lhs: Node<Expression>,
-  pub rhs: Node<TypeRef>
+  pub rhs: Node<TypeRef>,
+  pub not: bool,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -50,8 +51,8 @@ impl Expression {
     Box::new(Self::MemberAccess(MemberAccess { lhs, rhs }))
   }
 
-  pub fn type_check(lhs: Node<Expression>, rhs: Node<TypeRef>) -> Box<Self> {
-    Box::new(Self::TypeCheck(TypeCheck { lhs, rhs }))
+  pub fn type_check(lhs: Node<Expression>, rhs: Node<TypeRef>, not: bool) -> Box<Self> {
+    Box::new(Self::TypeCheck(TypeCheck { lhs, rhs, not }))
   }
 
   pub fn unary_op(op: &'static str, expr: Node<Expression>) -> Box<Self> {

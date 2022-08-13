@@ -1,38 +1,50 @@
+use crate::prelude::*;
+
 mod token;
 pub use self::token::Token;
 
 use line_col::LineColLookup;
 use logos::{Logos, Span};
+use std::path::PathBuf;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct TokenLocation {
-  filename: String,
+  filename: PathBuf,
   linecol: (usize, usize),
-  offset: usize
+  offset: usize,
+  token: Option<Token>,
 }
 
 impl std::fmt::Display for TokenLocation {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     let (line, col) = self.linecol;
-    write!(f, "{}[{};{}]", self.filename, line, col)
+    write!(f, "{}[{};{}]", self.filename.display(), line, col)
   }
 }
 
 pub struct TokenStream<'source> {
-  filename: &'source str,
+  filename: PathBuf,
   size: usize,
   tokens: Vec<(Token, Span)>,
   linecol_lookup: LineColLookup<'source>,
 }
 
 impl<'source> TokenStream<'source> {
-  pub fn new(filename: &'source str, input: &'source str) -> Self {
-    Self {
+  pub fn new(filename: PathBuf, input: &'source str) -> ParseResult<Self> {
+    let token_stream = Self {
       filename,
       size: input.len(),
       tokens: Token::lexer(input).spanned().collect(),
       linecol_lookup: LineColLookup::new(input),
+    };
+
+    for (token, span) in token_stream.tokens.iter() {
+      if let Token::Error = token {
+        return Err(ParseError::new(format!("invalid token: {} {:?}", token, span)));
+      }
     }
+
+    Ok(token_stream)
   }
 }
 
@@ -48,19 +60,20 @@ impl<'source> peg::Parse for TokenStream<'source> {
   }
 
   fn position_repr<'input>(&'input self, pos: usize) -> Self::PositionRepr {
-    let (linecol, offset) = match self.tokens.get(pos) {
-      Some((_, span)) => {
-        (self.linecol_lookup.get(span.start), span.start)
+    let (token, linecol, offset) = match self.tokens.get(pos) {
+      Some((token, span)) => {
+        (Some(token.clone()), self.linecol_lookup.get(span.start), span.start)
       },
       None => {
-        (self.linecol_lookup.get(self.size), self.size)
+        (None, self.linecol_lookup.get(self.size), self.size)
       }
     };
 
     TokenLocation {
-      filename: self.filename.to_string(),
+      filename: self.filename.clone(),
       linecol,
-      offset
+      offset,
+      token
     }
   }
 }

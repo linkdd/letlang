@@ -1,5 +1,8 @@
 ---
 title: Homepage
+
+authors: ["david-delassus"]
+categories: ["letlang"]
 ---
 
 {{< center >}}
@@ -26,722 +29,228 @@ definitive and may be subject to change.
 
 ---
 
+{{< columns class="is-vcentered my-6" >}}
+{{< column class="is-one-third" >}}
 {{< center >}}
-# **Useful resources**
+{{< action href="/book/" class="is-info p-6" >}}
+<i class="fas fa-book"></i>
+<b>Handbook</b>
+{{< /action >}}
 {{< /center >}}
-
-{{< columns >}}
-{{< column class="is-one-quarter" >}}
-{{< card title="Handbook" headerClass="has-background-info has-text-white" >}}
-{{< markdown >}}
-Read more about **Letlang**'s features and design.
-A good resource to learn about the language.
-
----
-{{< /markdown >}}
-
-{{< center >}}
-[Read](/book/)
-{{< /center >}}
-{{< /card >}}
 {{< /column >}}
 
-{{< column class="is-one-quarter" >}}
-{{< card title="Code Examples" headerClass="has-background-warning has-text-black" >}}
-{{< markdown >}}
-Discover code samples from the standard library or implentations of simple UNIX.
-tools.
-
----
-{{< /markdown >}}
-
+{{< column class="is-one-third" >}}
 {{< center >}}
-[Read](/examples/)
+{{< action href="/lep/" class="is-warning p-6" >}}
+<i class="fas fa-code"></i>
+<b>Language Specification</b>
+{{< /action >}}
 {{< /center >}}
-{{< /card >}}
 {{< /column >}}
 
-{{< column class="is-one-quarter" >}}
-{{< card title="Language Specification" headerClass="has-background-danger has-text-white" >}}
-{{< markdown >}}
-Read the language specification by exploring the different **LEP** (**L**etlang
-**E**nhancement **P**roposal) documents.
-
----
-{{< /markdown >}}
-
+{{< column class="is-one-third" >}}
 {{< center >}}
-[Read](/lep/)
+{{< action href="https://github.com/linkdd/letlang" class="is-success p-6" >}}
+<i class="fab fa-github"></i>
+<b>Download</b>
+{{< /action >}}
 {{< /center >}}
-{{< /card >}}
-{{< /column >}}
-
-{{< column class="is-one-quarter" >}}
-{{< card title="Download" headerClass="has-background-success has-text-white" >}}
-{{< markdown >}}
-Github repository containing the source code and setup instructions to get
-started with **Letlang**.
-
----
-{{< /markdown >}}
-
-{{< center >}}
-[Get started](https://github.com/linkdd/letlang)
-{{< /center >}}
-{{< /card >}}
 {{< /column >}}
 {{< /columns >}}
 
 ---
 
+{{< columns class="my-6" >}}
+{{< column class="is-one-third" >}}
+{{< markdown >}}
 {{< center >}}
-# **Key features**
+# Dynamic Type System
 {{< /center >}}
 
-## Syntax
-{.has-title-underline}
+---
 
-{{< columns >}}
-
-{{< column class="is-half" >}}
-{{< markdown >}}
-**Letlang** is inspired by mathematics and the following languages:
-
- - *[Elixir](https://elixir-lang.org/)*
- - *[Python](https://www.python.org/)*
- - *[Rust](https://www.rust-lang.org/)*
- - *[Go](https://go.dev/)*
- - *[TypeScript](https://www.typescriptlang.org/)*
-{{< /markdown >}}
-{{< /column >}}
-
-{{< column class="is-half" >}}
-{{< markdown >}}
 ```letlang
-module example::main;
-
-import std::io;
-
-pub func main(args: list<string>) -> @ok {
-  std::io::println("Hello World");
-  @ok;
-}
-```
-{{< /markdown >}}
-{{< /column >}}
-
-{{< /columns >}}
-
-## Dynamic Type System
-{.has-title-underline}
-
-{{< columns >}}
-{{< column class="is-half" >}}
-{{< markdown >}}
-In mathematics, a value does not have a single type. Instead, it belongs to one
-or more sets:
-
- - `42` is an integer, a real number, a scalar, ...
- - `(2, 1)` is a 2D vector, a 2x1 matrix, ...
-
-This concept is at the core of **Letlang**'s type system. New types can be
-defined using the `class` statement.
-
-A class has a structure, every value matching this structure belongs to the
-class.
-
-Optionnaly, a class can define a predicate. Every value belonging to the class
-**must** validate the predicate.
-{{< /markdown >}}
-{{< /column >}}
-
-{{< column class="is-half" >}}
-{{< markdown >}}
-```letlang
-module example::types;
-
 class even(n: int) {
   n % 2 = 0;
 }
 
 class odd(n: int & !even);
-
-class vector(v: {x: number, y: number });
-
-class unit_vector(v: vector) {
-  v.x ** 2 + v.y ** 2 = 1
-}
-```
-{{< /markdown >}}
-{{< /column >}}
-{{< /columns >}}
-
-Using the above definitions, we can assert:
-
-```letlang
-42 is even;    # true
-42 is odd;     # false
-43 is odd;     # true
-43 is even;    # false
 ```
 
-Furthermore, we can compose types together with the operators `|`, `&` and `!`:
+{{< center >}}
+A value does not have a single type, instead the type definition determines what
+value it contains.
 
-{{< columns >}}
-{{< column class="is-half" >}}
+`42` is a `number`, an `int`, an `even` but not an `odd`.
+{{< /center >}}
+
+{{< /markdown >}}
+{{< /column >}}
+
+{{< column class="is-one-third" >}}
 {{< markdown >}}
+{{< center >}}
+# Pattern Matching
+{{< /center >}}
+
+---
+
 ```letlang
-let var: number | string;
-```
-{{< /markdown >}}
-{{< /column >}}
-
-{{< column class="is-half" >}}
-{{< markdown >}}
-- `var` is either a number or a string
-{{< /markdown >}}
-{{< /column >}}
-{{< /columns >}}
-
-{{< columns >}}
-{{< column class="is-half" >}}
-{{< markdown >}}
-```letlang
-let var: int & !even;
-```
-{{< /markdown >}}
-{{< /column >}}
-
-{{< column class="is-half" >}}
-{{< markdown >}}
-- `var` is an integer and must not be even
-{{< /markdown >}}
-{{< /column >}}
-{{< /columns >}}
-
-## Generics
-{.has-title-underline}
-
-{{< columns >}}
-{{< column class="is-half" >}}
-{{< markdown >}}
-Classes and functions can require type parameters.
-
-Those parameters can then be used within the definition of the class or
-function.
-
-Multiple parameters can be specified.
-{{< /markdown >}}
-{{< /column >}}
-
-{{< column class="is-half" >}}
-{{< markdown >}}
-```letlang
-class vector<T>(xy: (T, T));
-
-func swap<A, B>(a: A, b: B) -> (B, A) {
-  (b, a);
-}
-```
-{{< /markdown >}}
-{{< /column >}}
-{{< /columns >}}
-
-{{< columns >}}
-{{< column class="is-half" >}}
-{{< markdown >}}
-These parameters need to be specified to use the generic class or function.
-
-But most of the time, the compiler can infer the types.
-{{< /markdown >}}
-{{< /column >}}
-
-{{< column class="is-half" >}}
-{{< markdown >}}
-```letlang
-let v: vector<number>;
-
-x, s := swap("hello", 42);
-```
-{{< /markdown >}}
-{{< /column >}}
-{{< /columns >}}
-
-{{< columns >}}
-{{< column class="is-half" >}}
-{{< markdown >}}
-Thanks to this feature, a Result type (similar to Rust's) can be defined as
-follows:
-{{< /markdown >}}
-{{< /column >}}
-
-{{< column class="is-half" >}}
-{{< markdown >}}
-```letlang
-class ok<T>(v: (@ok, T));
-class err<T>(v: (@error, T));
-class result<T, E>(v: ok<T> | err<E>);
-```
-{{< /markdown >}}
-{{< /column >}}
-{{< /columns >}}
-
-Leading to the following equalities:
-
-{{< columns >}}
-{{< column class="is-half" >}}
-{{< markdown >}}
-```letlang
-(@ok, 42) is result<number, string>;
-```
-{{< /markdown >}}
-{{< /column >}}
-
-{{< column class="is-half" >}}
-{{< markdown >}}
-- this is `true`
-{{< /markdown >}}
-{{< /column >}}
-{{< /columns >}}
-
-{{< columns >}}
-{{< column class="is-half" >}}
-{{< markdown >}}
-```letlang
-(@ok, 42) is ok<number>;
-```
-{{< /markdown >}}
-{{< /column >}}
-
-{{< column class="is-half" >}}
-{{< markdown >}}
-- this is `true`
-{{< /markdown >}}
-{{< /column >}}
-{{< /columns >}}
-
-{{< columns >}}
-{{< column class="is-half" >}}
-{{< markdown >}}
-```letlang
-(@error, "wrong") is result<number, string>;
-```
-{{< /markdown >}}
-{{< /column >}}
-
-{{< column class="is-half" >}}
-{{< markdown >}}
-- this is `true`
-{{< /markdown >}}
-{{< /column >}}
-{{< /columns >}}
-
-{{< columns >}}
-{{< column class="is-half" >}}
-{{< markdown >}}
-```letlang
-(@error, "wrong") is ok<number>;
-```
-{{< /markdown >}}
-{{< /column >}}
-
-{{< column class="is-half" >}}
-{{< markdown >}}
-- this is `false`
-{{< /markdown >}}
-{{< /column >}}
-{{< /columns >}}
-
-## Pattern matching
-{.has-title-underline}
-
-{{< columns >}}
-{{< column class="is-half" >}}
-{{< markdown >}}
-The `:=` operator is **not** an assignment operator, it is the
-**pattern matching** operator.
-
-If the pattern on the left does not match the value on the right, an exception
-is thrown.
-
-Undefined variables used in a pattern will be bound to the value they match.
-They cannot be bound again to a new value.
-
-The operator returns the right-value as a result, allowing the operator to be
-chained.
-
-Pattern matching is especially useful to extract information out of complex
-data structures.
-{{< /markdown >}}
-{{< /column >}}
-
-{{< column class="is-half" >}}
-{{< markdown >}}
-```letlang
-(a, b) := (1, 2);
-a := 2; # a is 1, 1 does not match 2 -> error
-
 (@ok, val) := (@ok, 42);
 
-@ok := (@error, "oops"); # error
+(@ok, res) := (@error, @oops); # error
 
-(x, 2) := (1, y) := (1, 2);
+(a, b) := (1, 2);
 ```
-{{< /markdown >}}
-{{< /column >}}
-{{< /columns >}}
 
-## Inline typing
-{.has-title-underline}
+{{< center >}}
+The `:=` operator is a **pattern matching** operator, used to bind values to new
+variables, and extract values from complex data structures.
+{{< /center >}}
 
-{{< columns >}}
-{{< column class="is-half" >}}
-{{< markdown >}}
-Before being bound to a value, it is possible to declare constraints on a
-variable using the `let` expression.
-
-When binding a value to a constrained variable, it must validate all the defined
-predicates. If it fails validate, an exception will be thrown.
 {{< /markdown >}}
 {{< /column >}}
 
-{{< column class="is-half" >}}
+{{< column class="is-one-third" >}}
 {{< markdown >}}
+{{< center >}}
+# Side Effects
+{{< /center >}}
+
+---
+
 ```letlang
-let a: number;
-let b: number { b > 0, b > a };
-
-a := 5;
-b := 4; # error
+effect log(msg: string) -> @ok;
 ```
-{{< /markdown >}}
-{{< /column >}}
-{{< /columns >}}
 
-## Pipeline operator
-{.has-title-underline}
-
-Chaining computations can sometimes be awkward.
-
-When you have quite a number of steps, each requiring the output of the previous
-step, the code can become hard to read.
-
-{{< columns >}}
-{{< column class="is-half" >}}
-{{< markdown >}}
-```python
-list(map(
-  lambda x: x * 2,
-  filter(
-    lambda x: x % 2 == 0,
-    range(10, 20)
-  )
-))
-```
-{{< /markdown >}}
-{{< /column >}}
-
-{{< column class="is-half" >}}
-{{< markdown >}}
-This Python code will produce the following list:
-
-```
-[20, 24, 28, 32, 36]
-```
-{{< /markdown >}}
-{{< /column >}}
-{{< /columns >}}
-
-[Elixir](https://elixir-lang.org/), [F#](https://fsharp.org/),
-[R](https://www.r-project.org/) (and probably many other languages) all have a
-solution for this: **the pipeline operator**.
-
-A pipeline will transform some data by applying sequentially computations, each
-depending on the result of the previous one, and producing an output that will
-be forwarded to the next.
-
-If python had a pipeline operator (`|>` for example), the previous code could
-be rewritten as:
-
-{{< columns class="is-centered" >}}
-{{< column class="is-half" >}}
-{{< markdown >}}
-```python
-range(10, 20)
-  |> filter(lambda x: x % 2 == 0)
-  |> map(lambda x: x * 2)
-  |> list()
-```
-{{< /markdown >}}
-{{< /column >}}
-{{< /columns >}}
-
-Which is definitely clearer.
-
-Here is how it works in the following languages:
-
-| Language | Operator Syntax | Description |
-| --- | --- | --- |
-| Elixir | `val \|> func()` | Injects the lefthand-side value as first argument of the righthand-side function call |
-| F# | `val \|> func` or `func <\| val` | Injects the value on one side to the function call on the opposite side |
-| R | `val %>% func` | Injects the lefthand-side value as first argument of the righthand-side function call |
-
-In **Letlang**, the pipeline operator mimics the one from Elixir:
-
-{{< columns class="is-centered" >}}
-{{< column class="is-half" >}}
-{{< markdown >}}
 ```letlang
-x |> add(5) |> mul(2)
-# equivalent to
-mul(add(x, 5), 2)
-```
-{{< /markdown >}}
-{{< /column >}}
-{{< /columns >}}
-
-## Side Effects
-{.has-title-underline}
-
-{{< columns >}}
-{{< column class="is-half" >}}
-{{< markdown >}}
-In mathematics, functions have no side effects.
-
-They will always return the same result given the same parameters.
-{{< /markdown >}}
-{{< /column >}}
-
-{{< column class="is-half" >}}
-{{< markdown >}}
-```
-f(x) = 2x + 1
-f(0) = 1
-f(1) = 3
-```
-{{< /markdown >}}
-{{< /column >}}
-{{< /columns >}}
-
-In software development, such functions are called **pure**.
-
-Yet, not every functions can be pure, like:
-
- - getting input from the user
- - getting the current time
- - performing a request to an external service
- - ...
-
-Such **impure** functions have **side effects**.
-
-{{< columns >}}
-{{< column class="is-half" >}}
-{{< markdown >}}
-**Letlang** provides a mechanism to decouple the handling of a side effect from
-a function.
-
-Using the `effect` statement, you can declare a new type of side effect:
-{{< /markdown >}}
-{{< /column >}}
-
-{{< column class="is-half" >}}
-{{< markdown >}}
-```letlang
-class log_level(lvl: "debug" | "info");
-
-effect log(log_level, string) -> @ok;
-```
-{{< /markdown >}}
-{{< /column >}}
-{{< /columns >}}
-
-{{< columns >}}
-{{< column class="is-half" >}}
-{{< markdown >}}
-Inside a function, you can then trigger the effect, delegating its handling to
-the caller.
-
-This is done with the `perform` keyword followed by a call to the effect:
-{{< /markdown >}}
-{{< /column >}}
-
-{{< column class="is-half" >}}
-{{< markdown >}}
-```letlang
-func greet(name: string) -> @ok {
-  perform log("info", "Hello " <> name);
+do {
+  @ok := perform log("hello");
 }
+intercept log(msg) {
+  std::io::println(msg);
+};
 ```
+
+{{< center >}}
+Delegate the handling of side effects to the caller, or let them bubble up to
+the **Letlang** runtime.
+{{< /center >}}
+
+
 {{< /markdown >}}
 {{< /column >}}
 {{< /columns >}}
 
-{{< columns >}}
-{{< column class="is-half" >}}
+{{< columns class="my-6" >}}
+{{< column class="is-one-third" >}}
 {{< markdown >}}
-Using a `do {}` block and one or more `intercept` clause, the caller can handle
-the side effect.
+{{< center >}}
+# Actor Based Concurrency
+{{< /center >}}
 
-An `intercept` clause uses pattern matching to select which effect to handle.
+---
 
-The last expression of an `intercept` clause will be used as return value of the
-`perform` keyword.
-
-Unhandled effects are then propagated to the builtin runtime **Letlang**
-includes during compile time.
-
-If the effect is unknown to the runtime, the program will crash with a
-stacktrace.
-{{< /markdown >}}
-{{< /column >}}
-
-{{< column class="is-half" >}}
-{{< markdown >}}
 ```letlang
-module example::main;
-
-import std::io;
-
-pub func main(args: list<string>) -> @ok {
-  @ok := do {
-    greet("world");
-  }
-  intercept log("debug", _message) {
-    # silenced
-    @ok;
-  }
-  intercept log("info", message) {
-    std::io::println(message);
-    @ok;
-  };
-
-  perform log("debug", "will crash");
-}
-```
-{{< /markdown >}}
-{{< /column >}}
-{{< /columns >}}
-
-## Exceptions
-{.has-title-underline}
-
-{{< columns >}}
-{{< column class="is-half" >}}
-{{< markdown >}}
-Exceptions are a special kind of effect: **they do not resume**.
-This is a form of early return from a function.
-
-Exceptions can be of any type and are raised with the `throw` keyword.
-
-The caller can handle such exceptions with the `catch` clause in a `do {}`
-block.
-
-The value returned by the `do {}` block will be the value returned by the
-`catch` clause that handled the exception.
-
-> **NB:** Unhandled exceptions (like any other effects) are propagated to the
-> runtime environment and crash the program.
-{{< /markdown >}}
-{{< /column >}}
-
-{{< column class="is-half" >}}
-{{< markdown >}}
-```letlang
-func main(pub args: list<string>) -> @ok {
-  err := do {
-    throw (@error, @not_implemented);
-    @never_reached;
-  }
-  catch (@error, reason) {
-    reason;
-  };
-
-  err = @not_implemented;
-
-  throw @will_crash;
-
-  @ok;
-}
-```
-{{< /markdown >}}
-{{< /column >}}
-{{< /columns >}}
-
-## Concurrency
-{.has-title-underline}
-
-{{< columns >}}
-{{< column class="is-half" >}}
-{{< markdown >}}
-Functions have [no color](https://journal.stuffwithstuff.com/2015/02/01/what-color-is-your-function/), any function can be run asynchronously or not, it
-is up to the caller to decide.
-
-> **WORK IN PROGRESS**
-
-{{< /markdown >}}
-{{< /column >}}
-
-{{< column class="is-half" >}}
-{{< markdown >}}
-```letlang
-module example::main;
-
-import std::io;
-
 func task() -> @ok {
-  # do stuff
+  # do something
   @ok;
 }
 
-pub func main(args: list<string>) -> @ok {
-  proc_id := spawn task();
-  std::io::println("Task PID: " <> proc_id);
+func main() -> @ok {
+  (@ok, proc_id) := spawn task();
+  # do something
   @ok;
 }
 ```
+
+{{< center >}}
+Run any function in a new **Letlang** *process* (concurrent task), inspired by
+[Erlang](https://www.erlang.org/)'s design, and backed by
+[Tokio](https://tokio.rs).
+
+Your program will live as long as there is a running *process*, even if the
+`main()` function returned.
+
+Every *process* have a unique identifier (`pid`) used for communication and
+monitoring.
+{{< /center >}}
+
 {{< /markdown >}}
 {{< /column >}}
-{{< /columns >}}
 
-## Message passing
-{.has-title-underline}
-
-{{< columns >}}
-{{< column class="is-half" >}}
+{{< column class="is-one-third" >}}
 {{< markdown >}}
+{{< center >}}
+# Message Passing
+{{< /center >}}
 
-> **WORK IN PROGRESS**
+---
 
-{{< /markdown >}}
-{{< /column >}}
-
-{{< column class="is-half" >}}
-{{< markdown >}}
 ```letlang
-module example::main;
+(@ok, proc_id) := spawn task(std::proc::self());
+# send a signal to this process on exit
+std::proc::link(proc_id);
 
-import std::io;
-
-func task(parent: pid) -> @ok;
-  send(parent, "hello");
-  @ok;
-}
-
-pub func main(args: list<string>) -> @ok {
-  proc_id := spawn task(self())
-
-  receive {
-    message(proc_id, msg) => {
-      std::io::println(msg);
-    }
-    exited(proc_id) => {
-      std::io::println("Child exited!");
-    }
-  };
-
-  @ok;
-}
+receive { # blocks until signal is received
+  message(proc_id, msg) => {
+    # message signal received
+  },
+  exited(proc_id, reason) => {
+    # exit signal received
+  },
+};
 ```
+
+```letlang
+@ok := std::proc::send(proc_id, "hello");
+```
+
+{{< center >}}
+Each *process* have a mailbox where signals can be queued. There exist 2 kinds
+of signal: **message** and **exited**.
+
+Processes can send messages to each others. When a process exits (or crashes),
+an **exited** signal is sent to every linked process.
+{{< /center >}}
+
+{{< /markdown >}}
+{{< /column >}}
+
+{{< column class="is-one-third" >}}
+{{< markdown >}}
+{{< center >}}
+# Immutable & No GC
+{{< /center >}}
+
+---
+
+```letlang
+a := 1;
+a := 2; # error
+```
+
+```letlang
+do {
+  a := 1;
+  # a goes out of scope and is freed
+};
+
+a := 2; # works
+```
+
+{{< center >}}
+Once bound to a value, variables cannot be reassigned a new value. There is not
+mutable state, let alone **shared** mutable state.
+
+**Letlang** relies on Rust's ownership semantics to free the memory when objects
+go out of scope, making it free of any Garbage Collector.
+{{< /center >}}
+
 {{< /markdown >}}
 {{< /column >}}
 {{< /columns >}}
+
+---
+
+{{< newsFeed >}}

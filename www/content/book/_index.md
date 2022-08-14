@@ -4,22 +4,14 @@ description: Introduction to Letlang's syntax and features
 next: /book/c1-first-project
 ---
 
-# Introduction
+# Who is this book for?
 
-In this book, you will find a detailed description of **Letlang**, its syntax
-and its features.
+> **WORK IN PROGRESS**
 
-Since **Letlang** is still a work in progress &#128679;, this book is **NOT** a
-tutorial.
+# What can you expect from this book ?
 
-You will not find setup instructions, or any compiler specification.
+> **WORK IN PROGRESS**
 
-This book is intended for curious people and will describe what **Letlang** will
-look like. The ideas exposed in this book are an aggregation of features found
-in many existing languages, or features that are being implemented as we speak.
+# What are not the goals of this book ?
 
-As a learning experience, I still would like to implement this language, even
-if no one uses it. But this is certainly not my main priority.
-
-This book is here as a record so those ideas can be confronted, challenged and
-improved.
+> **WORK IN PROGRESS**

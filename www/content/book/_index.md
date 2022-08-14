@@ -1,7 +1,7 @@
 ---
 title: Preface
 description: Introduction to Letlang's syntax and features
-next: /book/c1-first-project
+next: /book/chapter-1
 ---
 
 # Who is this book for?

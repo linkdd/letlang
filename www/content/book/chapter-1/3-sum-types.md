@@ -40,3 +40,11 @@ Types can be composed with the operator `&`, meaning: **all of each type**:
 42 is (number & !int);  # false
 2.3 is (number & !int); # true
 ```
+
+# Tagged Union
+
+Using unions and value types, tagged unions can be encoded as:
+
+```letlang
+(@left, number) | (@right, number)
+```

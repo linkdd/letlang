@@ -74,8 +74,8 @@ impl CodeGenerator {
     lib_path.push("lib.rs");
 
     let source_code = self.gen_lib_source(unit)?;
-    std::fs::write(lib_path, source_code)?;
-    self.reformat_source(lib_path)?;
+    std::fs::write(&lib_path, source_code)?;
+    self.reformat_source(&lib_path)?;
 
     Ok(crate_name)
   }
@@ -131,8 +131,8 @@ impl CodeGenerator {
     exe_path.push("main.rs");
 
     let source_code = self.gen_exe_source(&main_crate)?;
-    std::fs::write(exe_path, source_code)?;
-    self.reformat_source(exe_path)?;
+    std::fs::write(&exe_path, source_code)?;
+    self.reformat_source(&exe_path)?;
 
     Ok(())
   }

@@ -34,10 +34,11 @@ fn main() -> Result<()> {
   match cli.command {
     Commands::Build => {
       build_project(&project_dir, &project_config)?;
+      cargo_command(&project_dir, "build")?;
     },
     Commands::Run => {
       build_project(&project_dir, &project_config)?;
-      run_project(&project_config)?;
+      cargo_command(&project_dir, "run")?;
     }
   }
 
@@ -57,14 +58,34 @@ fn build_project<P: AsRef<Path>>(project_dir: P, cfg: &ProjectConfig) -> Result<
   let inputs = glob_sources(&project_dir);
   let target_dir = make_target_dir(&project_dir)?;
 
-  let compiler = Compiler::new();
-  compiler.compile(inputs, target_dir)?;
+  let compiler = Compiler::new(
+    cfg.toolchain.letlang.clone(),
+    cfg.toolchain.rust.clone(),
+  );
+  compiler.compile(
+    &cfg.executable.bin,
+    &cfg.executable.module,
+    &cfg.package.version,
+    inputs,
+    target_dir,
+  )?;
 
   Ok(())
 }
 
-fn run_project(cfg: &ProjectConfig) -> Result<()> {
-  println!("run...");
+fn cargo_command<P: AsRef<Path>>(project_dir: P, cmd: &str) -> Result<()> {
+  let target_dir = make_target_dir(&project_dir)?;
+
+  let status = std::process::Command::new("cargo")
+    .current_dir(target_dir)
+    .arg(cmd)
+    .status()?;
+
+  if !status.success() {
+    eprintln!("ERROR: cargo command returned non-zero exit code: {:?}", status.code());
+    std::process::exit(1);
+  }
+
   Ok(())
 }
 

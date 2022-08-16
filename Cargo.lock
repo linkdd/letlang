@@ -232,7 +232,9 @@ version = "0.1.0"
 dependencies = [
  "codegen",
  "letlang_parser",
+ "serde",
  "string-interner",
+ "toml",
 ]
 
 [[package]]

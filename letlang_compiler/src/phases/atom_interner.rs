@@ -8,9 +8,11 @@ use string_interner::{
   symbol::SymbolUsize,
 };
 
+pub type AtomInterner = StringInterner<StringBackend<SymbolUsize>>;
+
 #[derive(Clone)]
 pub struct AtomInternerPhase {
-  interner: StringInterner<StringBackend<SymbolUsize>>,
+  interner: AtomInterner,
 }
 
 impl AtomInternerPhase {

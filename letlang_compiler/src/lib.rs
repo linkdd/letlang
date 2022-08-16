@@ -4,6 +4,8 @@ mod phases;
 mod codegen;
 
 use self::prelude::*;
+use self::codegen::CodeGenerator;
+
 use letlang_parser::{
   parse_file,
   ast::{Node, Unit},
@@ -12,11 +14,14 @@ use letlang_parser::{
 use std::path::Path;
 
 
-pub struct Compiler;
+pub struct Compiler {
+  runtime_version: String,
+  rust_edition: String,
+}
 
 impl Compiler {
-  pub fn new() -> Self {
-    Self {}
+  pub fn new(runtime_version: String, rust_edition: String) -> Self {
+    Self { runtime_version, rust_edition }
   }
 
   fn error_in_file<P: AsRef<Path>>(
@@ -34,7 +39,7 @@ impl Compiler {
   fn run_phase<P: AsRef<Path>, V: semantics::Visitor>(
     inputs: &Vec<(P, Node<Unit>)>,
     visitor: V,
-  ) -> CompilationResult<V> {
+  ) -> CompilationResult<semantics::Model<V>> {
     let mut model = semantics::Model::new(visitor);
 
     for (filename, ast) in inputs.iter() {
@@ -42,13 +47,16 @@ impl Compiler {
       Self::error_in_file(result, filename)?;
     }
 
-    Ok(model.get_visitor().clone())
+    Ok(model)
   }
 
   pub fn compile<P: AsRef<Path>>(
     &self,
+    bin: &str,
+    main_module: &str,
+    version: &str,
     inputs: Vec<P>,
-    _target_dir: P,
+    target_dir: P,
   ) -> Result<(), Box<dyn std::error::Error>> {
     let mut units = vec![];
 
@@ -57,14 +65,30 @@ impl Compiler {
       units.push((input, ast));
     }
 
-    let _expr_validator = Self::run_phase(
+    Self::run_phase(
       &units,
       phases::ExpressionValidatorPhase::new(),
     )?;
-    let _atom_interner = Self::run_phase(
+    let atom_interner_model = Self::run_phase(
       &units,
       phases::AtomInternerPhase::new(),
     )?;
+
+    let mut generator = CodeGenerator::new(
+      self.runtime_version.clone(),
+      self.rust_edition.clone(),
+      target_dir,
+    );
+
+    let mut workspace_members = vec!["executable".to_string()];
+
+    for (_, unit) in units.iter() {
+      let crate_name = generator.gen_lib_crate(unit, version)?;
+      workspace_members.push(format!("modules/{}", crate_name));
+    }
+
+    generator.gen_exe_crate(bin, main_module, version)?;
+    generator.gen_workspace(workspace_members)?;
 
     Ok(())
   }

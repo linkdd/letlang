@@ -6,12 +6,15 @@ next: /book/chapter-1
 
 # Who is this book for?
 
-> **WORK IN PROGRESS**
+This book is intended for developers who wish to understand how Letlang is
+designed.
 
 # What can you expect from this book ?
 
-> **WORK IN PROGRESS**
+This book introduces the features of Letlang, their syntax, and some
+implementation details.
 
 # What are not the goals of this book ?
 
-> **WORK IN PROGRESS**
+This book is not a tutorial and does not provide any documentation about the
+future standard library.

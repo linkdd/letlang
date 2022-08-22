@@ -19,8 +19,8 @@ impl<V: Visitor> Model<V> {
     Self { visitor }
   }
 
-  pub fn get_visitor(&mut self) -> &V {
-    &self.visitor
+  pub fn get_visitor(&mut self) -> &mut V {
+    &mut self.visitor
   }
 
   pub fn locate_error(

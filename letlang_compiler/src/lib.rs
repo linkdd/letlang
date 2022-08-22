@@ -69,15 +69,20 @@ impl Compiler {
       &units,
       phases::ExpressionValidatorPhase::new(),
     )?;
-    let atom_interner_model = Self::run_phase(
+    let mut atom_interner_model = Self::run_phase(
       &units,
       phases::AtomInternerPhase::new(),
     )?;
+
+    let context = codegen::Context {
+      atom_interner: atom_interner_model.get_visitor().get_interner(),
+    };
 
     let mut generator = CodeGenerator::new(
       self.runtime_version.clone(),
       self.rust_edition.clone(),
       target_dir,
+      context,
     );
 
     let mut workspace_members = vec!["executable".to_string()];

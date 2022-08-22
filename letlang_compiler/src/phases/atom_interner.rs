@@ -19,6 +19,10 @@ impl AtomInternerPhase {
   pub fn new() -> Self {
     Self { interner: StringInterner::new() }
   }
+
+  pub fn get_interner(&mut self) -> &mut AtomInterner {
+    &mut self.interner
+  }
 }
 
 impl Visitor for AtomInternerPhase {

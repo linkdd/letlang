@@ -10,22 +10,29 @@ use std::{path::{Path, PathBuf}, collections::HashMap};
 
 pub type CodeGenResult<T> = Result<T, Box<dyn std::error::Error>>;
 
-pub struct CodeGenerator {
+pub struct Context<'ctx> {
+  pub atom_interner: &'ctx mut crate::phases::AtomInterner,
+}
+
+pub struct CodeGenerator<'ctx> {
   runtime_version: String,
   rust_edition: String,
   target_dir: PathBuf,
+  context: Context<'ctx>,
 }
 
-impl CodeGenerator {
+impl<'ctx> CodeGenerator<'ctx> {
   pub fn new<P: AsRef<Path>>(
     runtime_version: String,
     rust_edition: String,
     target_dir: P,
+    context: Context<'ctx>,
   ) -> Self {
     Self {
       runtime_version,
       rust_edition,
       target_dir: target_dir.as_ref().to_path_buf(),
+      context,
     }
   }
 

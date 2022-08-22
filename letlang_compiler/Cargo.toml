@@ -7,7 +7,7 @@ edition = "2021"
 letlang_parser = { path = "../letlang_parser" }
 
 string-interner = "0.14"
-codegen = "0.1"
+askama = "0.11"
 
 serde = { version = "1.0", features = ["derive"] }
 toml = "0.5"

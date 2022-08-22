@@ -161,7 +161,7 @@ impl CodeGenerator {
 
   fn reformat_source<P: AsRef<Path>>(&mut self, path: P) -> CodeGenResult<()> {
     let status = std::process::Command::new("rustfmt")
-      .arg(format!("--edition {}", self.rust_edition))
+      .arg(format!("--edition={}", self.rust_edition))
       .arg(path.as_ref().to_path_buf())
       .status()?;
 

@@ -1,9 +1,10 @@
-use crate::{Context, Value, FunctionCoroutine};
-use std::sync::{Arc, Mutex};
+use crate::core::{TaskContext, function::FunctionCoroutine};
+use crate::repr::Value;
+
 use async_trait::async_trait;
 
 #[async_trait]
-pub trait Type : Sync + Send {
-  fn to_string(&self, context: Arc<Mutex<Context>>) -> String;
-  async fn has(&self, co: &FunctionCoroutine, context: Arc<Mutex<Context>>, llval: &Value) -> bool;
+pub trait Type : Sync + Send + std::fmt::Debug {
+  fn to_string(&self, context: &mut TaskContext) -> String;
+  async fn has(&self, context: &mut TaskContext, co: &FunctionCoroutine, llval: &Value) -> bool;
 }

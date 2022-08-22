@@ -47,12 +47,7 @@ impl CodeGenerator {
     crate_cargo_path.push("Cargo.toml");
 
     let mut crate_deps: HashMap<String, cargo::CargoDependencyConfig> = HashMap::new();
-    /*crate_deps.insert(
-      String::from("llcore_runtime"),
-      cargo::CargoDependencyConfig::FileSystem {
-        path: String::from(".."),
-      }
-    );*/
+    self.inject_runtime_dep(&mut crate_deps);
 
     let crate_cargo_cfg = cargo::UnitConfig {
       package: cargo::CargoPackageConfig {
@@ -98,12 +93,8 @@ impl CodeGenerator {
     crate_cargo_path.push("Cargo.toml");
 
     let mut crate_deps: HashMap<String, cargo::CargoDependencyConfig> = HashMap::new();
-    /*crate_deps.insert(
-      String::from("llcore_runtime"),
-      cargo::CargoDependencyConfig::FileSystem {
-        path: String::from(".."),
-      }
-    );*/
+    self.inject_runtime_dep(&mut crate_deps);
+
     crate_deps.insert(
       main_crate.clone(),
       cargo::CargoDependencyConfig::FileSystem {
@@ -170,5 +161,27 @@ impl CodeGenerator {
     }
 
     Ok(())
+  }
+
+  fn inject_runtime_dep(&self, deps: &mut HashMap<String, cargo::CargoDependencyConfig>) {
+    let dep = match std::env::var("LETLANG_RUNTIME_PATH") {
+      Ok(val) => {
+        match val.trim() {
+          "" => {
+            cargo::CargoDependencyConfig::Versionned(self.runtime_version.clone())
+          },
+          path => {
+            cargo::CargoDependencyConfig::FileSystem {
+              path: path.to_string(),
+            }
+          },
+        }
+      },
+      Err(_) => {
+        cargo::CargoDependencyConfig::Versionned(self.runtime_version.clone())
+      },
+    };
+
+    deps.insert(String::from("llcore_runtime"), dep);
   }
 }

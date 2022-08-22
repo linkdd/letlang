@@ -22,7 +22,7 @@ The value returned by the `do {}` block will be the value returned by the
 `catch` clause that handled the exception.
 
 > **NB:** Unhandled exceptions (like any other effects) are propagated to the
-> runtime environment and crash the program.
+> runtime environment and crash the process.
 {{< /markdown >}}
 {{< /column >}}
 

@@ -94,8 +94,7 @@ The last expression of an `intercept` clause will be used as return value of the
 Unhandled effects are then propagated to the builtin runtime **Letlang**
 includes during compile time.
 
-If the effect is unknown to the runtime, the program will crash with a
-stacktrace.
+If the effect is unknown to the runtime, the process will crash.
 {{< /markdown >}}
 {{< /column >}}
 

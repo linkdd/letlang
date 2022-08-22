@@ -1,0 +1,13 @@
+use llcore_runtime::api::*;
+use {{crate_name}}::symbol_main;
+
+#[tokio::main]
+async fn main() -> Result<()> {
+  let mut builtin_atoms = BuiltinAtoms::new();
+  {% for builtin_atom in builtin_atoms %}
+    builtin_atoms.add("{{ builtin_atom.string }}", Atom({{ builtin_atom.symbol }}));
+  {% endfor %}
+  let node = Node::new(builtin_atoms);
+  let main_func = symbol_main::main_func {};
+  node.run(main_func).await
+}

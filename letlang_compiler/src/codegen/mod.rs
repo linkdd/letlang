@@ -1,4 +1,6 @@
 mod cargo;
+mod executable;
+mod module;
 
 use crate::prelude::*;
 use letlang_parser::{
@@ -149,12 +151,13 @@ impl<'ctx> CodeGenerator<'ctx> {
   }
 
   fn gen_lib_source(&mut self, unit: &Node<ast::Unit>) -> CompilationResult<String> {
-    Ok("".to_string())
+    let generator = module::CodeGenerator::new(&self.context);
+    generator.generate(unit)
   }
 
   fn gen_exe_source(&mut self, crate_name: &str) -> CompilationResult<String> {
-
-    Ok("".to_string())
+    let mut generator = executable::CodeGenerator::new(&mut self.context);
+    generator.generate(crate_name)
   }
 
   fn reformat_source<P: AsRef<Path>>(&mut self, path: P) -> CodeGenResult<()> {

@@ -19,7 +19,7 @@ of the loop it is breaking out of, as well as the value to return.
 ```bnf
 <loop-expression> :=
     "loop" "(" <identifier> ")" "{"
-    <proposition+>
+    <proposition>+
     "}"
     ;
 

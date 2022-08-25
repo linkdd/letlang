@@ -1,0 +1,55 @@
+{% if public %}pub{% else %}pub(crate){% endif %} mod symbol_{{ symbol_name }} {
+  use super::*;
+
+  #[allow(non_camel_case_types)]
+  pub struct func_{{ symbol_name }} {
+    {% for type_param in type_params %}
+      {{ type_param }}: Box<dyn Type>,
+    {% endfor %}
+  }
+
+  impl Function for func_{{ symbol_name }} {
+    fn call(
+      &self,
+      context: &mut TaskContext,
+      args: Vec<Value>,
+    ) -> FunctionContinuation {
+      async fn code_block(
+        co: FunctionCoroutine,
+        context: &mut TaskContext,
+        args: Vec<Value>,
+      ) -> Value {
+        {% for call_param in call_params %}
+          let paramtype_{{ call_param.name }} = {{ call_param.type_code }};
+          let paramval_{{ call_param.name }} = &args[{{ loop.index0 }}];
+          ll_assert_type(
+            &co,
+            context,
+            &paramtype_{{ call_param.name }},
+            &paramval_{{ call_param.name }},
+          ).await;
+        {% endfor %}
+
+        let return_type = {{ return_type }};
+
+        {% for proposition in body %}
+          {% if loop.last %}
+            let result = {{ proposition }};
+            ll_assert_type(
+              &co,
+              context,
+              &return_type,
+              &result,
+            ).await;
+
+            result
+          {% else %}
+            {{ proposition }};
+          {% endif %}
+        {% endfor %}
+      }
+
+      FunctionContinuation::new_boxed(|co| code_block(co, context, args))
+    }
+  }
+}

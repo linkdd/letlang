@@ -1,5 +1,5 @@
 use std::fmt;
-use letlang_parser::ast::LocationInfo;
+use letlang_ast::LocationInfo;
 
 pub type CompilationResult<T> = std::result::Result<T, CompilationError>;
 

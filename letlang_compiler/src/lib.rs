@@ -1,99 +1,85 @@
 pub mod prelude;
-mod semantics;
-mod phases;
-mod codegen;
 
 use self::prelude::*;
-use self::codegen::CodeGenerator;
 
-use letlang_parser::{
-  parse_file,
-  ast::{Node, Unit},
+use std::{
+  path::Path,
+  error::Error,
+  collections::HashMap,
+  cell::RefCell,
 };
 
-use std::path::Path;
+use letlang_parser::parse_file;
+use letlang_ast::{Node, Unit};
 
+pub mod toolchain;
+pub mod target;
+
+mod atom_interner;
+mod scope;
+mod semantic;
+
+mod codegen;
+
+pub use self::{
+  toolchain::Toolchain,
+  target::Target,
+};
 
 pub struct Compiler {
-  runtime_version: String,
-  rust_edition: String,
+  toolchain: Toolchain,
+  target: Target,
 }
 
 impl Compiler {
-  pub fn new(runtime_version: String, rust_edition: String) -> Self {
-    Self { runtime_version, rust_edition }
-  }
-
-  fn error_in_file<P: AsRef<Path>>(
-    result: CompilationResult<()>,
-    filename: P,
-  ) -> CompilationResult<()> {
-    result.map_err(|err| {
-      CompilationError::new(format!("{}{}",
-        filename.as_ref().display(),
-        err.message,
-      ))
-    })
-  }
-
-  fn run_phase<P: AsRef<Path>, V: semantics::Visitor>(
-    inputs: &Vec<(P, Node<Unit>)>,
-    visitor: V,
-  ) -> CompilationResult<semantics::Model<V>> {
-    let mut model = semantics::Model::new(visitor);
-
-    for (filename, ast) in inputs.iter() {
-      let result = model.visit_unit(ast);
-      Self::error_in_file(result, filename)?;
+  pub fn new(toolchain: Toolchain, target: Target) -> Self {
+    Self {
+      toolchain,
+      target,
     }
-
-    Ok(model)
   }
 
   pub fn compile<P: AsRef<Path>>(
-    &self,
-    bin: &str,
-    main_module: &str,
-    version: &str,
+    &mut self,
     inputs: Vec<P>,
-    target_dir: P,
-  ) -> Result<(), Box<dyn std::error::Error>> {
-    let mut units = vec![];
+    target_dir: P
+  ) -> Result<(), Box<dyn Error>> {
+    let mut unit_registry: HashMap<String, RefCell<Node<Unit>>> = HashMap::new();
+    let mut path_registry: HashMap<String, P> = HashMap::new();
 
-    for input in inputs {
-      let ast = parse_file(&input)?;
-      units.push((input, ast));
+    let mut atom_interner = atom_interner::new();
+    let mut scope_arena = scope::ScopeArena::new();
+
+    for input_path in inputs {
+      let ast = parse_file(&input_path)?;
+      let unit_key = format!("lldep_{}", ast.data.path.join("_"));
+
+      unit_registry.insert(unit_key.clone(), RefCell::new(ast));
+      path_registry.insert(unit_key.clone(), input_path);
     }
 
-    Self::run_phase(
-      &units,
-      phases::ExpressionValidatorPhase::new(),
-    )?;
-    let mut atom_interner_model = Self::run_phase(
-      &units,
-      phases::AtomInternerPhase::new(),
-    )?;
-
-    let context = codegen::Context {
-      atom_interner: atom_interner_model.get_visitor().get_interner(),
-    };
-
-    let mut generator = CodeGenerator::new(
-      self.runtime_version.clone(),
-      self.rust_edition.clone(),
-      target_dir,
-      context,
+    let mut model = semantic::Model::new(
+      &unit_registry,
+      &mut atom_interner,
+      &mut scope_arena,
     );
+    model.visit().map_err(|(unit_key, err)| {
+      let filename = path_registry.get(&unit_key).unwrap();
 
-    let mut workspace_members = vec!["executable".to_string()];
+      CompilationError::new(format!("[{}] {}",
+        filename.as_ref().display(),
+        err.message,
+      ))
+    })?;
 
-    for (_, unit) in units.iter() {
-      let crate_name = generator.gen_lib_crate(unit, version)?;
-      workspace_members.push(format!("modules/{}", crate_name));
-    }
-
-    generator.gen_exe_crate(bin, main_module, version)?;
-    generator.gen_workspace(workspace_members)?;
+    let mut generator = codegen::Generator::new(
+      &unit_registry,
+      &mut atom_interner,
+      &scope_arena,
+      &self.toolchain,
+      &self.target,
+    );
+    generator.build(target_dir)?;
 
     Ok(())
   }

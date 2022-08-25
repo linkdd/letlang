@@ -4,6 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+letlang_ast = { path = "../letlang_ast" }
+
 regex = "1"
 logos = "0.12"
 peg = "0.8"

@@ -1,7 +1,7 @@
 extern crate logos;
 
 pub mod prelude;
-pub mod ast;
+pub use letlang_ast as ast;
 
 mod lexer;
 mod grammar;

@@ -1,6 +1,8 @@
 [workspace]
 
 members = [
+  "letlang_derive",
+  "letlang_ast",
   "letlang_parser",
   "letlang_runtime",
   "letlang_compiler",

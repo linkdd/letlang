@@ -261,6 +261,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
+name = "letlang_ast"
+version = "0.1.0"
+dependencies = [
+ "letlang_derive",
+]
+
+[[package]]
 name = "letlang_cli"
 version = "0.1.0"
 dependencies = [
@@ -276,6 +283,7 @@ name = "letlang_compiler"
 version = "0.1.0"
 dependencies = [
  "askama",
+ "letlang_ast",
  "letlang_parser",
  "serde",
  "string-interner",
@@ -283,9 +291,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "letlang_derive"
+version = "0.1.0"
+dependencies = [
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "letlang_parser"
 version = "0.1.0"
 dependencies = [
+ "letlang_ast",
  "line-col",
  "logos",
  "parse_int",

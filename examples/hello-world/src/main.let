@@ -1,6 +1,0 @@
-module "hello.main";
-
-pub func main() -> @ok {
-  perform debug("hello world");
-  @ok;
-}

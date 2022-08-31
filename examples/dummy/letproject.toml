@@ -1,11 +1,11 @@
 [package]
-name = "fibonacci"
+name = "dummy"
 version = "0.0.0"
-description = "Fibonacci example in Letlang"
+description = "Dummy program"
 
 [executable]
-bin = "fib"
-module = "fib.main"
+bin = "dummy"
+module = "dummy::main"
 
 [toolchain]
 letlang = "0.1.0"

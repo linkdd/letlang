@@ -7,12 +7,11 @@ pub async fn assert_type(
   llval: &Value,
 ) {
   if !lltype.has(context.clone(), co, llval).await {
-    let context_ref = context.lock().await;
-    let type_error_atom = {
+    let type_error_atom = async {
+      let context_ref = context.lock().await;
       let atom_table = context_ref.atom_table.lock().unwrap();
       atom_table.from_repr("@type_error")
-    };
-    drop(context_ref);
+    }.await;
 
     let exc = Value::Tuple(Box::new([
       Value::Atom(type_error_atom),

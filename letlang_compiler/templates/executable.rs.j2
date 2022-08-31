@@ -1,13 +1,12 @@
 use llcore_runtime::api::*;
 use {{crate_name}}::symbol_main;
 
-#[tokio::main]
-async fn main() -> Result<()> {
+fn main() -> Result<()> {
   let mut atom_table = AtomTable::new();
   {% for atom in atoms %}
-    atom_table.register(Atom({{ atom.symbol }}, "{{ atom.repr }}"));
+    atom_table.register(Atom({{ atom.symbol }}), "{{ atom.repr }}");
   {% endfor %}
   let node = Node::new(atom_table);
-  let main_func = symbol_main::main_func {};
-  node.run(main_func).await
+  let main_func = Box::new(symbol_main::func_main {});
+  node.run(main_func)
 }

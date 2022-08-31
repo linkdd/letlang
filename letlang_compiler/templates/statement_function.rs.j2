@@ -2,6 +2,7 @@
   use super::*;
 
   #[allow(non_camel_case_types)]
+  #[derive(Debug, Clone, PartialEq)]
   pub struct func_{{ symbol_name }} {
     {% for type_param in type_params %}
       {{ type_param }}: Box<dyn Type>,
@@ -11,20 +12,20 @@
   impl Function for func_{{ symbol_name }} {
     fn call(
       &self,
-      context: &mut TaskContext,
+      context: Arc<Mutex<TaskContext>>,
       args: Vec<Value>,
     ) -> FunctionContinuation {
       async fn code_block(
         co: FunctionCoroutine,
-        context: &mut TaskContext,
+        context: Arc<Mutex<TaskContext>>,
         args: Vec<Value>,
       ) -> Value {
         {% for call_param in call_params %}
           let paramtype_{{ call_param.name }} = {{ call_param.type_code }};
           let paramval_{{ call_param.name }} = &args[{{ loop.index0 }}];
-          ll_assert_type(
+          helpers::assert_type(
             &co,
-            context,
+            context.clone(),
             &paramtype_{{ call_param.name }},
             &paramval_{{ call_param.name }},
           ).await;
@@ -35,9 +36,9 @@
         {% for proposition in body %}
           {% if loop.last %}
             let result = {{ proposition }};
-            ll_assert_type(
+            helpers::assert_type(
               &co,
-              context,
+              context.clone(),
               &return_type,
               &result,
             ).await;

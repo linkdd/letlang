@@ -6,7 +6,7 @@ use askama::Template;
 
 
 #[derive(Template)]
-#[template(path = "executable.rs.j2")]
+#[template(path = "executable.rs.j2", escape = "none")]
 struct ExecutableTemplate {
   pub crate_name: String,
   pub atoms: Vec<AtomTemplate>,

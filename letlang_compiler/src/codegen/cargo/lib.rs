@@ -23,6 +23,7 @@ struct PackageConfig {
 
 #[derive(Serialize)]
 struct DependencyConfig {
+  package: Option<String>,
   path: Option<String>,
   version: Option<String>,
   features: Option<Vec<String>>,
@@ -50,11 +51,13 @@ impl<'compiler> Generator<'compiler> {
 
     let runtime_dep = match std::env::var("LETLANG_RUNTIME_PATH") {
       Err(_) => DependencyConfig {
+        package: Some("letlang_runtime".to_string()),
         path: None,
         version: Some(self.toolchain.runtime_version.clone()),
         features: None,
       },
       Ok(path) => DependencyConfig {
+        package: Some("letlang_runtime".to_string()),
         path: Some(path),
         version: None,
         features: None,
@@ -65,6 +68,7 @@ impl<'compiler> Generator<'compiler> {
 
     for dependency in unit_node.attrs.as_ref().unwrap().dependencies.iter() {
       crate_deps.insert(dependency.clone(), DependencyConfig {
+        package: None,
         path: Some(format!("../modules/{}", dependency)),
         version: None,
         features: None,

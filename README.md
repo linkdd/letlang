@@ -20,6 +20,12 @@ If you want to contribute, please make a pull request.
 $ cargo build
 ```
 
+**Run example:**
+
+```
+$ cargo run -- -p examples/dummy run
+```
+
 ## License
 
 **Letlang**'s source code is distributed under the terms of the

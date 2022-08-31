@@ -3,7 +3,7 @@ use genawaiter::GeneratorState;
 use crate::prelude::*;
 use crate::repr::Value;
 use crate::core::{
-  TaskContext,
+  context::TaskContext,
   function::{Function, FunctionInterruption},
 };
 
@@ -24,21 +24,21 @@ pub async fn run(
 
         match name.as_str() {
           "debug" => {
-            println!("{}", arg_list);
+            println!("{}", arg_list.to_string(&mut context));
 
             let ok = Value::Atom(
-              context.builtin_atoms.lock().unwrap().get("@ok")
+              context.atom_table.lock().unwrap().from_repr("@ok")
             );
             state = block.resume_with(ok);
           }
           _ => {
-            eprintln!("[FATAL] Unknown effect: {}{}", name, arg_list);
+            eprintln!("[FATAL] Unknown effect: {}{}", name, arg_list.to_string(&mut context));
             return Err(RuntimeError::EffectNotImplemented);
           }
         }
       },
       GeneratorState::Yielded(FunctionInterruption::Exception(exc)) => {
-        eprintln!("[FATAL] Uncaught exception: {}", exc);
+        eprintln!("[FATAL] Uncaught exception: {}", exc.to_string(&mut context));
         return Err(RuntimeError::UncaughtException);
       },
       GeneratorState::Complete(val) => {

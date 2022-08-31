@@ -1,4 +1,4 @@
-use crate::core::{TaskContext, function::FunctionCoroutine, type_trait::Type};
+use crate::core::{context::TaskContext, function::FunctionCoroutine, type_trait::Type};
 use crate::repr::Value;
 
 use async_trait::async_trait;
@@ -10,8 +10,8 @@ pub struct ValueType {
 
 #[async_trait]
 impl Type for ValueType {
-  fn to_string(&self, _context: &mut TaskContext) -> String {
-    format!("{}", self.llval)
+  fn to_string(&self, context: &mut TaskContext) -> String {
+    format!("{}", self.llval.to_string(context))
   }
 
   async fn has(&self, _context: &mut TaskContext, _co: &FunctionCoroutine, llval: &Value) -> bool {

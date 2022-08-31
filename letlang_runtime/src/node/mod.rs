@@ -16,27 +16,27 @@ use crate::{
     signal::Signal,
     process,
     function::Function,
-    TaskContext,
+    atom_table::AtomTable,
+    context::TaskContext,
   },
-  builtins::atoms::BuiltinAtoms,
 };
 
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
 pub struct Node {
-  builtin_atoms: Arc<Mutex<BuiltinAtoms>>,
+  atom_table: Arc<Mutex<AtomTable>>,
   process_registry: HashMap<Pid, (Vec<Pid>, signal::SignalSender)>,
   request_tx: RequestSender,
   request_rx: RequestReceiver,
 }
 
 impl Node {
-  pub fn new(builtin_atoms: BuiltinAtoms) -> Self {
+  pub fn new(atom_table: AtomTable) -> Self {
     let (tx, rx) = request::channel();
 
     Self {
-      builtin_atoms: Arc::new(Mutex::new(builtin_atoms)),
+      atom_table: Arc::new(Mutex::new(atom_table)),
       process_registry: HashMap::new(),
       request_tx: tx,
       request_rx: rx,
@@ -90,7 +90,7 @@ impl Node {
     let (pid, links, mbox_tx, mbox_rx) = process::new();
     self.process_registry.insert(pid.clone(), (links, mbox_tx));
 
-    let builtin_atoms = self.builtin_atoms.clone();
+    let atom_table = self.atom_table.clone();
 
     tokio::spawn(async move {
       let proc_id = pid.clone();
@@ -99,7 +99,7 @@ impl Node {
         let context = TaskContext {
           pid: proc_id,
           mbox_rx,
-          builtin_atoms
+          atom_table
         };
 
         task::run(context, func).await.unwrap();
@@ -148,11 +148,11 @@ impl Node {
   async fn process_exited(&mut self, proc_id: Pid, result: Result<()>) -> Result<()> {
     let reason = match result {
       Ok(_) => {
-        Value::Atom(self.builtin_atoms.lock().unwrap().get("@normal"))
+        Value::Atom(self.atom_table.lock().unwrap().from_repr("@normal"))
       },
       Err(err) => {
         Value::Tuple(Box::new([
-          Value::Atom(self.builtin_atoms.lock().unwrap().get("@error")),
+          Value::Atom(self.atom_table.lock().unwrap().from_repr("@error")),
           Value::String(format!("{:?}", err))
         ]))
       }

@@ -8,7 +8,7 @@ pub use self::{
   coroutine::FunctionCoroutine,
 };
 
-use crate::core::TaskContext;
+use crate::core::context::TaskContext;
 use crate::repr::Value;
 
 pub trait Function: Sync + Send + std::fmt::Debug {

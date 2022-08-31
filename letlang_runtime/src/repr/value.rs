@@ -1,4 +1,5 @@
 use crate::repr::{Atom, Pid};
+use crate::core::context::TaskContext;
 
 use std::collections::HashMap;
 
@@ -17,24 +18,46 @@ pub enum Value {
   Pid(Pid),
 }
 
-
-impl std::fmt::Display for Value {
-  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl Value {
+  pub fn to_string(&self, context: &TaskContext) -> String {
     match self {
-      Value::Boolean(val) => write!(f, "{}", val),
-      Value::Number(val) => write!(f, "{}", val),
-      Value::String(val) => write!(f, "{}", val),
-      Value::Atom(val) => write!(f, "{:?}", val),
+      Value::Boolean(val) => format!("{}", val),
+      Value::Number(val) => format!("{}", val),
+      Value::String(val) => format!("{:?}", val),
+      Value::Atom(val) => {
+        let repr = context.atom_table.lock().unwrap().lookup(val);
+        format!("{}", repr)
+      },
       Value::Tuple(vals) => {
-        todo!()
+        let members = vals
+          .iter()
+          .map(|member| member.to_string(context))
+          .collect::<Vec<String>>()
+          .join(", ");
+
+        format!("({})", members)
       },
       Value::List(vals) => {
-        todo!()
+        let items = vals
+          .iter()
+          .map(|item| item.to_string(context))
+          .collect::<Vec<String>>()
+          .join(", ");
+
+        format!("[{}]", items)
       },
       Value::Struct(vals) => {
-        todo!()
+        let entries = vals
+          .iter()
+          .map(|(key, value)| {
+            format!("{}: {}", key, value.to_string(context))
+          })
+          .collect::<Vec<String>>()
+          .join(", ");
+
+        format!("{{{}}}", entries)
       },
-      Value::Pid(val) => write!(f, "{:?}", val),
+      Value::Pid(val) => format!("{:?}", val),
     }
   }
 }

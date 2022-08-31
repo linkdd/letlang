@@ -3,11 +3,11 @@ use {{crate_name}}::symbol_main;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-  let mut builtin_atoms = BuiltinAtoms::new();
-  {% for builtin_atom in builtin_atoms %}
-    builtin_atoms.add("{{ builtin_atom.string }}", Atom({{ builtin_atom.symbol }}));
+  let mut atom_table = AtomTable::new();
+  {% for atom in atoms %}
+    atom_table.register(Atom({{ atom.symbol }}, "{{ atom.repr }}"));
   {% endfor %}
-  let node = Node::new(builtin_atoms);
+  let node = Node::new(atom_table);
   let main_func = symbol_main::main_func {};
   node.run(main_func).await
 }

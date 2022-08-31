@@ -1,5 +1,5 @@
 use letlang_cli::config::ProjectConfig;
-use letlang_compiler::Compiler;
+use letlang_compiler::{Compiler, Toolchain, Target};
 
 use clap::{Parser, Subcommand};
 use std::path::{Path, PathBuf};
@@ -58,17 +58,18 @@ fn build_project<P: AsRef<Path>>(project_dir: P, cfg: &ProjectConfig) -> Result<
   let inputs = glob_sources(&project_dir);
   let target_dir = make_target_dir(&project_dir)?;
 
-  let compiler = Compiler::new(
-    cfg.toolchain.letlang.clone(),
-    cfg.toolchain.rust.clone(),
+  let mut compiler = Compiler::new(
+    Toolchain {
+      runtime_version: cfg.toolchain.letlang.clone(),
+      rust_edition: cfg.toolchain.rust.clone(),
+    },
+    Target {
+      binary_name: cfg.executable.bin.clone(),
+      main_module: cfg.executable.module.clone(),
+      package_version: cfg.package.version.clone(),
+    },
   );
-  compiler.compile(
-    &cfg.executable.bin,
-    &cfg.executable.module,
-    &cfg.package.version,
-    inputs,
-    target_dir,
-  )?;
+  compiler.compile(inputs, target_dir)?;
 
   Ok(())
 }

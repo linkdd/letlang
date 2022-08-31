@@ -2,6 +2,9 @@ use crate::core::{context::TaskContext, function::FunctionCoroutine, type_trait:
 use crate::repr::Value;
 
 use async_trait::async_trait;
+use std::sync::Arc;
+use tokio::sync::Mutex;
+
 
 #[derive(Debug)]
 pub struct TupleType {
@@ -10,17 +13,17 @@ pub struct TupleType {
 
 #[async_trait]
 impl Type for TupleType {
-  fn to_string(&self, context: &mut TaskContext) -> String {
-    let members = self.members_types
-      .iter()
-      .map(|lltype| lltype.to_string(context))
-      .collect::<Vec<String>>()
-      .join(", ");
+  async fn to_string(&self, context: Arc<Mutex<TaskContext>>) -> String {
+    let mut members = vec![];
 
-    format!("({})", members)
+    for lltype in self.members_types.iter() {
+      members.push(lltype.to_string(context.clone()).await);
+    }
+
+    format!("({})", members.join(", "))
   }
 
-  async fn has(&self, context: &mut TaskContext, co: &FunctionCoroutine, llval: &Value) -> bool {
+  async fn has(&self, context: Arc<Mutex<TaskContext>>, co: &FunctionCoroutine, llval: &Value) -> bool {
     match llval {
       Value::Tuple(members) => {
         if members.len() != self.members_types.len() {
@@ -32,7 +35,7 @@ impl Type for TupleType {
           .zip(self.members_types.iter());
 
         for (member, member_type) in pairs {
-          if !member_type.has(context, co, member).await {
+          if !member_type.has(context.clone(), co, member).await {
             return false;
           }
         }

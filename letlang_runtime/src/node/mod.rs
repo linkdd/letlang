@@ -43,8 +43,15 @@ impl Node {
     }
   }
 
-  pub async fn run(mut self, main: Box<dyn Function>) -> Result<()> {
-    Request::publish(Command::Spawn(main), &mut self.request_tx).await?;
+  pub fn run(self, main: Box<dyn Function>) -> Result<()> {
+    let rt = tokio::runtime::Runtime::new().unwrap();
+    rt.block_on(async {
+      self.run_impl(main).await
+    })
+  }
+
+  pub async fn run_impl(mut self, main: Box<dyn Function>) -> Result<()> {
+    let mut req_tx = self.request_tx.clone();
 
     let request_server_handle = tokio::spawn(async move {
       while let Some(req) = self.request_rx.receive().await {
@@ -56,6 +63,8 @@ impl Node {
         }
       }
     });
+
+    Request::publish(Command::Spawn(main), &mut req_tx).await?;
 
     request_server_handle.await.map_err(|_err| {
       RuntimeError::NodeServerFailed
@@ -148,11 +157,17 @@ impl Node {
   async fn process_exited(&mut self, proc_id: Pid, result: Result<()>) -> Result<()> {
     let reason = match result {
       Ok(_) => {
-        Value::Atom(self.atom_table.lock().unwrap().from_repr("@normal"))
+        Value::Atom({
+          let atom_table = self.atom_table.lock().unwrap();
+          atom_table.from_repr("@normal")
+        })
       },
       Err(err) => {
         Value::Tuple(Box::new([
-          Value::Atom(self.atom_table.lock().unwrap().from_repr("@error")),
+          Value::Atom({
+            let atom_table = self.atom_table.lock().unwrap();
+            atom_table.from_repr("@error")
+          }),
           Value::String(format!("{:?}", err))
         ]))
       }

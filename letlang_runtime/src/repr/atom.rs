@@ -1,2 +1,2 @@
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
-pub struct Atom(u64);
+pub struct Atom(pub u64);

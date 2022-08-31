@@ -1,7 +1,10 @@
 use crate::repr::{Atom, Pid};
 use crate::core::context::TaskContext;
 
+use async_recursion::async_recursion;
 use std::collections::HashMap;
+use std::sync::Arc;
+use tokio::sync::Mutex;
 
 
 #[derive(Debug, Clone, PartialEq)]
@@ -19,43 +22,47 @@ pub enum Value {
 }
 
 impl Value {
-  pub fn to_string(&self, context: &TaskContext) -> String {
+  #[async_recursion]
+  pub async fn to_string(&self, context: Arc<Mutex<TaskContext>>) -> String {
     match self {
       Value::Boolean(val) => format!("{}", val),
       Value::Number(val) => format!("{}", val),
       Value::String(val) => format!("{:?}", val),
       Value::Atom(val) => {
+        let context = context.lock().await;
         let repr = context.atom_table.lock().unwrap().lookup(val);
         format!("{}", repr)
       },
       Value::Tuple(vals) => {
-        let members = vals
-          .iter()
-          .map(|member| member.to_string(context))
-          .collect::<Vec<String>>()
-          .join(", ");
+        let mut members = vec![];
 
-        format!("({})", members)
+        for member in vals.iter() {
+          members.push(member.to_string(context.clone()).await);
+        }
+
+        format!("({})", members.join(", "))
       },
       Value::List(vals) => {
-        let items = vals
-          .iter()
-          .map(|item| item.to_string(context))
-          .collect::<Vec<String>>()
-          .join(", ");
+        let mut items = vec![];
 
-        format!("[{}]", items)
+        for item in vals.iter() {
+          items.push(item.to_string(context.clone()).await);
+        }
+
+        format!("[{}]", items.join(", "))
       },
       Value::Struct(vals) => {
-        let entries = vals
-          .iter()
-          .map(|(key, value)| {
-            format!("{}: {}", key, value.to_string(context))
-          })
-          .collect::<Vec<String>>()
-          .join(", ");
+        let mut entries = vec![];
 
-        format!("{{{}}}", entries)
+        for (key, value) in vals.iter() {
+          entries.push(format!(
+            "{}: {}",
+            key,
+            value.to_string(context.clone()).await,
+          ));
+        }
+
+        format!("{{{}}}", entries.join(", "))
       },
       Value::Pid(val) => format!("{:?}", val),
     }

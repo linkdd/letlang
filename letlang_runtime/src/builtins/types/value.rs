@@ -2,6 +2,8 @@ use crate::core::{context::TaskContext, function::FunctionCoroutine, type_trait:
 use crate::repr::Value;
 
 use async_trait::async_trait;
+use std::sync::Arc;
+use tokio::sync::Mutex;
 
 #[derive(Debug)]
 pub struct ValueType {
@@ -10,11 +12,11 @@ pub struct ValueType {
 
 #[async_trait]
 impl Type for ValueType {
-  fn to_string(&self, context: &mut TaskContext) -> String {
-    format!("{}", self.llval.to_string(context))
+  async fn to_string(&self, context: Arc<Mutex<TaskContext>>) -> String {
+    format!("{}", self.llval.to_string(context.clone()).await)
   }
 
-  async fn has(&self, _context: &mut TaskContext, _co: &FunctionCoroutine, llval: &Value) -> bool {
+  async fn has(&self, _context: Arc<Mutex<TaskContext>>, _co: &FunctionCoroutine, llval: &Value) -> bool {
     match (&self.llval, llval) {
       (Value::Boolean(a), Value::Boolean(b)) => a == b,
       (Value::Number(a), Value::Number(b)) => a == b,

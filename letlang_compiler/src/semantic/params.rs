@@ -8,6 +8,7 @@ use super::{
 use letlang_ast::{
   *,
   params::*,
+  types::*,
 };
 
 
@@ -55,6 +56,9 @@ impl<'compiler> Model<'compiler> {
         )
       })?;
 
+    node.data.param_type.attrs = Some(TypeRefAttributes {
+      scope_id: attrs.scope_id,
+    });
     self.visit_typeref(&mut node.data.param_type)
   }
 
@@ -75,6 +79,9 @@ impl<'compiler> Model<'compiler> {
         )
       })?;
 
+    node.data.param_type.attrs = Some(TypeRefAttributes {
+      scope_id: attrs.scope_id,
+    });
     self.visit_typeref(&mut node.data.param_type)
   }
 }

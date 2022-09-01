@@ -1,11 +1,13 @@
 use serde::Deserialize;
-
+use std::collections::HashMap;
+use std::path::PathBuf;
 
 #[derive(Deserialize, Debug)]
 pub struct ProjectConfig {
   pub package: PackageConfig,
   pub executable: ExecutableConfig,
   pub toolchain: ToolchainConfig,
+  pub dependencies: HashMap<String, DependencyConfig>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -26,6 +28,12 @@ pub struct ToolchainConfig {
   pub letlang: String,
   pub rust: String,
 }
+
+#[derive(Deserialize, Debug)]
+pub struct DependencyConfig {
+  pub path: PathBuf,
+}
+
 
 impl ProjectConfig {
   pub fn load<P>(filename: P) -> Result<ProjectConfig, Box<dyn std::error::Error>>

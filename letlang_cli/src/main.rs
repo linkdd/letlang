@@ -55,7 +55,30 @@ fn load_config<P: AsRef<Path>>(project_dir: P) -> Result<ProjectConfig>
 
 fn build_project<P: AsRef<Path>>(project_dir: P, cfg: &ProjectConfig) -> Result<()>
 {
-  let inputs = glob_sources(&project_dir);
+  let mut inputs = glob_sources(&project_dir);
+
+  for (dep_name, dep_config) in cfg.dependencies.iter() {
+    let mut dep_path = PathBuf::new();
+    dep_path.push(&project_dir);
+    dep_path.push(&dep_config.path);
+
+    if !dep_path.exists() {
+      return Err(Box::new(std::io::Error::new(
+        std::io::ErrorKind::NotFound,
+        format!("dependency {} not found at path {}", dep_name, dep_path.display())
+      )));
+    }
+
+    if !dep_path.is_dir() {
+      return Err(Box::new(std::io::Error::new(
+        std::io::ErrorKind::Other,
+        format!("dependency {} at path {} is not a directory", dep_name, dep_path.display())
+      )));
+    }
+
+    inputs.append(&mut glob_sources(&dep_path));
+  }
+
   let target_dir = make_target_dir(&project_dir)?;
 
   let mut compiler = Compiler::new(

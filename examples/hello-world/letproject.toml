@@ -1,0 +1,15 @@
+[package]
+name = "hello-world"
+version = "0.0.0"
+description = "Hello World program"
+
+[executable]
+bin = "hello"
+module = "hello::main"
+
+[toolchain]
+letlang = "0.1.0"
+rust = "2021"
+
+[dependencies]
+stdlib = { path = "../../lib" }

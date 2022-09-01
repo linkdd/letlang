@@ -23,6 +23,7 @@ $ cargo build
 **Run example:**
 
 ```
+$ export LETLANG_RUNTIME_PATH="${PWD}/letlang_runtime"
 $ cargo run -- -p examples/dummy run
 ```
 

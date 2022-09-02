@@ -1,7 +1,7 @@
 module std::io;
 
-effect io_println(msg: string) -> @ok | (@error, atom);
+effect __io_println(msg: string) -> @ok | (@error, atom);
 
 pub func println(msg: string) -> @ok | (@error, atom) {
-  perform io_println(msg);
+  perform __io_println(msg);
 }

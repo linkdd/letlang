@@ -1,0 +1,150 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Letlang",
+	"patterns": [
+		{
+			"include": "#comments"
+		},
+		{
+			"include": "#literals"
+		},
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#operators"
+		},
+		{
+			"include": "#builtins"
+		}
+	],
+	"repository": {
+		"comments": {
+			"patterns": [{
+				"name": "comment.line.number-sign.letlang",
+				"begin": "#",
+				"end": "\\n"
+			}]
+		},
+		"literals": {
+			"patterns": [
+				{"include": "#booleans"},
+				{"include": "#numbers"},
+				{"include": "#strings"},
+				{"include": "#atoms"}
+			]
+		},
+		"booleans": {
+			"patterns": [{
+				"name": "constant.language.letlang",
+				"match": "\\b(true|false)\\b"
+			}]
+		},
+		"numbers": {
+			"patterns": [
+				{
+					"name": "constant.numeric.letlang",
+					"match": "\\b(0b_*[01][_01]*)\\b"
+				},
+				{
+					"name": "constant.numeric.letlang",
+					"match": "\\b(0o_*[0-7][_0-7]*)\\b"
+				},
+				{
+					"name": "constant.numeric.letlang",
+					"match": "\\b([1-9][_1-9]*)\\b"
+				},
+				{
+					"name": "constant.numeric.letlang",
+					"match": "\\b(0x_*[0-9a-fA-F][_0-9a-fA-F]*)\\b"
+				},
+				{
+					"name": "constant.numeric.letlang",
+					"match": "\\b(((\\d+\\.?\\d*)|(\\.\\d+))(([eE][+-]?)?\\d+)?)\\b"
+				}
+			]
+		},
+		"strings": {
+			"name": "string.quoted.double.letlang",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.letlang",
+					"match": "\\\\."
+				}
+			]
+		},
+		"atoms": {
+			"patterns": [{
+				"name": "constant.language.letlang",
+				"begin": "@(('(?:[^']|\\\\')+')|([_a-zA-Z][_a-zA-Z0-9]*))",
+				"end": "\\b"
+			}]
+		},
+		"keywords": {
+			"patterns": [
+				{"include": "#kw-visibility"},
+				{"include": "#kw-statements"},
+				{"include": "#kw-controlflow"}
+			]
+		},
+		"kw-visibility": {
+			"patterns": [{
+				"name": "storage.modifier.letlang",
+				"match": "\\b(pub)\\b"
+			}]
+		},
+		"kw-statements": {
+			"patterns": [{
+				"name": "storage.type.letlang",
+				"match": "\\b(module|import|as|effect|class|func)\\b"
+			}]
+		},
+		"kw-controlflow": {
+			"patterns": [{
+				"name": "keyword.control.letlang",
+				"match": "\\b(do|catch|intercept|throw|perform|spawn|receive|after|cond|else|match|loop|break)\\b"
+			}]
+		},
+		"operators": {
+			"patterns": [
+				{
+					"name": "keyword.other.letlang",
+					"match": "\\;|\\=\\>|\\-\\>|\\,|\\:|\\:\\:|\\:\\="
+				},
+				{
+					"name": "keyword.operator.letlang",
+					"match": "\\!|\\||\\&|\\~|\\^|\\<\\<|\\>\\>"
+				},
+				{
+					"name": "keyword.operator.letlang",
+					"match": "\\b(or|and|not)\\b"
+				},
+				{
+					"name": "keyword.operator.letlang",
+					"match": "\\=|\\!\\=|\\<|\\<\\=|\\>\\=|\\>"
+				},
+				{
+					"name": "keyword.operator.letlang",
+					"match": "\\+|\\-|\\*|\\/|\\%|\\*\\*"
+				},
+				{
+					"name": "keyword.operator.letlang",
+					"match": "\\|\\>"
+				},
+				{
+					"name": "keyword.operator.letlang",
+					"match": "\\b(in|is)\\b"
+				}
+			]
+		},
+		"builtins": {
+			"patterns": [{
+				"name": "support.class.letlang",
+				"match": "\\b(boolean|number|int|string|atom|list)\\b"
+			}]
+		}
+	},
+	"scopeName": "source.letlang"
+}

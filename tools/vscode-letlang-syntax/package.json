@@ -1,0 +1,25 @@
+{
+  "name": "letlang-syntax",
+  "displayName": "letlang-syntax",
+  "description": "Letlang Syntax Highlighting",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.71.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "letlang",
+      "aliases": ["Letlang", "letlang"],
+      "extensions": [".let"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "letlang",
+      "scopeName": "source.letlang",
+      "path": "./syntaxes/letlang.tmLanguage.json"
+    }]
+  }
+}

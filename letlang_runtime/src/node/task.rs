@@ -29,10 +29,10 @@ pub async fn run(
 
         match name.as_str() {
           "debug" => {
-            let context = context_cell.lock().await;
             println!("{}", arg_list.to_string(context_cell.clone()).await);
 
             let ok = Value::Atom({
+              let context = context_cell.lock().await;
               let atom_table = context.atom_table.lock().unwrap();
               atom_table.from_repr("@ok")
             });

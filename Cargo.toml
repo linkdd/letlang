@@ -1,10 +1,10 @@
 [workspace]
 
 members = [
-  "letlang_derive",
-  "letlang_ast",
-  "letlang_parser",
-  "letlang_runtime",
-  "letlang_compiler",
-  "letlang_cli",
+  "sources/letlang_derive",
+  "sources/letlang_ast",
+  "sources/letlang_parser",
+  "sources/letlang_runtime",
+  "sources/letlang_compiler",
+  "sources/letlang_cli",
 ]

@@ -11,7 +11,10 @@ impl<'compiler> Generator<'compiler> {
       },
       Statement::FuncDecl(data) => {
         self.gen_statement_func(&node.location, data)
-      }
+      },
+      Statement::EffectDecl(data) => {
+        self.gen_statement_effect(&node.location, data)
+      },
       _ => todo!()
     }
   }
@@ -19,3 +22,4 @@ impl<'compiler> Generator<'compiler> {
 
 mod import;
 mod function;
+mod effect;

@@ -81,9 +81,6 @@ pub enum Token {
   #[token("intercept")]
   KeywordIntercept,
 
-  #[token("finally")]
-  KeywordFinally,
-
   #[token("let")]
   KeywordLet,
 
@@ -227,6 +224,9 @@ pub enum Token {
 
   #[token(">>")]
   OperatorBinRShift,
+
+  #[token("<>")]
+  OperatorStringConcat,
 
   #[token("|>")]
   OperatorPipeline,

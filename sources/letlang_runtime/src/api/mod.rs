@@ -14,6 +14,7 @@ pub use crate::{
       FunctionCoroutine,
     },
     type_trait::Type,
+    effect_trait::Effect,
     context::TaskContext,
   },
   builtins::{

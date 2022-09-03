@@ -1,10 +1,10 @@
 use crate::lexer::{Token, TokenStream};
 use crate::{ast, ast::Node};
 
-//#region Grammar
+/* #region Grammar */
 peg::parser!{
   pub grammar unit_parser<'source>() for TokenStream<'source> {
-    //#region Unit
+    /* #region Unit */
     pub rule unit() -> Node<ast::Unit>
       = l:position!() module:module() stmts:statement()* r:position!()
       {
@@ -19,16 +19,16 @@ peg::parser!{
       {
         sym
       }
-    //#endregion
+    /* #endregion */
 
-    //#region Statements
+    /* #region Statements */
     rule statement() -> Node<ast::Statement>
       = statement_import()
       / statement_effect()
       / statement_class()
       / statement_function()
 
-    //#region Import
+    /* #region Import */
     rule statement_import() -> Node<ast::Statement>
       = l:position!()
           [Token::KeywordImport]
@@ -45,9 +45,9 @@ peg::parser!{
 
     rule statement_import_alias() -> String
       = [Token::KeywordAlias] [Token::Identifier(alias)] { alias.clone() }
-    //#endregion
+    /* #endregion */
 
-    //#region Effect Declaration
+    /* #region Effect Declaration */
     rule statement_effect() -> Node<ast::Statement>
       = l:position!()
           public:[Token::KeywordPublic]?
@@ -67,9 +67,9 @@ peg::parser!{
           )
         )
       }
-    //#endregion
+    /* #endregion */
 
-    //#region Class Declaration
+    /* #region Class Declaration */
     rule statement_class() -> Node<ast::Statement>
       = statement_class_simple()
       / statement_class_with_constraints()
@@ -115,9 +115,9 @@ peg::parser!{
           )
         )
       }
-    //#endregion
+    /* #endregion */
 
-    //#region Function Declaration
+    /* #region Function Declaration */
     rule statement_function() -> Node<ast::Statement>
       = l:position!()
           public:[Token::KeywordPublic]?
@@ -140,11 +140,11 @@ peg::parser!{
           )
         )
       }
-    //#endregion
+    /* #endregion */
 
-    //#endregion
+    /* #endregion */
 
-    //#region Parameters
+    /* #region Parameters */
     rule type_params() -> Vec<Node<ast::params::TypeParam>>
       = params:(type_param() ** [Token::Comma]) [Token::Comma]?
       { params }
@@ -183,9 +183,9 @@ peg::parser!{
           ast::params::CallParam::new(name, type_ref)
         )
       }
-    //#endregion
+    /* #endregion */
 
-    //#region Proposition
+    /* #region Proposition */
     rule proposition() -> Node<ast::statement::Proposition>
       = proposition_constraint()
       / proposition_evaluation()
@@ -233,14 +233,14 @@ peg::parser!{
     rule proposition_constraint_checks() -> Vec<Node<ast::expression::Expression>>
       = exprs:(expression() ++ [Token::Comma]) [Token::Comma]?
       { exprs }
-    //#endregion
+    /* #endregion */
 
-    //#region TypeRef expressions
+    /* #region TypeRef expressions */
     rule type_refs() -> Vec<Node<ast::types::TypeRef>>
       = type_refs:(type_ref() ++ [Token::Comma]) [Token::Comma]?
       { type_refs }
 
-    //#region Precedence Climbing
+    /* #region Precedence Climbing */
     rule type_ref() -> Node<ast::types::TypeRef> = precedence!{
       l:position!() data:@ r:position!() {
         Node::new((l, r), data)
@@ -261,9 +261,9 @@ peg::parser!{
       t:type_ref_term() { t }
       [Token::ParenthesisBegin] t:type_ref() [Token::ParenthesisEnd] { t.data }
     }
-    //#endregion
+    /* #endregion */
 
-    //#region Terms
+    /* #region Terms */
     rule type_ref_term() -> Box<ast::types::TypeRef>
       = type_ref_term_generic_symbol()
       / type_ref_term_concrete_symbol()
@@ -300,9 +300,9 @@ peg::parser!{
     rule type_ref_term_literal() -> Box<ast::types::TypeRef>
       = value:literal()
       { ast::types::TypeRef::value(value) }
-    //#endregion
+    /* #endregion */
 
-    //#region Structure Definition
+    /* #region Structure Definition */
     rule structure_definition() -> Vec<(String, Node<ast::types::TypeRef>)>
       = [Token::CurlyBracketBegin]
         members:struct_definition_members()
@@ -316,23 +316,23 @@ peg::parser!{
     rule struct_definition_member() -> (String, Node<ast::types::TypeRef>)
       = name:identifier() [Token::Colon] type_ref:type_ref()
       { (name, type_ref) }
-    //#endregion
+    /* #endregion */
 
-    //#region Tuple Definition
+    /* #region Tuple Definition */
     rule tuple_definition() -> Vec<Node<ast::types::TypeRef>>
       = [Token::ParenthesisBegin] members:type_refs() [Token::ParenthesisEnd]
       { members }
-    //#endregion
+    /* #endregion */
 
-    //#endregion
+    /* #endregion */
 
-    //#region Expressions
+    /* #region Expressions */
 
     rule expressions() -> Vec<Node<ast::expression::Expression>>
       = exprs:(expression() ** [Token::Comma]) [Token::Comma]?
       { exprs }
 
-    //#region Precedence Climbing
+    /* #region Precedence Climbing */
     rule expression() -> Node<ast::expression::Expression> = precedence!{
       l:position!() data:@ r:position!() {
         Node::new((l, r), data)
@@ -455,9 +455,9 @@ peg::parser!{
       t:expression_term() { t.data }
       [Token::ParenthesisBegin] e:expression() [Token::ParenthesisEnd] { e.data }
     }
-    //#endregion
+    /* #endregion */
 
-    //#region Terms
+    /* #region Terms */
     rule expression_term() -> Node<ast::expression::Expression>
       = expression_term_literal()
       / expression_term_struct()
@@ -472,7 +472,7 @@ peg::parser!{
       / expression_term_conditional()
       / expression_term_receive()
 
-    //#region Data
+    /* #region Data */
     rule expression_term_literal() -> Node<ast::expression::Expression>
       = l:position!() lit:literal() r:position!()
       {
@@ -517,9 +517,9 @@ peg::parser!{
           ast::expression::Expression::symbol(sym)
         )
       }
-    //#endregion
+    /* #endregion */
 
-    //#region Effect
+    /* #region Effect */
     rule expression_term_effect_call() -> Node<ast::expression::Expression>
       = l:position!()
         [Token::KeywordPerform]
@@ -534,9 +534,9 @@ peg::parser!{
           ast::expression::Expression::effect_call(effect_name, params)
         )
       }
-    //#endregion
+    /* #endregion */
 
-    //#region Spawn
+    /* #region Spawn */
     rule expression_term_spawn_call() -> Node<ast::expression::Expression>
       = l:position!()
         [Token::KeywordSpawn]
@@ -551,9 +551,9 @@ peg::parser!{
           ast::expression::Expression::spawn_call(func, params)
         )
       }
-    //#endregion
+    /* #endregion */
 
-    //#region Loop
+    /* #region Loop */
     rule expression_term_loop() -> Node<ast::expression::Expression>
       = l:position!()
         [Token::KeywordLoop]
@@ -579,9 +579,9 @@ peg::parser!{
           ast::expression::Expression::loop_break(label, value)
         )
       }
-    //#endregion
+    /* #endregion */
 
-    //#region Match
+    /* #region Match */
     rule expression_term_match() -> Node<ast::expression::Expression>
       = l:position!()
         [Token::KeywordMatch]
@@ -613,9 +613,9 @@ peg::parser!{
           )
         ])
       }
-    //#endregion
+    /* #endregion */
 
-    //#region Conditional
+    /* #region Conditional */
     rule expression_term_conditional() -> Node<ast::expression::Expression>
       = l:position!()
         [Token::KeywordCond]
@@ -664,9 +664,9 @@ peg::parser!{
           )
         ]
       }
-    //#endregion
+    /* #endregion */
 
-    //#region Receive
+    /* #region Receive */
     rule expression_term_receive() -> Node<ast::expression::Expression>
       = l:position!()
         [Token::KeywordReceive]
@@ -706,13 +706,13 @@ peg::parser!{
         [Token::CurlyBracketEnd]
       { (timeout, body) }
 
-    //#endregion
+    /* #endregion */
 
-    //#endregion
+    /* #endregion */
 
-    //#endregion
+    /* #endregion */
 
-    //#region Pattern Matching
+    /* #region Pattern Matching */
     rule pattern() -> Node<ast::expression::Pattern>
       = pattern_symbol()
       / pattern_literal()
@@ -721,7 +721,7 @@ peg::parser!{
       / pattern_list()
       / pattern_list_head_tail()
 
-    //#region Variants
+    /* #region Variants */
     rule pattern_symbol() -> Node<ast::expression::Pattern>
       = l:position!() sym:identifier() r:position!()
       {
@@ -776,17 +776,17 @@ peg::parser!{
           ast::expression::Pattern::list_head_tail(head, tail)
         )
       }
-    //#endregion
+    /* #endregion */
 
-    //#region Tuple Match
+    /* #region Tuple Match */
     rule tuple_match() -> Vec<Node<ast::expression::Pattern>>
       = [Token::ParenthesisBegin]
         members:(pattern() ** [Token::Comma]) [Token::Comma]?
         [Token::ParenthesisEnd]
       { members }
-    //#endregion
+    /* #endregion */
 
-    //#region Structure Match
+    /* #region Structure Match */
     rule struct_match() -> Vec<(String, Node<ast::expression::Pattern>)>
       = [Token::CurlyBracketBegin]
         members:(struct_member_match() ** [Token::Comma]) [Token::Comma]?
@@ -796,9 +796,9 @@ peg::parser!{
     rule struct_member_match() -> (String, Node<ast::expression::Pattern>)
       = name:identifier() [Token::Colon] pattern:pattern()
       { (name, pattern) }
-    //#endregion
+    /* #endregion */
 
-    //#region List Match
+    /* #region List Match */
     rule list_match() -> Vec<Node<ast::expression::Pattern>>
       = [Token::BracketBegin]
         items:(pattern() ** [Token::Comma]) [Token::Comma]?
@@ -812,11 +812,11 @@ peg::parser!{
         tail:pattern()
         [Token::BracketEnd]
       { (head, tail) }
-    //#endregion
+    /* #endregion */
 
-    //#endregion
+    /* #endregion */
 
-    //#region Structure
+    /* #region Structure */
     rule structure() -> Vec<(String, Node<ast::expression::Expression>)>
       = [Token::CurlyBracketBegin]
         members:structure_members()
@@ -830,21 +830,21 @@ peg::parser!{
     rule structure_member() -> (String, Node<ast::expression::Expression>)
       = member_name:identifier() [Token::Colon] member_val:expression()
       { (member_name, member_val) }
-    //#endregion
+    /* #endregion */
 
-    //#region Tuple
+    /* #region Tuple */
     rule tuple() -> Vec<Node<ast::expression::Expression>>
       = [Token::ParenthesisBegin] members:expressions() [Token::ParenthesisEnd]
       { members }
-    //#endregion
+    /* #endregion */
 
-    //#region List
+    /* #region List */
     rule list() -> Vec<Node<ast::expression::Expression>>
       = [Token::BracketBegin] items:expressions() [Token::BracketEnd]
       { items }
-    //#endregion
+    /* #endregion */
 
-    //#region Literal
+    /* #region Literal */
     rule literal() -> Node<ast::expression::Literal>
       = literal_true()
       / literal_false()
@@ -936,9 +936,9 @@ peg::parser!{
           ast::expression::Literal::atom(a.clone())
         )
       }
-    //#endregion
+    /* #endregion */
 
-    //#region Misc
+    /* #region Misc */
     rule type_params_template() -> Vec<Node<ast::params::TypeParam>>
       = [Token::OperatorCmpLT] params:type_params() [Token::OperatorCmpGT]
       { params }
@@ -953,7 +953,7 @@ peg::parser!{
     rule identifier() -> String
       = [Token::Identifier(id)] { id.clone() }
 
-    //#endregion
+    /* #endregion */
   }
 }
-//#endregion
+/* #endregion */

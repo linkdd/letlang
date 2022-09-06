@@ -20,6 +20,13 @@
         context: Arc<Mutex<TaskContext>>,
         args: Vec<Value>,
       ) -> Value {
+        helpers::assert_param_count(
+          &co,
+          context.clone(),
+          {{ call_param_count }},
+          args.len(),
+        ).await;
+
         {% for call_param in call_params %}
           let paramtype_{{ call_param.name }} = {{ call_param.type_code }};
           let paramval_{{ call_param.name }} = &args[{{ loop.index0 }}];

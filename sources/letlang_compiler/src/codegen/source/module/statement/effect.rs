@@ -15,6 +15,7 @@ struct EffectDeclarationTemplate {
   public: bool,
   symbol_name: String,
   call_params: Vec<CallParamTemplate>,
+  call_param_count: usize,
   return_type: String,
 }
 
@@ -39,12 +40,15 @@ impl<'compiler> Generator<'compiler> {
       });
     }
 
+    let call_param_count = call_params.len();
+
     let return_type = self.gen_typeref(&data.return_type)?;
 
     let context = EffectDeclarationTemplate {
       public: data.public,
       symbol_name: data.symbol_name.clone(),
       call_params,
+      call_param_count,
       return_type,
     };
 

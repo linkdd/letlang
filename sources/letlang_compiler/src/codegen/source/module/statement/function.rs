@@ -16,6 +16,7 @@ struct FunctionDeclarationTemplate {
   symbol_name: String,
   type_params: Vec<String>,
   call_params: Vec<CallParamTemplate>,
+  call_param_count: usize,
   return_type: String,
   body: Vec<String>,
 }
@@ -47,6 +48,8 @@ impl<'compiler> Generator<'compiler> {
       });
     }
 
+    let call_param_count = call_params.len();
+
     let return_type = self.gen_typeref(&data.return_type)?;
 
     let mut body = vec![];
@@ -60,6 +63,7 @@ impl<'compiler> Generator<'compiler> {
       symbol_name: data.symbol_name.clone(),
       type_params,
       call_params,
+      call_param_count,
       return_type,
       body
     };

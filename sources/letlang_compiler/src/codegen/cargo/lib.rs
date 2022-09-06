@@ -69,7 +69,7 @@ impl<'compiler> Generator<'compiler> {
     for dependency in unit_node.attrs.as_ref().unwrap().dependencies.iter() {
       crate_deps.insert(dependency.clone(), DependencyConfig {
         package: None,
-        path: Some(format!("../modules/{}", dependency)),
+        path: Some(format!("../{}", dependency)),
         version: None,
         features: None,
       });

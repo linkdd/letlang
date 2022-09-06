@@ -7,6 +7,7 @@ pub enum RuntimeError {
   ProcessCrashed,
   EffectNotImplemented,
   UncaughtException,
+  Other(&'static str)
 }
 
 pub type Result<T> = std::result::Result<T, RuntimeError>;

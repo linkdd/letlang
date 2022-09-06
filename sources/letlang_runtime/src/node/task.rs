@@ -1,6 +1,7 @@
 use genawaiter::GeneratorState;
 
 use crate::prelude::*;
+use crate::builtins;
 use crate::repr::Value;
 use crate::core::{
   context::TaskContext,
@@ -25,32 +26,12 @@ pub async fn run(
   loop {
     match &state {
       GeneratorState::Yielded(FunctionInterruption::Effect { name, args }) => {
-        let arg_list = Value::Tuple(args.clone().into_boxed_slice());
-
-        match name.as_str() {
-          "debug" => {
-            println!("{}", arg_list.to_string(context_cell.clone()).await);
-
-            let ok = Value::Atom({
-              let context = context_cell.lock().await;
-              let atom_table = context.atom_table.lock().unwrap();
-              atom_table.from_repr("@ok")
-            });
-            state = block.resume_with(ok);
-          }
-          _ => {
-            eprintln!(
-              "[FATAL] Unknown effect in task {:?}: {}{}",
-              async {
-                let context = context_cell.lock().await;
-                context.pid.clone()
-              }.await,
-              name,
-              arg_list.to_string(context_cell.clone()).await,
-            );
-            return Err(RuntimeError::EffectNotImplemented);
-          }
-        }
+        let val = builtins::effects::dispatch(
+          context_cell.clone(),
+          name,
+          args,
+        ).await?;
+        state = block.resume_with(val);
       },
       GeneratorState::Yielded(FunctionInterruption::Exception(exc)) => {
         eprintln!(

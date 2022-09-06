@@ -47,7 +47,7 @@ impl<'compiler> Generator<'compiler> {
         todo!();
       },
       SymbolKind::CallParameter { index } => {
-        todo!();
+        Ok(format!("paramval_{index}.clone()"))
       },
       _ => {
         unreachable!("\

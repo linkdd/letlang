@@ -22,7 +22,6 @@ struct FunctionDeclarationTemplate {
 }
 
 struct CallParamTemplate {
-  name: String,
   type_code: String,
 }
 
@@ -43,7 +42,6 @@ impl<'compiler> Generator<'compiler> {
 
     for node in data.call_params.iter() {
       call_params.push(CallParamTemplate {
-        name: node.data.param_name.clone(),
         type_code: self.gen_typeref(&node.data.param_type)?,
       });
     }

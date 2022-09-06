@@ -6,5 +6,5 @@ async {
     {% endfor %}
   ];
 
-  helpers::call_function(co, context.clone(), &func, args).await
+  helpers::call_function(&co, context.clone(), &func, args).await
 }.await

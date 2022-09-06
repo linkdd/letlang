@@ -19,7 +19,7 @@ impl<'compiler> Generator<'compiler> {
         Ok(format!("Value::Number({})", val))
       },
       Literal::String(val) => {
-        Ok(format!("Value::String({:?}", val))
+        Ok(format!("Value::String({:?})", val))
       },
       Literal::Atom(Atom(repr)) => {
         let sym = self.atom_interner.get(repr).unwrap().to_usize();

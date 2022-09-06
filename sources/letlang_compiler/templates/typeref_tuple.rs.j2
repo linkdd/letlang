@@ -1,0 +1,5 @@
+TupleType { members_types: vec![
+  {% for member in members %}
+    Box::new({{ member }})
+  {% endfor %}
+]}

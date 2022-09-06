@@ -18,6 +18,9 @@ impl<'compiler> Generator<'compiler> {
       TypeRef::TypeName(type_name) => {
         self.gen_typeref_name(type_name, attrs)
       },
+      TypeRef::TupleDefinition(tuple_def) => {
+        self.gen_typeref_tuple(&node.location, tuple_def)
+      },
       TypeRef::OneOf(oneof_typeref) => {
         self.gen_typeref_oneof(&node.location, oneof_typeref)
       },
@@ -30,4 +33,5 @@ impl<'compiler> Generator<'compiler> {
 
 mod value;
 mod name;
+mod tuple;
 mod oneof;

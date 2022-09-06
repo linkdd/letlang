@@ -28,7 +28,7 @@ impl<'compiler> Model<'compiler> {
             let scope = self.scope_arena.get_scope(scope_id);
 
             scope.register_symbol(
-              "bool".to_string(),
+              "boolean".to_string(),
               false,
               SymbolKind::Class { type_param_count: 0, builtin: true },
             ).unwrap();

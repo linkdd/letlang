@@ -18,6 +18,9 @@ impl<'compiler> Generator<'compiler> {
       TypeRef::TypeName(type_name) => {
         self.gen_typeref_name(type_name, attrs)
       },
+      TypeRef::OneOf(oneof_typeref) => {
+        self.gen_typeref_oneof(&node.location, oneof_typeref)
+      },
       _ => {
         todo!();
       }
@@ -27,3 +30,4 @@ impl<'compiler> Generator<'compiler> {
 
 mod value;
 mod name;
+mod oneof;

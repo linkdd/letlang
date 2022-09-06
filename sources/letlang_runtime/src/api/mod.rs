@@ -1,5 +1,6 @@
 pub use std::sync::Arc;
 pub use tokio::sync::Mutex;
+pub use async_trait::async_trait;
 
 pub use crate::{
   prelude::*,

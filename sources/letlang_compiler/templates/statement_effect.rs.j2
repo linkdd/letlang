@@ -5,6 +5,7 @@
   #[derive(Debug, Clone, PartialEq)]
   pub struct effect_{{ symbol_name }};
 
+  #[async_trait]
   impl Effect for effect_{{ symbol_name }} {
     async fn call(
       &self,

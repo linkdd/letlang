@@ -1,5 +1,5 @@
 OneOfType { lltypes: vec![
   {% for typeref in typerefs %}
-    Box::new({{ typeref }})
+    Box::new({{ typeref }}),
   {% endfor %}
 ]}

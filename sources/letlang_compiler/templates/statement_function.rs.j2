@@ -28,13 +28,13 @@
         ).await;
 
         {% for call_param in call_params %}
-          let paramtype_{{ call_param.name }} = {{ call_param.type_code }};
-          let paramval_{{ call_param.name }} = &args[{{ loop.index0 }}];
+          let paramtype_{{ loop.index0 }} = {{ call_param.type_code }};
+          let paramval_{{ loop.index0 }} = &args[{{ loop.index0 }}];
           helpers::assert_type(
             &co,
             context.clone(),
-            &paramtype_{{ call_param.name }},
-            &paramval_{{ call_param.name }},
+            &paramtype_{{ loop.index0 }},
+            &paramval_{{ loop.index0 }},
           ).await;
         {% endfor %}
 

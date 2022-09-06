@@ -10,9 +10,7 @@ If you want to contribute, please make a pull request.
 
 **Requirements:**
 
- - Rust & Cargo 1.59+
- - Hugo ^0.85 (we use a deprecated markdown renderer)
-
+ - Rust & Cargo 1.63+
 
 **Build:**
 

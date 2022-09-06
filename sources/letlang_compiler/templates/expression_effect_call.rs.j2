@@ -1,0 +1,10 @@
+async {
+  let effect = {{ effect_code }};
+  let args: Vec<Value> = vec![
+    {% for call_param in call_params %}
+      {{ call_param }},
+    {% endfor %}
+  ];
+
+  effect.call(context.clone(), &co, args).await
+}.await

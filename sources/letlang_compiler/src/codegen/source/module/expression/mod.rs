@@ -19,7 +19,7 @@ impl<'compiler> Generator<'compiler> {
         self.gen_function_call(&node.location, data)
       },
       Expression::EffectCall(data) => {
-        todo!();
+        self.gen_effect_call(&node.location, data)
       },
       Expression::Symbol(sym) => {
         self.gen_symbol(&node.location, sym, attrs.scope_id)
@@ -33,4 +33,5 @@ impl<'compiler> Generator<'compiler> {
 
 mod literal;
 mod function;
+mod effect;
 mod symbol;

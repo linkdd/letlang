@@ -31,7 +31,7 @@ impl<'compiler> Model<'compiler> {
           Some(sym_kind) => {
             match sym_kind {
               SymbolKind::Variable => {},
-              SymbolKind::Function { .. } => {},
+              SymbolKind::Function { type_param_count: 0, .. } => {},
               SymbolKind::ConsParameter => {},
               SymbolKind::CallParameter { .. } => {},
               _ => {

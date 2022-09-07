@@ -12,6 +12,9 @@ impl<'compiler> Generator<'compiler> {
     let attrs = node.attrs.as_ref().unwrap();
 
     match node.data.as_ref() {
+      Expression::Symbol(sym) => {
+        self.gen_symbol(&node.location, sym, attrs.scope_id)
+      },
       Expression::Literal(lit) => {
         self.gen_literal(lit)
       },
@@ -21,8 +24,11 @@ impl<'compiler> Generator<'compiler> {
       Expression::EffectCall(data) => {
         self.gen_effect_call(&node.location, data)
       },
-      Expression::Symbol(sym) => {
-        self.gen_symbol(&node.location, sym, attrs.scope_id)
+      Expression::BinaryOperation(data) => {
+        todo!();
+      },
+      Expression::PatternMatch(data) => {
+        self.gen_pattern_match(&node.location, data)
       },
       _ => {
         todo!();
@@ -31,7 +37,8 @@ impl<'compiler> Generator<'compiler> {
   }
 }
 
+mod symbol;
 mod literal;
 mod function;
 mod effect;
-mod symbol;
+mod pattern;

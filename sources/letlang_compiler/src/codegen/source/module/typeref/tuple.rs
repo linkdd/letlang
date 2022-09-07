@@ -10,7 +10,7 @@ use askama::Template;
 
 
 #[derive(Template)]
-#[template(path = "typeref_tuple.rs.j2", escape = "none")]
+#[template(path = "typeref/tuple.rs.j2", escape = "none")]
 struct TupleTypeTemplate {
   members: Vec<String>,
 }

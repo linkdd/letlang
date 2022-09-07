@@ -10,7 +10,7 @@ use askama::Template;
 
 
 #[derive(Template)]
-#[template(path = "typeref_oneof.rs.j2", escape = "none")]
+#[template(path = "typeref/oneof.rs.j2", escape = "none")]
 struct OneOfTypeTemplate {
   typerefs: Vec<String>,
 }

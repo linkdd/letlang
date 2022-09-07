@@ -10,7 +10,7 @@ use askama::Template;
 
 
 #[derive(Template)]
-#[template(path = "statement_function.rs.j2", escape = "none")]
+#[template(path = "statement/function.rs.j2", escape = "none")]
 struct FunctionDeclarationTemplate {
   public: bool,
   symbol_name: String,

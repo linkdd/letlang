@@ -41,6 +41,8 @@
 
         let return_type = {{ return_type }};
 
+        let mut locals = Locals::new(None);
+
         {% for proposition in body %}
           {% if loop.last %}
             let result = {{ proposition }};

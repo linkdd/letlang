@@ -10,7 +10,7 @@ use askama::Template;
 
 
 #[derive(Template)]
-#[template(path = "statement_effect.rs.j2", escape = "none")]
+#[template(path = "statement/effect.rs.j2", escape = "none")]
 struct EffectDeclarationTemplate {
   public: bool,
   symbol_name: String,

@@ -10,7 +10,7 @@ use askama::Template;
 
 
 #[derive(Template)]
-#[template(path = "expression_effect_call.rs.j2", escape = "none")]
+#[template(path = "expression/effect_call.rs.j2", escape = "none")]
 struct EffectCallTemplate {
   effect_code: String,
   call_params: Vec<String>,

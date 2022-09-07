@@ -411,6 +411,10 @@ peg::parser!{
         ast::expression::Expression::binary_op(">>", lhs, rhs)
       }
       --
+      lhs:(@) [Token::OperatorStringConcat] rhs:@ {
+        ast::expression::Expression::binary_op("<>", lhs, rhs)
+      }
+      --
       lhs:(@) [Token::OperatorMathAdd] rhs:@ {
         ast::expression::Expression::binary_op("+", lhs, rhs)
       }

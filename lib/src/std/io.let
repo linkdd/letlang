@@ -1,7 +1,12 @@
 module std::io;
 
 effect __io_println(msg: string) -> @ok | (@error, atom);
+effect __io_readline(prompt: string) -> (@ok, string) | (@error, atom);
 
 pub func println(msg: string) -> @ok | (@error, atom) {
   perform __io_println(msg);
+}
+
+pub func readline(prompt: string) -> (@ok, string) | (@error, atom) {
+  perform __io_readline(prompt);
 }

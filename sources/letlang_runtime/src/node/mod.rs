@@ -16,7 +16,7 @@ use crate::{
     signal::Signal,
     process,
     function::Function,
-    atom_table::AtomTable,
+    utils::AtomTable,
     context::TaskContext,
   },
 };

@@ -6,7 +6,6 @@ pub use crate::{
   prelude::*,
   repr::{Pid, Atom, Value},
   core::{
-    atom_table::AtomTable,
     signal::Signal,
     function::{
       Function,
@@ -14,9 +13,13 @@ pub use crate::{
       FunctionInterruption,
       FunctionCoroutine,
     },
-    type_trait::Type,
-    effect_trait::Effect,
+    types::Type,
+    effect::Effect,
     context::TaskContext,
+    utils::{
+      AtomTable,
+      Locals,
+    },
   },
   builtins::{
     types::*,

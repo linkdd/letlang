@@ -3,7 +3,7 @@ use crate::{
   repr::Pid,
   core::{
     signal::SignalReceiver,
-    atom_table::AtomTable,
+    utils::AtomTable,
   },
 };
 

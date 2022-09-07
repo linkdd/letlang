@@ -1,6 +1,6 @@
-pub mod atom_table;
-pub mod type_trait;
-pub mod effect_trait;
+pub mod utils;
+pub mod types;
+pub mod effect;
 pub mod function;
 pub mod signal;
 pub mod process;

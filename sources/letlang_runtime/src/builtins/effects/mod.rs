@@ -1,5 +1,6 @@
 mod io_inspect;
 mod io_println;
+mod io_readline;
 
 use crate::prelude::*;
 use crate::repr::Value;
@@ -20,6 +21,9 @@ pub async fn dispatch(
     },
     "__io_println" => {
       io_println::run(context.clone(), args).await
+    },
+    "__io_readline" => {
+      io_readline::run(context.clone(), args).await
     },
     _ => {
       let arg_list = Value::Tuple(args.clone().into_boxed_slice());

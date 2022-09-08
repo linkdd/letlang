@@ -26,6 +26,8 @@ impl<'compiler> Generator<'compiler> {
       "@type_error",
       "@match_error",
       "@division_by_zero",
+      "@eof",
+      "@io",
       "@normal",
     ] {
       self.atom_interner.get_or_intern(builtin_atom);

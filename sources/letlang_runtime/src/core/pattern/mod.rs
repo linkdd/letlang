@@ -1,5 +1,4 @@
 use crate::core::{
-  function::FunctionCoroutine,
   context::TaskContext,
   utils::Locals,
 };
@@ -11,12 +10,11 @@ use async_trait::async_trait;
 
 
 #[async_trait]
-pub trait Pattern {
+pub trait Pattern: Send + Sync {
   async fn match_(
     &self,
-    co: &FunctionCoroutine,
     context: Arc<Mutex<TaskContext>>,
     locals: &mut Locals,
     value: &Value,
-  );
+  ) -> Result<(), ()>;
 }

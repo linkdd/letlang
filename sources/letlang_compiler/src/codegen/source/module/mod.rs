@@ -31,3 +31,4 @@ mod statement;
 mod proposition;
 mod typeref;
 mod expression;
+mod pattern;

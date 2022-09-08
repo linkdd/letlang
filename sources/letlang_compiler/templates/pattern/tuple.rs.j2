@@ -1,0 +1,7 @@
+TuplePattern {
+  members: vec![
+    {% for member in members %}
+      Box::new({{ member }}),
+    {% endfor %}
+  ]
+}

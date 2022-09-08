@@ -27,7 +27,8 @@ impl<'compiler> Generator<'compiler> {
 
     match symbol_kind {
       SymbolKind::Variable => {
-        todo!();
+        let symbol_name = symbol.name();
+        Ok(format!("locals.lookup_symbol(\"{symbol_name}\").unwrap()"))
       },
       SymbolKind::Function { .. } => {
         match symbol.scope() {

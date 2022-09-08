@@ -15,4 +15,24 @@ impl<'scope> Locals<'scope> {
       parent_scope,
     }
   }
+
+  pub fn register_symbol(&mut self, symbol_name: &'static str, symbol_val: Value) {
+    self.variables.insert(symbol_name, symbol_val);
+  }
+
+  pub fn lookup_symbol(&self, symbol_name: &'static str) -> Option<&Value> {
+    match self.variables.get(symbol_name) {
+      None => {
+        match self.parent_scope {
+          None => None,
+          Some(scope) => {
+            scope.lookup_symbol(symbol_name)
+          }
+        }
+      },
+      Some(val) => {
+        Some(val)
+      }
+    }
+  }
 }

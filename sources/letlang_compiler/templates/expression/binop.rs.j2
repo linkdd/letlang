@@ -1,0 +1,6 @@
+async {
+  let lhs = {{ lhs_code }};
+  let rhs = {{ rhs_code }};
+
+  {{ op_func_name }}(context.clone(), &co, &lhs, &rhs).await
+}.await

@@ -25,7 +25,7 @@ impl<'compiler> Generator<'compiler> {
         self.gen_effect_call(&node.location, data)
       },
       Expression::BinaryOperation(data) => {
-        todo!();
+        self.gen_binary_op(&node.location, data)
       },
       Expression::PatternMatch(data) => {
         self.gen_pattern_match(&node.location, data)
@@ -41,4 +41,5 @@ mod symbol;
 mod literal;
 mod function;
 mod effect;
+mod binop;
 mod pattern;

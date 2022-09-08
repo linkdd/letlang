@@ -24,6 +24,7 @@ pub use crate::{
   builtins::{
     types::*,
     patterns::*,
+    ops,
   },
   node::{Node, Request, Command},
 };

@@ -20,7 +20,14 @@ struct AtomTemplate {
 
 impl<'compiler> Generator<'compiler> {
   pub fn gen_exe_source(&mut self, crate_name: &str) -> CompilationResult<String> {
-    for builtin_atom in vec!["@ok", "@error", "@type_error", "@normal"] {
+    for builtin_atom in [
+      "@ok",
+      "@error",
+      "@type_error",
+      "@match_error",
+      "@division_by_zero",
+      "@normal",
+    ] {
       self.atom_interner.get_or_intern(builtin_atom);
     }
 

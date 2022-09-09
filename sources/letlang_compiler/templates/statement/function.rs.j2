@@ -21,6 +21,10 @@
         context: Arc<Mutex<TaskContext>>,
         args: Vec<Value>,
       ) -> Value {
+        #[allow(unused_variables)]
+        #[allow(unused_mut)]
+        let mut locals = Locals::new(None);
+
         helpers::assert_param_count(
           &co,
           context.clone(),
@@ -40,8 +44,6 @@
         {% endfor %}
 
         let return_type = {{ return_type }};
-
-        let mut locals = Locals::new(None);
 
         {% for proposition in body %}
           {% if loop.last %}

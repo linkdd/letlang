@@ -11,9 +11,11 @@ impl<'compiler> Generator<'compiler> {
     &self,
     node: &Node<Pattern>,
   ) -> CompilationResult<String> {
+    let attrs = node.attrs.as_ref().unwrap();
+
     match node.data.as_ref() {
       Pattern::Symbol(sym) => {
-        self.gen_pattern_symbol(sym)
+        self.gen_pattern_symbol(sym, attrs.scope_id)
       },
       Pattern::Literal(lit) => {
         self.gen_pattern_value(lit)

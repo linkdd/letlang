@@ -1,4 +1,4 @@
-pub mod result;
+pub mod prelude;
 
 pub mod types;
 pub mod effects;

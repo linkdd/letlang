@@ -13,8 +13,6 @@ pub enum OperationError {
   DivisionByZero,
 }
 
-pub type Result<T> = std::result::Result<T, OperationError>;
-
 unsafe impl Sync for OperationError {}
 unsafe impl Send for OperationError {}
 

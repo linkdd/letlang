@@ -1,5 +1,5 @@
 use crate::api::*;
-use crate::builtins::result::*;
+use crate::builtins::prelude::*;
 
 
 pub async fn assert_param_count(

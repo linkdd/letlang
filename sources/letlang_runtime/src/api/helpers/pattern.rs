@@ -1,5 +1,5 @@
 use crate::api::*;
-use crate::builtins::result::*;
+use crate::builtins::prelude::*;
 use crate::core::pattern::Pattern;
 
 pub async fn assert_match<'locals>(

@@ -1,0 +1,15 @@
+[package]
+name = "constraints"
+version = "0.0.0"
+description = "Exemple of lazy constraints"
+
+[executable]
+bin = "constraints"
+module = "constraints::main"
+
+[toolchain]
+letlang = "0.1.0"
+rust = "2021"
+
+[dependencies]
+stdlib = { path = "../../lib" }

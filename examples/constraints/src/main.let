@@ -1,0 +1,13 @@
+module constraints::main;
+
+import std::io;
+
+pub func main() -> @ok {
+  let a: number;
+  let b: number { b > a };
+
+  a := 0;
+  b := 1;
+
+  let b: number { b > 2 };
+}

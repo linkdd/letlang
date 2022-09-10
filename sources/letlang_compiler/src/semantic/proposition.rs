@@ -15,17 +15,16 @@ impl<'compiler> Model<'compiler> {
 
     match node.data.as_mut() {
       Proposition::Constraint(data) => {
-        let constraint_scope_id = self.scope_arena.new_scope(attrs.scope_id);
-        let constraint_scope = self.scope_arena.get_scope(constraint_scope_id);
+        let scope = self.scope_arena.get_scope(attrs.scope_id);
 
-        let sym = constraint_scope.lookup_symbol(
+        let sym = scope.lookup_symbol(
           &self.scope_arena,
           &data.symbol_name
         );
 
         match sym {
           None => {
-            constraint_scope.register_symbol(
+            scope.register_symbol(
               data.symbol_name.clone(),
               false,
               SymbolKind::Variable
@@ -48,9 +47,11 @@ impl<'compiler> Model<'compiler> {
         }
 
         data.symbol_type.attrs = Some(TypeRefAttributes {
-          scope_id: constraint_scope_id,
+          scope_id: attrs.scope_id,
         });
         self.visit_typeref(&mut data.symbol_type)?;
+
+        let constraint_scope_id = self.scope_arena.new_scope(attrs.scope_id);
 
         for expression in data.checks.iter_mut() {
           expression.attrs = Some(ExpressionAttributes {

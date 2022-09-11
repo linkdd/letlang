@@ -15,6 +15,7 @@ pub use crate::{
     },
     types::Type,
     effect::Effect,
+    constraint::Constraint,
     context::TaskContext,
     utils::{
       AtomTable,

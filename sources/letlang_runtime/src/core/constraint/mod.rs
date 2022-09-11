@@ -12,6 +12,6 @@ pub trait Constraint : Sync + Send + std::fmt::Debug {
     &self,
     co: &FunctionCoroutine,
     context: Arc<Mutex<TaskContext>>,
-    locals: &mut Locals,
-  ) -> bool;
+    locals: &Locals,
+  ) -> Result<(), String>;
 }

@@ -16,7 +16,7 @@ impl<'compiler> Generator<'compiler> {
         Ok(format!("Value::Boolean({})", val))
       },
       Literal::Number(val) => {
-        Ok(format!("Value::Number({})", val))
+        Ok(format!("Value::Number({} as f64)", val))
       },
       Literal::String(val) => {
         Ok(format!("Value::String({:?}.to_string())", val))

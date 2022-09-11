@@ -718,7 +718,8 @@ peg::parser!{
 
     /* #region Pattern Matching */
     rule pattern() -> Node<ast::expression::Pattern>
-      = pattern_symbol()
+      = pattern_assign()
+      / pattern_value()
       / pattern_literal()
       / pattern_tuple()
       / pattern_struct()
@@ -726,12 +727,26 @@ peg::parser!{
       / pattern_list_head_tail()
 
     /* #region Variants */
-    rule pattern_symbol() -> Node<ast::expression::Pattern>
+    rule pattern_assign() -> Node<ast::expression::Pattern>
       = l:position!() sym:identifier() r:position!()
       {
         Node::new(
           (l, r),
-          ast::expression::Pattern::symbol(sym)
+          ast::expression::Pattern::assign(sym)
+        )
+      }
+
+    rule pattern_value() -> Node<ast::expression::Pattern>
+      = l:position!()
+        [Token::Dollar]
+        [Token::ParenthesisBegin]
+        expr:expression()
+        [Token::ParenthesisEnd]
+        r:position!()
+      {
+        Node::new(
+          (l, r),
+          ast::expression::Pattern::value(expr)
         )
       }
 

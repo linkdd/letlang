@@ -48,13 +48,19 @@ impl<'compiler> Generator<'compiler> {
 
 fn get_op_func_name(op: &str) -> &'static str {
   match op {
-    "+" =>  "ops::binary::add",
-    "-" =>  "ops::binary::sub",
-    "*" =>  "ops::binary::mul",
-    "/" =>  "ops::binary::div",
-    "%" =>  "ops::binary::modulo",
+    "+"  => "ops::binary::add",
+    "-"  => "ops::binary::sub",
+    "*"  => "ops::binary::mul",
+    "/"  => "ops::binary::div",
+    "%"  => "ops::binary::modulo",
     "**" => "ops::binary::pow",
     "<>" => "ops::binary::str_concat",
+    "="  => "ops::binary::eq",
+    "!=" => "ops::binary::ne",
+    "<"  => "ops::binary::lt",
+    "<=" => "ops::binary::lte",
+    ">=" => "ops::binary::gte",
+    ">"  => "ops::binary::gt",
     _ => todo!(),
   }
 }

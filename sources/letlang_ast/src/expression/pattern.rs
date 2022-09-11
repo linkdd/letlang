@@ -1,12 +1,13 @@
 use crate::{
   Node,
-  expression::{Symbol, Literal},
+  expression::{Expression, Symbol, Literal},
 };
 
 #[derive(NodeAttributes, Debug, Clone, PartialEq)]
 #[node_attrs(PatternAttributes)]
 pub enum Pattern {
-  Symbol(Symbol),
+  Assign(Symbol),
+  Value(Node<Expression>),
   Literal(Node<Literal>),
   Tuple(TuplePattern),
   Struct(StructPattern),
@@ -41,8 +42,12 @@ pub struct ListHeadTailPattern {
 }
 
 impl Pattern {
-  pub fn symbol(sym: String) -> Box<Self> {
-    Box::new(Self::Symbol(Symbol(vec![sym])))
+  pub fn assign(sym: String) -> Box<Self> {
+    Box::new(Self::Assign(Symbol(vec![sym])))
+  }
+
+  pub fn value(expr: Node<Expression>) -> Box<Self> {
+    Box::new(Self::Value(expr))
   }
 
   pub fn literal(node: Node<Literal>) -> Box<Self> {

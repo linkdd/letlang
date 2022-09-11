@@ -12,6 +12,7 @@ pub enum OperationError {
   CallParamCountError { expected: usize, got: usize },
   DivisionByZero,
   OperationNotSupported,
+  ConstraintError(String),
   Undefined(String),
 }
 
@@ -94,6 +95,27 @@ impl OperationError {
         Value::Tuple(Box::new([
           Value::Atom(error_atom),
           Value::Atom(division_by_zero_atom),
+        ]))
+      },
+      Self::ConstraintError(symbol) => {
+        let type_error_atom = async {
+          let context_ref = context.lock().await;
+          let atom_table = context_ref.atom_table.lock().unwrap();
+          atom_table.from_repr("@type_error")
+        }.await;
+
+        let constraint_atom = async {
+          let context_ref = context.lock().await;
+          let atom_table = context_ref.atom_table.lock().unwrap();
+          atom_table.from_repr("@constraint")
+        }.await;
+
+        Value::Tuple(Box::new([
+          Value::Atom(type_error_atom),
+          Value::Tuple(Box::new([
+            Value::Atom(constraint_atom),
+            Value::String(symbol.clone()),
+          ])),
         ]))
       },
       Self::OperationNotSupported => {

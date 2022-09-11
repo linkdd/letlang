@@ -12,6 +12,7 @@ pub enum OperationError {
   CallParamCountError { expected: usize, got: usize },
   DivisionByZero,
   OperationNotSupported,
+  Undefined(String),
 }
 
 unsafe impl Sync for OperationError {}
@@ -111,6 +112,27 @@ impl OperationError {
         Value::Tuple(Box::new([
           Value::Atom(type_error_atom),
           Value::Atom(operation_not_supported_atom),
+        ]))
+      },
+      Self::Undefined(symbol) => {
+        let error_atom = async {
+          let context_ref = context.lock().await;
+          let atom_table = context_ref.atom_table.lock().unwrap();
+          atom_table.from_repr("@error")
+        }.await;
+
+        let undefined_atom = async {
+          let context_ref = context.lock().await;
+          let atom_table = context_ref.atom_table.lock().unwrap();
+          atom_table.from_repr("@undefined")
+        }.await;
+
+        Value::Tuple(Box::new([
+          Value::Atom(error_atom),
+          Value::Tuple(Box::new([
+            Value::Atom(undefined_atom),
+            Value::String(symbol.clone()),
+          ]))
         ]))
       }
     }

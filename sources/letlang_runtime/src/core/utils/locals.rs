@@ -43,7 +43,7 @@ impl<'scope> Locals<'scope> {
     }
   }
 
-  pub fn iter_constraints(&self) -> Box<dyn Iterator<Item = &Box<dyn Constraint>> + '_> {
+  pub fn iter_constraints(&self) -> Box<dyn Iterator<Item = &Box<dyn Constraint>> + Send + '_> {
     match self.parent_scope {
       None => {
         Box::new(self.constraints.iter())

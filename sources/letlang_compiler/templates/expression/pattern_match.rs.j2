@@ -2,5 +2,6 @@ async {
   let expr = {{ expr_code }};
   let pattern = {{ pattern_code }};
   helpers::assert_match(&co, context.clone(), &mut locals, &pattern, &expr).await;
+  helpers::assert_constraints(&co, context.clone(), &locals).await;
   expr
 }.await

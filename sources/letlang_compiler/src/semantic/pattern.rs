@@ -28,7 +28,7 @@ impl<'compiler> Model<'compiler> {
           symbol.to_string(),
           false,
           SymbolKind::Variable,
-        ).unwrap();
+        );
 
         Ok(())
       },

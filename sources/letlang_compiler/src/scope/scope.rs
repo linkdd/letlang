@@ -18,16 +18,9 @@ impl Scope {
     key: String,
     public: bool,
     kind: SymbolKind,
-  ) -> Result<(), ()> {
+  ) {
     let mut symbols = self.symbols.borrow_mut();
-
-    if symbols.contains_key(&key) {
-      Err(())
-    }
-    else {
-      symbols.insert(key, (public, kind));
-      Ok(())
-    }
+    symbols.insert(key, (public, kind));
   }
 
   pub fn lookup_symbol(

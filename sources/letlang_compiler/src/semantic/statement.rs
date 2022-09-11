@@ -26,52 +26,36 @@ impl<'compiler> Model<'compiler> {
         let unit_dep_attrs = unit_dep.attrs.as_ref().unwrap();
         let scope = self.scope_arena.get_scope(attrs.scope_id);
 
-        let (path, result) = match data.alias.as_ref() {
+        let path = match data.alias.as_ref() {
           None => {
-            (
-              data.path.clone(),
-              scope.register_symbol(
-                data.path.join("::"),
-                false,
-                SymbolKind::Module { scope_id: unit_dep_attrs.scope_id },
-              ),
-            )
+            scope.register_symbol(
+              data.path.join("::"),
+              false,
+              SymbolKind::Module { scope_id: unit_dep_attrs.scope_id },
+            );
+            data.path.clone()
           },
           Some(alias) => {
-            (
-              vec![alias.clone()],
-              scope.register_symbol(
-                alias.clone(),
-                false,
-                SymbolKind::Module { scope_id: unit_dep_attrs.scope_id },
-              ),
-            )
+            scope.register_symbol(
+              alias.clone(),
+              false,
+              SymbolKind::Module { scope_id: unit_dep_attrs.scope_id },
+            );
+            vec![alias.clone()]
           }
         };
-
-        result.map_err(|()| {
-          CompilationError::new_located(
-            &node.location,
-            format!("Symbol '{}' already exists", path.join("::")),
-          )
-        })?;
 
         Ok(Some(unit_key))
       },
       Statement::EffectDecl(data) => {
         let scope = self.scope_arena.get_scope(attrs.scope_id);
-        scope
-          .register_symbol(
-            data.symbol_name.clone(),
-            data.public,
-            SymbolKind::Effect {
-              call_param_count: data.call_params.len(),
-            }
-          )
-          .map_err(|()| CompilationError::new_located(
-            &node.location,
-            format!("Symbol '{}' already exists", data.symbol_name.clone()),
-          ))?;
+        scope.register_symbol(
+          data.symbol_name.clone(),
+          data.public,
+          SymbolKind::Effect {
+            call_param_count: data.call_params.len(),
+          }
+        );
 
         let effect_scope_id = self.scope_arena.new_scope(attrs.scope_id);
 
@@ -94,21 +78,14 @@ impl<'compiler> Model<'compiler> {
       },
       Statement::ClassDecl(data) => {
         let scope = self.scope_arena.get_scope(attrs.scope_id);
-        scope
-          .register_symbol(
-            data.symbol_name.clone(),
-            data.public,
-            SymbolKind::Class {
-              type_param_count: data.type_params.len(),
-              builtin: false,
-            }
-          )
-          .map_err(|()| {
-            CompilationError::new_located(
-              &node.location,
-              format!("Symbol '{}' already exists", data.symbol_name.clone()),
-            )
-          })?;
+        scope.register_symbol(
+          data.symbol_name.clone(),
+          data.public,
+          SymbolKind::Class {
+            type_param_count: data.type_params.len(),
+            builtin: false,
+          }
+        );
 
         let class_scope_id = self.scope_arena.new_scope(attrs.scope_id);
 
@@ -137,21 +114,14 @@ impl<'compiler> Model<'compiler> {
       },
       Statement::FuncDecl(data) => {
         let scope = self.scope_arena.get_scope(attrs.scope_id);
-        scope
-          .register_symbol(
-            data.symbol_name.clone(),
-            data.public,
-            SymbolKind::Function {
-              type_param_count: data.type_params.len(),
-              call_param_count: data.call_params.len(),
-            }
-          )
-          .map_err(|()| {
-            CompilationError::new_located(
-              &node.location,
-              format!("Symbol '{}' already exists", data.symbol_name.clone()),
-            )
-          })?;
+        scope.register_symbol(
+          data.symbol_name.clone(),
+          data.public,
+          SymbolKind::Function {
+            type_param_count: data.type_params.len(),
+            call_param_count: data.call_params.len(),
+          }
+        );
 
         let func_scope_id = self.scope_arena.new_scope(attrs.scope_id);
 

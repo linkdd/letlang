@@ -28,7 +28,7 @@ impl<'compiler> Model<'compiler> {
               data.symbol_name.clone(),
               false,
               SymbolKind::Variable
-            ).unwrap();
+            );
           },
           Some((_, sym_type)) => {
             match sym_type {

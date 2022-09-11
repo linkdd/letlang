@@ -312,7 +312,7 @@ impl<'compiler> Model<'compiler> {
             loop_label_symbol_key,
             false,
             SymbolKind::Label,
-          ).unwrap();
+          );
         }
         else if let Some((_, SymbolKind::Label)) = loop_label_symbol {
         }

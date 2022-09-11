@@ -17,21 +17,11 @@ impl<'compiler> Model<'compiler> {
     let attrs = node.attrs.as_ref().unwrap();
     let scope = self.scope_arena.get_scope(attrs.scope_id);
 
-    scope
-      .register_symbol(
-        node.data.name.clone(),
-        false,
-        SymbolKind::TypeParameter { index: attrs.index }
-      )
-      .map_err(|()| {
-        CompilationError::new_located(
-          &node.location,
-          format!(
-            "Symbol '{}' already exists",
-            node.data.name.clone(),
-          ),
-        )
-      })?;
+    scope.register_symbol(
+      node.data.name.clone(),
+      false,
+      SymbolKind::TypeParameter { index: attrs.index }
+    );
 
     Ok(())
   }
@@ -40,21 +30,11 @@ impl<'compiler> Model<'compiler> {
     let attrs = node.attrs.as_ref().unwrap();
     let scope = self.scope_arena.get_scope(attrs.scope_id);
 
-    scope
-      .register_symbol(
-        node.data.param_name.clone(),
-        false,
-        SymbolKind::ConsParameter,
-      )
-      .map_err(|()| {
-        CompilationError::new_located(
-          &node.location,
-          format!(
-            "Symbol '{}' already exists",
-            node.data.param_name.clone(),
-          ),
-        )
-      })?;
+    scope.register_symbol(
+      node.data.param_name.clone(),
+      false,
+      SymbolKind::ConsParameter,
+    );
 
     node.data.param_type.attrs = Some(TypeRefAttributes {
       scope_id: attrs.scope_id,
@@ -66,18 +46,11 @@ impl<'compiler> Model<'compiler> {
     let attrs = node.attrs.as_ref().unwrap();
     let scope = self.scope_arena.get_scope(attrs.scope_id);
 
-    scope
-      .register_symbol(
-        node.data.param_name.clone(),
-        false,
-        SymbolKind::CallParameter { index: attrs.index }
-      )
-      .map_err(|()| {
-        CompilationError::new_located(
-          &node.location,
-          format!("Symbol '{}' already exists", node.data.param_name.clone()),
-        )
-      })?;
+    scope.register_symbol(
+      node.data.param_name.clone(),
+      false,
+      SymbolKind::CallParameter { index: attrs.index }
+    );
 
     node.data.param_type.attrs = Some(TypeRefAttributes {
       scope_id: attrs.scope_id,

@@ -31,43 +31,43 @@ impl<'compiler> Model<'compiler> {
               "boolean".to_string(),
               false,
               SymbolKind::Class { type_param_count: 0, builtin: true },
-            ).unwrap();
+            );
 
             scope.register_symbol(
               "number".to_string(),
               false,
               SymbolKind::Class { type_param_count: 0, builtin: true },
-            ).unwrap();
+            );
 
             scope.register_symbol(
               "int".to_string(),
               false,
               SymbolKind::Class { type_param_count: 0, builtin: true },
-            ).unwrap();
+            );
 
             scope.register_symbol(
               "string".to_string(),
               false,
               SymbolKind::Class { type_param_count: 0, builtin: true },
-            ).unwrap();
+            );
 
             scope.register_symbol(
               "atom".to_string(),
               false,
               SymbolKind::Class { type_param_count: 0, builtin: true },
-            ).unwrap();
+            );
 
             scope.register_symbol(
               "pid".to_string(),
               false,
               SymbolKind::Class { type_param_count: 0, builtin: true },
-            ).unwrap();
+            );
 
             scope.register_symbol(
               "list".to_string(),
               false,
               SymbolKind::Class { type_param_count: 1, builtin: true },
-            ).unwrap();
+            );
 
             node.attrs = Some(UnitAttributes {
               scope_id,

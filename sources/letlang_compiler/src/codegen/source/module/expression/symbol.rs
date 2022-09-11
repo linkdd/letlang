@@ -28,7 +28,7 @@ impl<'compiler> Generator<'compiler> {
     match symbol_kind {
       SymbolKind::Variable => {
         let symbol_name = symbol.name();
-        Ok(format!("locals.lookup_symbol(\"{symbol_name}\").unwrap().clone()"))
+        Ok(format!("helpers::assert_defined(&co, context.clone(), &mut locals, \"{symbol_name}\").await"))
       },
       SymbolKind::Function { .. } => {
         match symbol.scope() {

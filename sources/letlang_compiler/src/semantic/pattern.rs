@@ -15,44 +15,26 @@ impl<'compiler> Model<'compiler> {
     let attrs = node.attrs.as_ref().unwrap();
 
     match node.data.as_mut() {
-      Pattern::Symbol(symbol) => {
-        let sym = self.visit_symbol(symbol, attrs.scope_id)?;
-
-        match sym {
-          None => {
-            if symbol.scope().is_some() {
-              return Err(CompilationError::new_located(
-                &node.location,
-                format!("Unknown symbol '{}'", symbol.to_string()),
-              ));
-            }
-            else {
-              let scope = self.scope_arena.get_scope(attrs.scope_id);
-
-              scope.register_symbol(
-                symbol.to_string(),
-                false,
-                SymbolKind::Variable,
-              ).unwrap();
-            }
-          },
-          Some(sym_kind) => {
-            match sym_kind {
-              SymbolKind::Variable => {},
-              SymbolKind::Function { .. } => {},
-              SymbolKind::ConsParameter => {},
-              SymbolKind::CallParameter { .. } => {},
-              _ => {
-                return Err(CompilationError::new_located(
-                  &node.location,
-                  format!("Invalid symbol '{}' in this context", symbol.to_string()),
-                ));
-              }
-            }
-          }
+      Pattern::Assign(symbol) => {
+        if symbol.scope().is_some() {
+          unreachable!("\
+            The parser does not allow scoped symbols in this context\
+          ");
         }
 
+        let scope = self.scope_arena.get_scope(attrs.scope_id);
+
+        scope.register_symbol(
+          symbol.to_string(),
+          false,
+          SymbolKind::Variable,
+        ).unwrap();
+
         Ok(())
+      },
+      Pattern::Value(expr) => {
+        expr.attrs = Some(ExpressionAttributes { scope_id: attrs.scope_id });
+        self.visit_expression(expr)
       },
       Pattern::Literal(literal_node) => {
         literal_node.attrs = Some(());

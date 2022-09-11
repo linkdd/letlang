@@ -11,11 +11,9 @@ impl<'compiler> Generator<'compiler> {
     &self,
     node: &Node<Pattern>,
   ) -> CompilationResult<String> {
-    let attrs = node.attrs.as_ref().unwrap();
-
     match node.data.as_ref() {
-      Pattern::Symbol(sym) => {
-        self.gen_pattern_symbol(sym, attrs.scope_id)
+      Pattern::Assign(sym) => {
+        self.gen_pattern_assign(sym)
       },
       Pattern::Literal(lit) => {
         self.gen_pattern_value(lit)
@@ -30,6 +28,6 @@ impl<'compiler> Generator<'compiler> {
   }
 }
 
-mod symbol;
+mod assign;
 mod value;
 mod tuple;

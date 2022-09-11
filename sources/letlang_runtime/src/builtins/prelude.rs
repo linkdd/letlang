@@ -11,6 +11,7 @@ pub enum OperationError {
   MatchError { value: String },
   CallParamCountError { expected: usize, got: usize },
   DivisionByZero,
+  OperationNotSupported,
 }
 
 unsafe impl Sync for OperationError {}
@@ -27,13 +28,19 @@ impl OperationError {
           atom_table.from_repr("@type_error")
         }.await;
 
+        let unexpected_atom = async {
+          let context_ref = context.lock().await;
+          let atom_table = context_ref.atom_table.lock().unwrap();
+          atom_table.from_repr("@unexpected")
+        }.await;
+
         Value::Tuple(Box::new([
           Value::Atom(type_error_atom),
-          Value::String(format!(
-            "expected type {}, got value {}",
-            expected,
-            got,
-          )),
+          Value::Tuple(Box::new([
+            Value::Atom(unexpected_atom),
+            Value::String(expected.clone()),
+            Value::String(got.clone()),
+          ])),
         ]))
       },
       Self::MatchError { value } => {
@@ -45,10 +52,7 @@ impl OperationError {
 
         Value::Tuple(Box::new([
           Value::Atom(match_error_atom),
-          Value::String(format!(
-            "no match on lefthand side for {}",
-            value,
-          )),
+          Value::String(value.clone()),
         ]))
       },
       Self::CallParamCountError { expected, got } => {
@@ -58,13 +62,19 @@ impl OperationError {
           atom_table.from_repr("@type_error")
         }.await;
 
+        let arity_atom = async {
+          let context_ref = context.lock().await;
+          let atom_table = context_ref.atom_table.lock().unwrap();
+          atom_table.from_repr("@arity")
+        }.await;
+
         Value::Tuple(Box::new([
           Value::Atom(type_error_atom),
-          Value::String(format!(
-            "expected {} arguments, got {}",
-            expected,
-            got,
-          )),
+          Value::Tuple(Box::new([
+            Value::Atom(arity_atom),
+            Value::String(format!("{expected}")),
+            Value::String(format!("{got}")),
+          ])),
         ]))
       },
       Self::DivisionByZero => {
@@ -83,6 +93,24 @@ impl OperationError {
         Value::Tuple(Box::new([
           Value::Atom(error_atom),
           Value::Atom(division_by_zero_atom),
+        ]))
+      },
+      Self::OperationNotSupported => {
+        let type_error_atom = async {
+          let context_ref = context.lock().await;
+          let atom_table = context_ref.atom_table.lock().unwrap();
+          atom_table.from_repr("@type_error")
+        }.await;
+
+        let operation_not_supported_atom = async {
+          let context_ref = context.lock().await;
+          let atom_table = context_ref.atom_table.lock().unwrap();
+          atom_table.from_repr("@operation_not_supported")
+        }.await;
+
+        Value::Tuple(Box::new([
+          Value::Atom(type_error_atom),
+          Value::Atom(operation_not_supported_atom),
         ]))
       }
     }

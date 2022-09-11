@@ -20,7 +20,7 @@ The most simple example is to bind a single value to a single variable:
 
 ```letlang
 a := 1;  # a is now bound to the value 1
-a := 2;  # a is already bound, 1 does not match 2, an error occurs
+a := 2;  # a is now bound to the value 2
 ```
 
 But we can also bind multiple variables at once using **tuples**:
@@ -57,4 +57,11 @@ Because the match operator returns the right-hand side value, it can be chained:
 
 ```letlang
 (a, 2) := (1, b) := (1, 2);  # a is bound to 1, and b is bound to 2
+```
+
+We can also match against an expression using `$()`:
+
+```letlang
+a := 1;
+(@ok, $(a + 1)) := (@ok, 2);
 ```

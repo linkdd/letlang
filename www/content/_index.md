@@ -227,20 +227,25 @@ an **exited** signal is sent to every linked process.
 
 ```letlang
 a := 1;
-a := 2; # error
+# rebinding to a new value
+# does not mutate the previous value
+a := 2;
 ```
 
 ```letlang
+a := 1;
+
 do {
-  a := 1;
-  # a goes out of scope and is freed
+  a := 2;
+  # this binding goes out of scope
 };
 
-a := 2; # works
+# a equals 1
 ```
 
 {{< center >}}
-Once bound to a value, variables cannot be reassigned a new value. There is not
+Variables are bound to values during the lifetime of a scope. They can be
+rebound to new values, but the previous value is not mutated. There is no
 mutable state, let alone **shared** mutable state.
 
 **Letlang** relies on Rust's ownership semantics to free the memory when objects

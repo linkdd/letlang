@@ -155,6 +155,9 @@ pub enum Token {
   #[token("!")]
   Negation,
 
+  #[token("$")]
+  Dollar,
+
   // operators
   #[token(":=")]
   OperatorAssign,

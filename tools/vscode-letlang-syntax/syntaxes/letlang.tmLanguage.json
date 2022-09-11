@@ -111,7 +111,7 @@
 			"patterns": [
 				{
 					"name": "keyword.other.letlang",
-					"match": "\\;|\\=\\>|\\-\\>|\\,|\\:|\\:\\:|\\:\\="
+					"match": "\\;|\\=\\>|\\-\\>|\\,|\\:|\\:\\:|\\:\\=|\\$"
 				},
 				{
 					"name": "keyword.operator.letlang",

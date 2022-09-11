@@ -1,0 +1,44 @@
+{
+  struct constraint_{{ symbol }};
+
+  #[async_trait]
+  impl Constraint for constraint_{{ symbol }} {
+    async fn check(
+      &self,
+      co: &FunctionCoroutine,
+      context: Arc<Mutex<TaskContext>>,
+      locals: &mut Locals,
+    ) -> bool {
+      match locals.lookup_symbol("{{ symbol }}") {
+        None => true,
+        Some(val) => {
+          let lltype = {{ type_code }};
+
+          helpers::assert_type(
+            co,
+            context.clone(),
+            &lltype,
+            val,
+          ).await;
+
+          let mut valid = true;
+
+          {% for check in checks %}
+            valid &= async {
+              let res = {{ check }};
+              res == Value::Boolean(true)
+            }.await;
+
+            if !valid {
+              return false;
+            }
+          {% endfor %}
+
+          return true;
+        }
+      }
+    }
+  }
+
+  locals.register_constraint(Box::new(constraint_{{ symbol }} {}));
+}

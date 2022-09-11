@@ -41,6 +41,7 @@
             &paramtype_{{ loop.index0 }},
             &paramval_{{ loop.index0 }},
           ).await;
+          locals.register_symbol("$param${{ loop.index0 }}", paramval_{{ loop.index0 }}.clone());
         {% endfor %}
 
         let return_type = {{ return_type }};

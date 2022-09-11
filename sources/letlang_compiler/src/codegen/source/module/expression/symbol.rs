@@ -28,7 +28,7 @@ impl<'compiler> Generator<'compiler> {
     match symbol_kind {
       SymbolKind::Variable => {
         let symbol_name = symbol.name();
-        Ok(format!("locals.lookup_symbol(\"{symbol_name}\").unwrap()"))
+        Ok(format!("locals.lookup_symbol(\"{symbol_name}\").unwrap().clone()"))
       },
       SymbolKind::Function { .. } => {
         match symbol.scope() {
@@ -48,7 +48,7 @@ impl<'compiler> Generator<'compiler> {
         todo!();
       },
       SymbolKind::CallParameter { index } => {
-        Ok(format!("paramval_{index}.clone()"))
+        Ok(format!("locals.lookup_symbol(\"$param${index}\").unwrap().clone()"))
       },
       _ => {
         unreachable!("\

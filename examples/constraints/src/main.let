@@ -9,5 +9,5 @@ pub func main() -> @ok {
   a := 0;
   b := 1;
 
-  let b: number { b > 2 };
+  let b: number { b < 2 };
 }

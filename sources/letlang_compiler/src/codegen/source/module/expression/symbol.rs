@@ -11,7 +11,7 @@ use letlang_ast::{
 impl<'compiler> Generator<'compiler> {
   pub fn gen_symbol(
     &self,
-    location: &LocationInfo,
+    _location: &LocationInfo,
     symbol: &Symbol,
     local_scope_id: usize,
   ) -> CompilationResult<String> {
@@ -30,18 +30,25 @@ impl<'compiler> Generator<'compiler> {
         let symbol_name = symbol.name();
         Ok(format!("helpers::assert_defined(&co, context.clone(), &mut locals, \"{symbol_name}\").await"))
       },
-      SymbolKind::Function { .. } => {
-        match symbol.scope() {
+      SymbolKind::Function { type_param_count, .. } => {
+        let func_path = match symbol.scope() {
           None => {
             let symbol_name = symbol.name();
-            Ok(format!("symbol_{symbol_name}::func_{symbol_name} {{}}"))
+            format!("symbol_{symbol_name}::func_{symbol_name}")
           },
           Some(module_scope) => {
             let crate_name = format!("lldep_{}", module_scope.replace("::", "_"));
             let symbol_name = symbol.name();
 
-            Ok(format!("{crate_name}::symbol_{symbol_name}::func_{symbol_name} {{}}"))
+            format!("{crate_name}::symbol_{symbol_name}::func_{symbol_name}")
           }
+        };
+
+        if type_param_count > 0 {
+          Ok(func_path)
+        }
+        else {
+          Ok(format!("{func_path}::new()"))
         }
       },
       SymbolKind::ConsParameter => {

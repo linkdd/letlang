@@ -10,6 +10,20 @@
     {% endfor %}
   }
 
+  impl func_{{ symbol_name }} {
+    pub fn new(
+      {% for type_param in type_params %}
+        {{ type_param }}: Box<dyn Type>,
+      {% endfor %}
+    ) -> Self {
+      Self {
+        {% for type_param in type_params %}
+          {{ type_param }},
+        {% endfor %}
+      }
+    }
+  }
+
   impl Function for func_{{ symbol_name }} {
     fn call(
       &self,

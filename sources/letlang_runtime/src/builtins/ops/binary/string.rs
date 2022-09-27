@@ -22,18 +22,24 @@ pub async fn str_concat(
     ) => {
       Value::String(format!("{}{}", a, b))
     },
+    (
+      Value::String(a),
+      _,
+    ) => {
+      Value::String(format!("{}{}", a, b.to_string(context.clone()).await))
+    },
+    (
+      _,
+      Value::String(b),
+    ) => {
+      Value::String(format!("{}{}", a.to_string(context.clone()).await, b))
+    },
     _ => {
-      let err = OperationError::TypeError {
-        expected: "(string, string)".to_string(),
-        got: format!(
-          "({}, {})",
-          a.to_string(context.clone()).await,
-          b.to_string(context.clone()).await,
-        )
-      };
-      let exc = err.to_letlang_value(context.clone()).await;
-      co.yield_(FunctionInterruption::Exception(exc)).await;
-      unreachable!();
+      Value::String(format!(
+        "{}{}",
+        a.to_string(context.clone()).await,
+        b.to_string(context.clone()).await,
+      ))
     }
   }
 }

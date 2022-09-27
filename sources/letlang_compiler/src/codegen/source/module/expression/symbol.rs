@@ -45,7 +45,7 @@ impl<'compiler> Generator<'compiler> {
         }
       },
       SymbolKind::ConsParameter => {
-        todo!();
+        Ok("llval.clone()".to_string())
       },
       SymbolKind::CallParameter { index } => {
         Ok(format!("locals.lookup_symbol(\"$param${index}\").unwrap().clone()"))

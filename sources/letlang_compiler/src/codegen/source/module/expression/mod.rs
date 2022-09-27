@@ -33,6 +33,9 @@ impl<'compiler> Generator<'compiler> {
       Expression::FlowMatch(data) => {
         self.gen_flow_match(&node.location, data)
       },
+      Expression::FlowConditional(data) => {
+        self.gen_flow_cond(&node.location, data)
+      },
       _ => {
         todo!();
       }
@@ -47,3 +50,4 @@ mod effect;
 mod binop;
 mod pattern;
 mod flow_match;
+mod flow_cond;

@@ -30,6 +30,9 @@ impl<'compiler> Generator<'compiler> {
       Expression::PatternMatch(data) => {
         self.gen_pattern_match(&node.location, data)
       },
+      Expression::FlowMatch(data) => {
+        self.gen_flow_match(&node.location, data)
+      },
       _ => {
         todo!();
       }
@@ -43,3 +46,4 @@ mod function;
 mod effect;
 mod binop;
 mod pattern;
+mod flow_match;

@@ -1,0 +1,57 @@
+#[allow(non_snake_case)]
+{% if public %}pub{% else %}pub(crate){% endif %} mod symbol_{{ symbol_name }} {
+  use super::*;
+
+  #[allow(non_camel_case_types)]
+  #[derive(Debug, Clone, PartialEq)]
+  pub struct class_{{ symbol_name }} {
+    {% for type_param in type_params %}
+      {{ type_param }}: Box<dyn Type>,
+    {% endfor %}
+  }
+
+  impl class_{{ symbol_name }} {
+    pub fn new(
+      {% for type_param in type_params %}
+        {{ type_param }}: Box<dyn Type>,
+      {% endfor %}
+    ) -> Self {
+      Self {
+        {% for type_param in type_params %}
+          {{ type_param }},
+        {% endfor %}
+      }
+    }
+  }
+
+  #[async_trait]
+  impl Type for class_{{ symbol_name }} {
+    async fn to_string(&self, _context: Arc<Mutex<TaskContext>>) -> String {
+      "{{ symbol_name }}".to_string()
+    }
+
+    async fn has(&self, context: Arc<Mutex<TaskContext>>, co: &FunctionCoroutine, llval: &Value) -> bool {
+      let cons_param_type = {{ cons_param }};
+
+      if cons_param_type.has(context.clone(), co, llval).await {
+        {% if constraints.len() == 0 %}
+          true
+        {% else %}
+          let true_type = ValueType { llval: Value::Boolean(true) };
+
+          {% for constraint in constraints %}
+            {% if loop.last %}
+              let result = {{ constraint }};
+              true_type.has(context.clone(), co, &result).await
+            {% else %}
+              {{ constraint }}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      }
+      else {
+        false
+      }
+    }
+  }
+}

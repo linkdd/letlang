@@ -15,6 +15,9 @@ impl<'compiler> Generator<'compiler> {
       Statement::EffectDecl(data) => {
         self.gen_statement_effect(&node.location, data)
       },
+      Statement::ClassDecl(data) => {
+        self.gen_statement_class(&node.location, data)
+      },
       _ => todo!()
     }
   }
@@ -23,3 +26,4 @@ impl<'compiler> Generator<'compiler> {
 mod import;
 mod function;
 mod effect;
+mod class;

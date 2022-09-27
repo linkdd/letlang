@@ -1,7 +1,6 @@
-use crate::builtins::prelude::*;
 use crate::repr::Value;
 use crate::core::{
-  function::{FunctionCoroutine, FunctionInterruption},
+  function::FunctionCoroutine,
   context::TaskContext,
 };
 
@@ -11,7 +10,7 @@ use tokio::sync::Mutex;
 
 pub async fn str_concat(
   context: Arc<Mutex<TaskContext>>,
-  co: &FunctionCoroutine,
+  _co: &FunctionCoroutine,
   a: &Value,
   b: &Value,
 ) -> Value {

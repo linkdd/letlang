@@ -16,6 +16,7 @@ pub use crate::{
     types::Type,
     effect::Effect,
     constraint::Constraint,
+    pattern::Pattern,
     context::TaskContext,
     utils::{
       AtomTable,
@@ -23,6 +24,7 @@ pub use crate::{
     },
   },
   builtins::{
+    prelude::*,
     types::*,
     patterns::*,
     ops,

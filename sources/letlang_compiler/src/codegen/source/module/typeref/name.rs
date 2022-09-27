@@ -30,7 +30,7 @@ impl<'compiler> Generator<'compiler> {
         Ok(self.gen_builtin_class(data, type_param_count))
       },
       SymbolKind::Class { type_param_count, builtin: false } => {
-        todo!();
+        self.gen_custom_class(data, type_param_count)
       },
       SymbolKind::TypeParameter { index } => {
         todo!();
@@ -75,5 +75,31 @@ impl<'compiler> Generator<'compiler> {
         ");
       }
     }
+  }
+
+  fn gen_custom_class(
+    &self,
+    data: &TypeName,
+    type_param_count: usize,
+  ) -> CompilationResult<String> {
+    let mut type_params = vec![];
+
+    for type_param_node in data.type_params.iter() {
+      type_params.push(self.gen_typeref(type_param_node)?);
+    }
+
+    let class_path = match data.symbol.scope() {
+      None => {
+        let class_name = data.symbol.name();
+        format!("symbol_{class_name}::class_{class_name}")
+      },
+      Some(module_scope) => {
+        let crate_name = format!("lldep_{}", module_scope.replace("::", "_"));
+        let class_name = data.symbol.name();
+        format!("{crate_name}::symbol_{class_name}::class_{class_name}")
+      }
+    };
+
+    Ok(format!("{class_path}::new({})", type_params.join(",\n")))
   }
 }

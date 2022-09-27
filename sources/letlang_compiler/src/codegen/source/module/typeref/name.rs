@@ -2,11 +2,7 @@ use crate::prelude::*;
 use crate::scope::*;
 pub use super::Generator;
 
-use letlang_ast::{
-  *,
-  types::*,
-  expression::*,
-};
+use letlang_ast::types::*;
 
 
 impl<'compiler> Generator<'compiler> {
@@ -26,13 +22,13 @@ impl<'compiler> Generator<'compiler> {
     ).unwrap();
 
     match type_sym {
-      SymbolKind::Class { type_param_count, builtin: true } => {
-        Ok(self.gen_builtin_class(data, type_param_count))
+      SymbolKind::Class { builtin: true, .. } => {
+        Ok(self.gen_builtin_class(data))
       },
-      SymbolKind::Class { type_param_count, builtin: false } => {
-        self.gen_custom_class(data, type_param_count)
+      SymbolKind::Class { builtin: false, .. } => {
+        self.gen_custom_class(data)
       },
-      SymbolKind::TypeParameter { index } => {
+      SymbolKind::TypeParameter { .. } => {
         todo!();
       },
       _ => {
@@ -47,7 +43,6 @@ impl<'compiler> Generator<'compiler> {
   fn gen_builtin_class(
     &self,
     data: &TypeName,
-    type_param_count: usize,
   ) -> String {
     match data.symbol.name().as_str() {
       "boolean" => {
@@ -80,7 +75,6 @@ impl<'compiler> Generator<'compiler> {
   fn gen_custom_class(
     &self,
     data: &TypeName,
-    type_param_count: usize,
   ) -> CompilationResult<String> {
     let mut type_params = vec![];
 

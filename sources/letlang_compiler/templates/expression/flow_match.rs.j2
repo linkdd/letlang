@@ -7,6 +7,10 @@ async {
   {% for case in cases %}
     {% if loop.first %}
       if clause_{{ loop.index }}.match_(context.clone(), &mut locals, &val).await.is_ok() {
+        #[allow(unused_variables)]
+        #[allow(unused_mut)]
+        let mut locals = Locals::new(Some(&locals));
+
         {% for proposition in case.branch %}
           {% if loop.last %}
             {{ proposition }}
@@ -17,6 +21,10 @@ async {
       }
     {% else %}
       else if clause_{{ loop.index }}.match_(context.clone(), &mut locals, &val).await.is_ok() {
+        #[allow(unused_variables)]
+        #[allow(unused_mut)]
+        let mut locals = Locals::new(Some(&locals));
+
         {% for proposition in case.branch %}
           {% if loop.last %}
             {{ proposition }}

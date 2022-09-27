@@ -624,7 +624,7 @@ peg::parser!{
       = l:position!()
         [Token::KeywordCond]
         [Token::CurlyBracketBegin]
-        cases:(expression_term_conditional_case() ++ [Token::Comma])
+        cases:(expression_term_conditional_case() ++ [Token::Comma]) [Token::Comma]
         else_case:expression_term_conditional_else_case() [Token::Comma]?
         [Token::CurlyBracketEnd]
         r:position!()

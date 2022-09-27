@@ -1,0 +1,33 @@
+module fizzbuzz::main;
+
+import std::io;
+
+func fizzbuzz(n: int, limit: int) -> @ok {
+  cond {
+    n < limit => {
+      cond {
+        n % 3 = 0 and n % 5 = 0 => {
+          std::io::println("fizz buzz");
+        },
+        n % 3 = 0 => {
+          std::io::println("fizz");
+        },
+        n % 5 = 0 => {
+          std::io::println("buzz");
+        },
+        else => {
+          std::io::println("" <> n);
+        },
+      };
+
+      fizzbuzz(n + 1, limit);
+    },
+    else => {
+      @ok;
+    }
+  };
+}
+
+pub func main() -> @ok {
+  @ok := fizzbuzz(1, 25);
+}

@@ -18,7 +18,6 @@ impl<'compiler> Generator<'compiler> {
       Statement::ClassDecl(data) => {
         self.gen_statement_class(&node.location, data)
       },
-      _ => todo!()
     }
   }
 }

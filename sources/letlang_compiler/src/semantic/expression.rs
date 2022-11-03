@@ -15,7 +15,6 @@ use letlang_ast::{
 impl<'compiler> Model<'compiler> {
   pub fn visit_expression(&mut self, node: &mut Node<Expression>) -> CompilationResult<()> {
     let attrs = node.attrs.as_ref().unwrap();
-    let scope = self.scope_arena.get_scope(attrs.scope_id);
 
     match node.data.as_mut() {
       Expression::Symbol(symbol) => {
@@ -297,59 +296,21 @@ impl<'compiler> Model<'compiler> {
         self.visit_expression(&mut data.rhs)?;
         Ok(())
       },
-      Expression::Loop(data) => {
-        let loop_scope_id = self.scope_arena.new_scope(attrs.scope_id);
-        let loop_scope = self.scope_arena.get_scope(loop_scope_id);
-
-        let loop_label_symbol_key = format!("$loop${}", data.label);
-        let loop_label_symbol = loop_scope.lookup_symbol(
-          &self.scope_arena,
-          &loop_label_symbol_key,
-        );
-
-        if loop_label_symbol.is_none() {
-          loop_scope.register_symbol(
-            loop_label_symbol_key,
-            false,
-            SymbolKind::Label,
-          );
-        }
-        else if let Some((_, SymbolKind::Label)) = loop_label_symbol {
-        }
-        else {
-          return Err(CompilationError::new_located(
-            &node.location,
-            format!("Loop label '{}' already exists", data.label),
-          ));
-        }
-
-        for proposition in data.body.iter_mut() {
-          proposition.attrs = Some(PropositionAttributes {
-            scope_id: loop_scope_id,
-          });
-          self.visit_proposition(proposition)?;
-        }
-
-        Ok(())
-      },
-      Expression::Break(data) => {
-        let loop_label_symbol_key = format!("$loop${}", data.label);
-        let loop_label_symbol = scope.lookup_symbol(
-          &self.scope_arena,
-          &loop_label_symbol_key,
-        );
-
-        if loop_label_symbol.is_none() {
-          return Err(CompilationError::new_located(
-            &node.location,
-            format!("Unknown loop label '{}'", data.label),
-          ));
-        }
-
+      Expression::TailRecFinal(data) => {
         data.value.attrs = Some(ExpressionAttributes {
           scope_id: attrs.scope_id,
         });
         self.visit_expression(&mut data.value)
+      },
+      Expression::TailRecRecurse(data) => {
+        for arg_node in data.args.iter_mut() {
+          arg_node.attrs = Some(ExpressionAttributes {
+            scope_id: attrs.scope_id,
+          });
+          self.visit_expression(arg_node)?;
+        }
+
+        Ok(())
       },
       Expression::FlowMatch(data) => {
         data.expr.attrs = Some(ExpressionAttributes {

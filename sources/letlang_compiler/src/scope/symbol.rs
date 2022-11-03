@@ -8,5 +8,4 @@ pub enum SymbolKind {
   ConsParameter,
   CallParameter { index: usize },
   Variable,
-  Label,
 }

@@ -30,6 +30,12 @@ impl<'compiler> Generator<'compiler> {
       Expression::PatternMatch(data) => {
         self.gen_pattern_match(&node.location, data)
       },
+      Expression::TailRecFinal(data) => {
+        self.gen_tailrec_final(data)
+      },
+      Expression::TailRecRecurse(data) => {
+        self.gen_tailrec_recurse(&node.location, data)
+      },
       Expression::FlowMatch(data) => {
         self.gen_flow_match(&node.location, data)
       },
@@ -49,5 +55,6 @@ mod function;
 mod effect;
 mod binop;
 mod pattern;
+mod tailrec;
 mod flow_match;
 mod flow_cond;

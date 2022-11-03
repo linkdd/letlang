@@ -2,9 +2,9 @@ module fizzbuzz::main;
 
 import std::io;
 
-func fizzbuzz(n: int, limit: int) -> @ok {
+tailrec fizzbuzz(n: int) -> @ok {
   cond {
-    n < limit => {
+    n < 1000 => {
       cond {
         n % 3 = 0 and n % 5 = 0 => {
           std::io::println("fizz buzz");
@@ -20,14 +20,14 @@ func fizzbuzz(n: int, limit: int) -> @ok {
         },
       };
 
-      fizzbuzz(n + 1, limit);
+      recurse[n + 1];
     },
     else => {
-      @ok;
+      final[@ok];
     }
   };
 }
 
 pub func main() -> @ok {
-  @ok := fizzbuzz(1, 25);
+  @ok := fizzbuzz(0);
 }

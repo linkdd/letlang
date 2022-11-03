@@ -7,62 +7,46 @@ next: /book/chapter-3/3-side-effects
 
 # Introduction
 
-Letlang provides only one loop mechanism, the `loop` expression.
+Letlang provides only one loop mechanism, the `tailrec` functions.
 
-A `loop` expression will loop indefinitely until a `break` expression is met.
+A tail recursive function returns either:
 
-`loop` expressions are labelled, and the `break` expression provides the label
-of the loop it is breaking out of, as well as the value to return.
+ - `final[value]` to exit the loop
+ - `recurse[args...]` to keep iterating with new arguments
 
 **Syntax:**
 
+
 ```bnf
-<loop-expression> :=
-    "loop" "(" <identifier> ")" "{"
+<tailrec-statement> :=
+    [ "pub" ] "tailrec" <identifier>
+    [ <tailrec-type-params> ]
+    "(" [ <tailrec-call-params> ] ")"
+    "->" <type-ref> "{"
     <proposition>+
     "}"
     ;
 
-<break-expression> :=
-    "break" "(" <identifier> ")" <expression>
+<tailrec-type-params> :=
+    "<" <identifier> ("," <identifier>)* ">"
+    ;
+
+<tailrec-call-params> :=
+    <tailrec-call-param> ("," <tailrec-call-param>)*
+    ;
+
+<tailrec-call-param> :=
+    <identifier> ":" <type-ref>
     ;
 ```
 
-# Examples
-
-Simple loop with only one iteration:
+# Example
 
 ```letlang
-42 := loop(simple) {
-  # do stuff
-
-  break(simple) 42;
-};
-```
-
-Simple loop iterating until a condition is met:
-
-```letlang
-42 := loop(simple) {
-  # do stuff
-
-  @ok := cond {
-    check_condition() => {
-      break(simple) 42;
-    },
-    else => {
-      @ok;
-    }
+tailrec len<T>(items: list<T>, acc: int) -> int {
+  match items {
+    [] => final[acc],
+    [_ | tail] => recurse[tail, acc + 1],
   };
-};
-```
-
-Breaking out of nested loop:
-
-```letlang
-42 := loop(outer) {
-  loop(inner) {
-    break(outer) 42;
-  };
-};
+}
 ```

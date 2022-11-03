@@ -11,7 +11,7 @@ pub use self::{
   import::ImportStatement,
   effect::EffectDeclStatement,
   class::ClassDeclStatement,
-  func::FuncDeclStatement,
+  func::{FuncDeclStatement, TailRecFuncDeclStatement},
   proposition::{Proposition, PropositionAttributes, Constraint},
 };
 
@@ -22,6 +22,7 @@ pub enum Statement {
   EffectDecl(EffectDeclStatement),
   ClassDecl(ClassDeclStatement),
   FuncDecl(FuncDeclStatement),
+  TailRecFuncDecl(TailRecFuncDeclStatement),
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -78,6 +79,24 @@ impl Statement {
     body: Vec<Node<Proposition>>,
   ) -> Box<Self> {
     Box::new(Self::FuncDecl(FuncDeclStatement {
+      public,
+      symbol_name,
+      type_params,
+      call_params,
+      return_type,
+      body,
+    }))
+  }
+
+  pub fn tailrec_function(
+    public: bool,
+    symbol_name: String,
+    type_params: Vec<Node<TypeParam>>,
+    call_params: Vec<Node<CallParam>>,
+    return_type: Node<TypeRef>,
+    body: Vec<Node<Proposition>>,
+  ) -> Box<Self> {
+    Box::new(Self::TailRecFuncDecl(TailRecFuncDeclStatement {
       public,
       symbol_name,
       type_params,

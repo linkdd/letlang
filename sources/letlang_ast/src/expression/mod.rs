@@ -5,6 +5,7 @@ mod calls;
 mod operators;
 mod pattern;
 mod controlflow;
+mod tailrec;
 mod messaging;
 
 pub use self::{
@@ -37,10 +38,12 @@ pub use self::{
     ListHeadTailPattern,
   },
   controlflow::{
-    Loop,
-    Break,
     FlowMatch,
     FlowConditional,
+  },
+  tailrec::{
+    TailRecFinal,
+    TailRecRecurse,
   },
   messaging::Receive,
 };
@@ -64,8 +67,8 @@ pub enum Expression {
   UnaryOperation(UnaryOperation),
   BinaryOperation(BinaryOperation),
   PatternMatch(PatternMatch),
-  Loop(Loop),
-  Break(Break),
+  TailRecFinal(TailRecFinal),
+  TailRecRecurse(TailRecRecurse),
   FlowMatch(FlowMatch),
   FlowConditional(FlowConditional),
   Receive(Receive),

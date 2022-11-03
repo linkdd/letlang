@@ -5,7 +5,7 @@ pub async fn assert_defined<'scope>(
   co: &FunctionCoroutine,
   context: Arc<Mutex<TaskContext>>,
   locals: &mut Locals<'scope>,
-  symbol: &'static str,
+  symbol: &str,
 ) -> Value {
   match locals.lookup_symbol(symbol) {
     None => {

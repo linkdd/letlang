@@ -5,7 +5,7 @@ use std::collections::HashMap;
 
 
 pub struct Locals<'scope> {
-  variables: HashMap<&'static str, Value>,
+  variables: HashMap<String, Value>,
   constraints: Vec<Box<dyn Constraint>>,
   parent_scope: Option<&'scope Locals<'scope>>
 }
@@ -19,15 +19,15 @@ impl<'scope> Locals<'scope> {
     }
   }
 
-  pub fn register_symbol(&mut self, symbol_name: &'static str, symbol_val: Value) {
-    self.variables.insert(symbol_name, symbol_val);
+  pub fn register_symbol(&mut self, symbol_name: &str, symbol_val: Value) {
+    self.variables.insert(symbol_name.to_string(), symbol_val);
   }
 
   pub fn register_constraint(&mut self, constraint: Box<dyn Constraint>) {
     self.constraints.push(constraint);
   }
 
-  pub fn lookup_symbol(&self, symbol_name: &'static str) -> Option<&Value> {
+  pub fn lookup_symbol(&self, symbol_name: &str) -> Option<&Value> {
     match self.variables.get(symbol_name) {
       None => {
         match self.parent_scope {

@@ -18,6 +18,9 @@ pub enum Value {
   List(Vec<Value>),
   Struct(HashMap<String, Value>),
 
+  TailRecFinal(Box<Value>),
+  TailRecRecurse(Vec<Value>),
+
   Pid(Pid),
 }
 
@@ -64,7 +67,21 @@ impl Value {
 
         format!("{{{}}}", entries.join(", "))
       },
-      Value::Pid(val) => format!("{:?}", val),
+      Value::Pid(val) => {
+        format!("{:?}", val)
+      },
+      Value::TailRecFinal(value) => {
+        format!("final[{}]", value.to_string(context.clone()).await)
+      },
+      Value::TailRecRecurse(args) => {
+        let mut items = vec![];
+
+        for item in args.iter() {
+          items.push(item.to_string(context.clone()).await);
+        }
+
+        format!("recurse[{}]", items.join(", "))
+      }
     }
   }
 }

@@ -27,6 +27,7 @@ peg::parser!{
       / statement_effect()
       / statement_class()
       / statement_function()
+      / statement_tailrec_function()
 
     /* #region Import */
     rule statement_import() -> Node<ast::Statement>
@@ -131,6 +132,31 @@ peg::parser!{
         Node::new(
           (l, r),
           ast::Statement::function(
+            public.is_some(),
+            name,
+            type_params.unwrap_or(vec![]),
+            call_params,
+            return_type,
+            body
+          )
+        )
+      }
+    /* #endregion */
+
+    /* #region Tail Recursion Function Declaration */
+    rule statement_tailrec_function() -> Node<ast::Statement>
+      = l:position!()
+          public:[Token::KeywordPublic]?
+          [Token::KeywordTailRec] name:identifier()
+          type_params:type_params_template()?
+          [Token::ParenthesisBegin] call_params:call_params() [Token::ParenthesisEnd]
+          [Token::Arrow] return_type:type_ref()
+          [Token::CurlyBracketBegin] body:proposition()+ [Token::CurlyBracketEnd]
+        r:position!()
+      {
+        Node::new(
+          (l, r),
+          ast::Statement::tailrec_function(
             public.is_some(),
             name,
             type_params.unwrap_or(vec![]),
@@ -470,8 +496,8 @@ peg::parser!{
       / expression_term_symbol()
       / expression_term_effect_call()
       / expression_term_spawn_call()
-      / expression_term_loop()
-      / expression_term_break()
+      / expression_term_tailrec_final()
+      / expression_term_tailrec_recurse()
       / expression_term_match()
       / expression_term_conditional()
       / expression_term_receive()
@@ -557,32 +583,33 @@ peg::parser!{
       }
     /* #endregion */
 
-    /* #region Loop */
-    rule expression_term_loop() -> Node<ast::expression::Expression>
+    /* #region Tail Recursion Actions */
+    rule expression_term_tailrec_final() -> Node<ast::expression::Expression>
       = l:position!()
-        [Token::KeywordLoop]
-        [Token::ParenthesisBegin] label:identifier() [Token::ParenthesisEnd]
-        [Token::CurlyBracketBegin] body:proposition()+ [Token::CurlyBracketEnd]
+        [Token::KeywordFinal]
+        [Token::BracketBegin] value:expression() [Token::BracketEnd]
         r:position!()
       {
         Node::new(
           (l, r),
-          ast::expression::Expression::loop_block(label, body)
+          ast::expression::Expression::tailrec_final(value)
         )
       }
 
-    rule expression_term_break() -> Node<ast::expression::Expression>
+    rule expression_term_tailrec_recurse() -> Node<ast::expression::Expression>
       = l:position!()
-        [Token::KeywordBreak]
-        [Token::ParenthesisBegin] label:identifier() [Token::ParenthesisEnd]
-        value:expression()
+        [Token::KeywordRecurse]
+        [Token::BracketBegin]
+        args:(expression() ** [Token::Comma]) [Token::Comma]?
+        [Token::BracketEnd]
         r:position!()
       {
         Node::new(
           (l, r),
-          ast::expression::Expression::loop_break(label, value)
+          ast::expression::Expression::tailrec_recurse(args)
         )
       }
+
     /* #endregion */
 
     /* #region Match */

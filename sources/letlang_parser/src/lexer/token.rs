@@ -69,6 +69,15 @@ pub enum Token {
   #[token("func")]
   KeywordFunction,
 
+  #[token("tailrec")]
+  KeywordTailRec,
+
+  #[token("final")]
+  KeywordFinal,
+
+  #[token("recurse")]
+  KeywordRecurse,
+
   #[token("pub")]
   KeywordPublic,
 
@@ -107,12 +116,6 @@ pub enum Token {
 
   #[token("match")]
   KeywordMatch,
-
-  #[token("loop")]
-  KeywordLoop,
-
-  #[token("break")]
-  KeywordBreak,
 
   #[token("=>")]
   FatArrow,

@@ -31,6 +31,7 @@ impl<'compiler> Generator<'compiler> {
       "@constraint",
       "@operation_not_supported",
       "@undefined",
+      "@tailrec",
       "@eof",
       "@io",
       "@normal",

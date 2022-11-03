@@ -72,7 +72,12 @@
                     locals.register_symbol(&key, arg.clone());
                   }
                 },
-                _ => unreachable!(),
+                val => {
+                  let err = OperationError::TailRecursion(val);
+                  let exc = err.to_letlang_value(context.clone()).await;
+                  co.yield_(FunctionInterruption::Exception(exc)).await;
+                  unreachable!();
+                },
               };
             {% else %}
               {{ proposition }};

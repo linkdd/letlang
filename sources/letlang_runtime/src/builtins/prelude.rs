@@ -14,6 +14,7 @@ pub enum OperationError {
   OperationNotSupported,
   ConstraintError(String),
   Undefined(String),
+  TailRecursion(Value),
 }
 
 unsafe impl Sync for OperationError {}
@@ -155,6 +156,27 @@ impl OperationError {
             Value::Atom(undefined_atom),
             Value::String(symbol.clone()),
           ]))
+        ]))
+      },
+      Self::TailRecursion(value) => {
+        let type_error_atom = async {
+          let context_ref = context.lock().await;
+          let atom_table = context_ref.atom_table.lock().unwrap();
+          atom_table.from_repr("@type_error")
+        }.await;
+
+        let tailrec_atom = async {
+          let context_ref = context.lock().await;
+          let atom_table = context_ref.atom_table.lock().unwrap();
+          atom_table.from_repr("@tailrec")
+        }.await;
+
+        Value::Tuple(Box::new([
+          Value::Atom(type_error_atom),
+          Value::Tuple(Box::new([
+            Value::Atom(tailrec_atom),
+            value.clone(),
+          ])),
         ]))
       }
     }

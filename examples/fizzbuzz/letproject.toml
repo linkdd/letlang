@@ -1,0 +1,15 @@
+[package]
+name = "fizzbuzz"
+version = "0.0.0"
+description = "Exemple of fizzbuzz implementation"
+
+[executable]
+bin = "fizzbuzz"
+module = "fizzbuzz::main"
+
+[toolchain]
+letlang = "0.1.0"
+rust = "2021"
+
+[dependencies]
+stdlib = { path = "../../lib" }

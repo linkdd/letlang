@@ -1,0 +1,11 @@
+<h1 class="title is-size-1 has-text-centered mb-6">
+  📰 News Feed
+</h1>
+
+<div
+  class="columns is-multiline is-centered"
+
+  id="articles"
+  data-authors="{{ .Page.Params.authors | jsonify }}"
+  data-categories="{{ .Page.Params.categories | jsonify }}"
+></div>

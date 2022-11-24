@@ -1,0 +1,47 @@
+async {
+  let val = {{ expression }};
+  {% for case in cases %}
+    let clause_{{ loop.index }} = {{ case.pattern }};
+  {% endfor %}
+
+  {% for case in cases %}
+    {% if loop.first %}
+      if clause_{{ loop.index }}.match_(context.clone(), &mut locals, &val).await.is_ok() {
+        #[allow(unused_variables)]
+        #[allow(unused_mut)]
+        let mut locals = Locals::new(Some(&locals));
+
+        {% for proposition in case.branch %}
+          {% if loop.last %}
+            {{ proposition }}
+          {% else %}
+            {{ proposition }};
+          {% endif %}
+        {% endfor %}
+      }
+    {% else %}
+      else if clause_{{ loop.index }}.match_(context.clone(), &mut locals, &val).await.is_ok() {
+        #[allow(unused_variables)]
+        #[allow(unused_mut)]
+        let mut locals = Locals::new(Some(&locals));
+
+        {% for proposition in case.branch %}
+          {% if loop.last %}
+            {{ proposition }}
+          {% else %}
+            {{ proposition }};
+          {% endif %}
+        {% endfor %}
+      }
+    {% endif %}
+  {% endfor %}
+  else {
+    let err = OperationError::MatchError {
+      value: val.to_string(context.clone()).await,
+    };
+
+    let exc = err.to_letlang_value(context.clone()).await;
+    co.yield_(FunctionInterruption::Exception(exc)).await;
+    unreachable!();
+  }
+}.await

@@ -1,0 +1,46 @@
+async {
+  {% for case in cases %}
+    {% if loop.first %}
+      if {{ case.cond }} == Value::Boolean(true) {
+        #[allow(unused_variables)]
+        #[allow(unused_mut)]
+        let mut locals = Locals::new(Some(&locals));
+
+        {% for proposition in case.branch %}
+          {% if loop.last %}
+            {{ proposition }}
+          {% else %}
+            {{ proposition }};
+          {% endif %}
+        {% endfor %}
+      }
+    {% else %}
+      else if {{ case.cond}} == Value::Boolean(true) {
+        #[allow(unused_variables)]
+        #[allow(unused_mut)]
+        let mut locals = Locals::new(Some(&locals));
+
+        {% for proposition in case.branch %}
+          {% if loop.last %}
+            {{ proposition }}
+          {% else %}
+            {{ proposition }};
+          {% endif %}
+        {% endfor %}
+      }
+    {% endif %}
+  {% endfor %}
+  else {
+    #[allow(unused_variables)]
+    #[allow(unused_mut)]
+    let mut locals = Locals::new(Some(&locals));
+
+    {% for proposition in else_case %}
+      {% if loop.last %}
+        {{ proposition }}
+      {% else %}
+        {{ proposition }};
+      {% endif %}
+    {% endfor %}
+  }
+}.await

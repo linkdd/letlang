@@ -1,0 +1,5 @@
+module dummy::main;
+
+pub func main() -> @ok {
+  @ok;
+}

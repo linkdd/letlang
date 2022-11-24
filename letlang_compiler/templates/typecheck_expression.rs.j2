@@ -1,6 +1,0 @@
-{
-  let check_val = {{val}};
-  let lltype = {{typeref}};
-  let res = lltype.has(&co, context.clone(), &check_val).await;
-  Value::Primitive(PrimitiveValue::Boolean(res))
-}

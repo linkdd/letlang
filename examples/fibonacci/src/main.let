@@ -1,17 +1,20 @@
-module "fib.main";
+module fibo::main;
+
+import std::io;
 
 class natural(n: int) {
-  n > 0;
+  n >= 0;
 }
 
 func fib(n: natural) -> natural {
   match n {
-    0 | 1 => 1,
-    natural => fib(n - 1) + fib(n - 2),
+    0 => 0,
+    1 => 1,
+    _ => fib(n - 1) + fib(n - 2),
   };
 }
 
 pub func main() -> @ok {
-  perform debug(fib(5));
+  8 := fib(6);
   @ok;
 }

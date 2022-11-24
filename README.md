@@ -10,41 +10,20 @@ If you want to contribute, please make a pull request.
 
 **Requirements:**
 
- - Python 3.10+
- - Rust & Cargo 1.59+
- - Hugo ^0.85 (we use a deprecated markdown renderer)
-
-**Setup the environment:**
-
-```
-$ poetry install
-$ poetry shell
-(.venv)$
-```
+ - Rust & Cargo 1.63+
 
 **Build:**
 
 ```
-(.venv)$ poe build
+$ cargo build
 ```
 
-**Run with the example:**
-
-Either build:
-```
-(.venv)$ poe run -p ./examples/hello-world/letproject.toml build
-```
-
-Or run:
+**Run example:**
 
 ```
-(.venv)$ poe run -p ./examples/hello-world/letproject.toml run
-('hello world')
+$ export LETLANG_RUNTIME_PATH="${PWD}/sources/letlang_runtime"
+$ cargo run -- -p examples/dummy run
 ```
-
-> **NB:**
->  - Currently, the generated crates reference the runtime in this source tree,
->    later it will be replaced by a published version on https://crates.io
 
 ## License
 

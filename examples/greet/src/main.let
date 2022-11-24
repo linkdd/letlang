@@ -1,0 +1,8 @@
+module greet::main;
+
+import std::io;
+
+pub func main() -> @ok {
+  (@ok, name) := std::io::readline("What's your name:");
+  @ok := std::io::println("Hello " <> name);
+}

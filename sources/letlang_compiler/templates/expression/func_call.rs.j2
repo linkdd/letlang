@@ -1,0 +1,10 @@
+async {
+  let func = {{ func_code }};
+  let args: Vec<Value> = vec![
+    {% for call_param in call_params %}
+      {{ call_param }},
+    {% endfor %}
+  ];
+
+  helpers::call_function(&co, context.clone(), &func, args).await
+}.await

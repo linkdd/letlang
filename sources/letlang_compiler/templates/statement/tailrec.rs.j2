@@ -1,0 +1,101 @@
+#[allow(non_snake_case)]
+{% if public %}pub{% else %}pub(crate){% endif %} mod symbol_{{ symbol_name }} {
+  use super::*;
+
+  #[allow(non_camel_case_types)]
+  #[derive(Debug, Clone, PartialEq)]
+  pub struct func_{{ symbol_name }} {
+    {% for type_param in type_params %}
+      {{ type_param }}: Box<dyn Type>,
+    {% endfor %}
+  }
+
+  impl func_{{ symbol_name }} {
+    pub fn new(
+      {% for type_param in type_params %}
+        {{ type_param }}: Box<dyn Type>,
+      {% endfor %}
+    ) -> Self {
+      Self {
+        {% for type_param in type_params %}
+          {{ type_param }},
+        {% endfor %}
+      }
+    }
+  }
+
+  impl Function for func_{{ symbol_name }} {
+    fn call(
+      &self,
+      context: Arc<Mutex<TaskContext>>,
+      args: Vec<Value>,
+    ) -> FunctionContinuation {
+      async fn code_block(
+        co: FunctionCoroutine,
+        context: Arc<Mutex<TaskContext>>,
+        args: Vec<Value>,
+      ) -> Value {
+        #[allow(unused_variables)]
+        #[allow(unused_mut)]
+        let mut locals = Locals::new(None);
+
+        helpers::assert_param_count(
+          &co,
+          context.clone(),
+          {{ call_param_count }},
+          args.len(),
+        ).await;
+
+        {% for call_param in call_params %}
+          let paramtype_{{ loop.index0 }} = {{ call_param.type_code }};
+          let paramval_{{ loop.index0 }} = &args[{{ loop.index0 }}];
+          helpers::assert_type(
+            &co,
+            context.clone(),
+            &paramtype_{{ loop.index0 }},
+            &paramval_{{ loop.index0 }},
+          ).await;
+          locals.register_symbol("$param${{ loop.index0 }}", paramval_{{ loop.index0 }}.clone());
+        {% endfor %}
+
+        let return_type = {{ return_type }};
+
+        let result = loop {
+          {% for proposition in body %}
+            {% if loop.last %}
+              let action = {{ proposition }};
+              match action {
+                Value::TailRecFinal(value) => { break value; },
+                Value::TailRecRecurse(args) => {
+                  for (idx, arg) in args.iter().enumerate() {
+                    let key = format!("$param${idx}");
+                    locals.register_symbol(&key, arg.clone());
+                  }
+                },
+                val => {
+                  let err = OperationError::TailRecursion(val);
+                  let exc = err.to_letlang_value(context.clone()).await;
+                  co.yield_(FunctionInterruption::Exception(exc)).await;
+                  unreachable!();
+                },
+              };
+            {% else %}
+              {{ proposition }};
+            {% endif %}
+          {% endfor %}
+        };
+
+        helpers::assert_type(
+          &co,
+          context.clone(),
+          &return_type,
+          result.as_ref(),
+        ).await;
+
+        *result
+      }
+
+      FunctionContinuation::new_boxed(|co| code_block(co, context, args))
+    }
+  }
+}

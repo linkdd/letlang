@@ -1,0 +1,59 @@
+async {
+  #[allow(non_camel_case_types)]
+  #[derive(Debug, Clone, PartialEq)]
+  struct constraint_{{ symbol }};
+
+  #[async_trait]
+  impl Constraint for constraint_{{ symbol }} {
+    async fn check(
+      &self,
+      co: &FunctionCoroutine,
+      context: Arc<Mutex<TaskContext>>,
+      locals: &Locals,
+    ) -> std::result::Result<(), String> {
+      match locals.lookup_symbol("{{ symbol }}") {
+        None => Ok(()),
+        Some(val) => {
+          let lltype = {{ type_code }};
+
+          helpers::assert_type(
+            co,
+            context.clone(),
+            &lltype,
+            val,
+          ).await;
+
+          #[allow(unused_variables)]
+          #[allow(unused_mut)]
+          let mut valid = true;
+
+          {% for check in checks %}
+            valid &= async {
+              #[allow(unused_variables)]
+              #[allow(unused_mut)]
+              let mut locals = Locals::new(Some(locals));
+
+              let res = {{ check }};
+              res == Value::Boolean(true)
+            }.await;
+
+            if !valid {
+              return Err("{{ symbol }}".to_string());
+            }
+          {% endfor %}
+
+          return Ok(());
+        }
+      }
+    }
+  }
+
+  locals.register_constraint(Box::new(constraint_{{ symbol }} {}));
+  helpers::assert_constraints(&co, context.clone(), &locals).await;
+
+  Value::Atom({
+    let ctx = context.lock().await;
+    let atom_table = ctx.atom_table.lock().unwrap();
+    atom_table.from_repr("@ok")
+  })
+}.await

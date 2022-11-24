@@ -1,0 +1,51 @@
+#[allow(non_snake_case)]
+{% if public %}pub{% else %}pub(crate){% endif %} mod symbol_{{ symbol_name }} {
+  use super::*;
+
+  #[allow(non_camel_case_types)]
+  #[derive(Debug, Clone, PartialEq)]
+  pub struct effect_{{ symbol_name }};
+
+  #[async_trait]
+  impl Effect for effect_{{ symbol_name }} {
+    async fn call(
+      &self,
+      context: Arc<Mutex<TaskContext>>,
+      co: &FunctionCoroutine,
+      args: Vec<Value>,
+    ) -> Value {
+      helpers::assert_param_count(
+        &co,
+        context.clone(),
+        {{ call_param_count }},
+        args.len(),
+      ).await;
+
+      {% for call_param in call_params %}
+        let paramtype_{{ loop.index0 }} = {{ call_param.type_code }};
+        let paramval_{{ loop.index0 }} = &args[{{ loop.index0 }}];
+        helpers::assert_type(
+          &co,
+          context.clone(),
+          &paramtype_{{ loop.index0 }},
+          &paramval_{{ loop.index0 }},
+        ).await;
+      {% endfor %}
+
+      let result = co.yield_(FunctionInterruption::Effect {
+        name: "{{ symbol_name }}".to_string(),
+        args
+      }).await;
+
+      let return_type = {{ return_type }};
+      helpers::assert_type(
+        &co,
+        context.clone(),
+        &return_type,
+        &result,
+      ).await;
+
+      result
+    }
+  }
+}

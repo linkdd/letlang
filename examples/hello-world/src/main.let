@@ -1,6 +1,7 @@
-module "hello.main";
+module hello::main;
+
+import std::io;
 
 pub func main() -> @ok {
-  perform debug("hello world");
-  @ok;
+  std::io::println("hello world");
 }

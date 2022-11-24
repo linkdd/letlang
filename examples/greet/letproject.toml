@@ -1,0 +1,15 @@
+[package]
+name = "greet"
+version = "0.0.0"
+description = "Ask user's name and greet them"
+
+[executable]
+bin = "greet"
+module = "greet::main"
+
+[toolchain]
+letlang = "0.1.0"
+rust = "2021"
+
+[dependencies]
+stdlib = { path = "../../lib" }

@@ -1,0 +1,14 @@
+[package]
+name = "dummy"
+version = "0.0.0"
+description = "Dummy program"
+
+[executable]
+bin = "dummy"
+module = "dummy::main"
+
+[toolchain]
+letlang = "0.1.0"
+rust = "2021"
+
+[dependencies]

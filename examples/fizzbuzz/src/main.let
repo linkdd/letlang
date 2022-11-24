@@ -1,0 +1,33 @@
+module fizzbuzz::main;
+
+import std::io;
+
+tailrec fizzbuzz(n: int) -> @ok {
+  cond {
+    n < 1000 => {
+      cond {
+        n % 3 = 0 and n % 5 = 0 => {
+          std::io::println("fizz buzz");
+        },
+        n % 3 = 0 => {
+          std::io::println("fizz");
+        },
+        n % 5 = 0 => {
+          std::io::println("buzz");
+        },
+        else => {
+          std::io::println("" <> n);
+        },
+      };
+
+      recurse[n + 1];
+    },
+    else => {
+      final[@ok];
+    }
+  };
+}
+
+pub func main() -> @ok {
+  @ok := fizzbuzz(0);
+}

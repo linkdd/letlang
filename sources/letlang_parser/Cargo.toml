@@ -1,0 +1,14 @@
+[package]
+name = "letlang_parser"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+letlang_ast = { path = "../letlang_ast" }
+
+regex = "1"
+logos = "0.12"
+peg = "0.8"
+parse_int = "0.6"
+snailquote = "0.3"
+line-col = "0.2"

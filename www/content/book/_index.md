@@ -1,25 +1,34 @@
 ---
 title: Preface
 description: Introduction to Letlang's syntax and features
-next: /book/c1-first-project
+next: /book/chapter-1
 ---
 
-# Introduction
+# Who is this book for?
 
-In this book, you will find a detailed description of **Letlang**, its syntax
-and its features.
+This book is intended for developers who wish to understand how Letlang is
+designed.
 
-Since **Letlang** is still a work in progress &#128679;, this book is **NOT** a
-tutorial.
+Letlang is in an early stage, the design is quite finished and the
+implementation is a work in progress. Anyone interested in the language might
+find some interest in this book.
 
-You will not find setup instructions, or any compiler specification.
+# What can you expect from this book ?
 
-This book is intended for curious people and will describe what **Letlang** will
-look like. The ideas exposed in this book are an aggregation of features found
-in many existing languages, or features that are being implemented as we speak.
+This book introduces the features of Letlang, their syntax, and some
+implementation details.
 
-As a learning experience, I still would like to implement this language, even
-if no one uses it. But this is certainly not my main priority.
+Because Letlang is currently in the implementation phase, no more feature will
+be added. This book is a good place to find out about those features, how they
+work, and how to use them.
 
-This book is here as a record so those ideas can be confronted, challenged and
-improved.
+# What are not the goals of this book ?
+
+This book is not a tutorial and does not provide any documentation about the
+future standard library.
+
+This book isn't a specification as well, but a first draft of the future
+documentation.
+
+If you are interested in the specification (also a work in progress), they are
+currently being written as **[Letlang Enhancement Proposals](/lep)**.

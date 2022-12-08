@@ -3,6 +3,9 @@ title: Abstract Syntax Tree
 weight: 3
 ---
 
+Letlang source files **SHOULD** be parsed into the following Abstract Syntax
+Tree:
+
 ```typescript
 unit = Unit(path: identifier+, body: statement*)
 

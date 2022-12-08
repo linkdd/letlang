@@ -13,6 +13,20 @@
         {{ .Content }}
       </div>
 
+      <div class="content">
+        <h2>Table of Content</h2>
+
+        <ul>
+          {{ range .Pages }}
+            <li>
+              <a href="{{ .RelPermalink }}">
+                {{ .Params.title | default .Title }}
+              </a>
+            </li>
+          {{ end }}
+        </ul>
+      </div>
+
       <a
         class="button is-small is-floating has-tooltip-left"
         onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"

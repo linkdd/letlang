@@ -41,7 +41,7 @@ definitive and may be subject to change.
 
 {{< column class="is-one-third" >}}
 {{< center >}}
-{{< action href="/lep/" class="is-warning p-6" >}}
+{{< action href="/spec/" class="is-warning p-6" >}}
 <i class="fas fa-code"></i>
 <b>Language Specification</b>
 {{< /action >}}

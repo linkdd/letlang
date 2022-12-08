@@ -30,5 +30,5 @@ future standard library.
 This book isn't a specification as well, but a first draft of the future
 documentation.
 
-If you are interested in the specification (also a work in progress), they are
-currently being written as **[Letlang Enhancement Proposals](/lep)**.
+If you are interested in the specification (also a work in progress), please
+consult this [page](/spec/).

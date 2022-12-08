@@ -13,3 +13,8 @@ interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 
 The grammar of the language's features is described in those documents using
 the [BNF](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form) syntax.
+
+# Enhancement Proposals
+
+To get an history of changes made to this specification, please consult this
+[page](/lep/).

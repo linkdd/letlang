@@ -68,7 +68,8 @@ aside.menu * {
   top: 6rem;
 }
 
-.book-title {
+.book-title,
+.spec-title {
   border-bottom: 5px solid #F5F5F5;
   padding-top: 0.5rem;
   padding-bottom: 1.5rem;

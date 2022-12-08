@@ -1,0 +1,25 @@
+{{ define "main" }}
+  <div class="columns">
+    <div class="column is-one-fifth pt-6">
+      <div class="sticky sticky-5">
+        <ll-spec-toc></ll-spec-toc>
+      </div>
+    </div>
+
+    <section class="section column is-four-fifths">
+      <ll-spec-title class="is-block sticky sticky-3"></ll-spec-title>
+
+      <div class="content">
+        {{ .Content }}
+      </div>
+
+      <a
+        class="button is-small is-floating has-tooltip-left"
+        onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
+        data-tooltip="Scroll to top"
+      >
+        <i class="fas fa-chevron-up"></i>
+      </a>
+    </section>
+  </div>
+{{ end }}

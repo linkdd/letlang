@@ -1,0 +1,46 @@
+<template id="webcomp-spec-title">
+  <div class="level spec-title has-background-white">
+    {{ if .Params.prev }}{{ with .Site.GetPage .Params.prev }}
+      <div class="level-left">
+        <a class="nav-link nav-link-prev" href="{{ .RelPermalink }}">
+          <span class="nav-link-note">
+            <i class="fas fa-long-arrow-alt-left"></i>
+            Consider reading first
+          </span>
+          <span class="nav-link-title">
+            {{ .Params.title | default .Title }}
+          </span>
+        </a>
+      </div>
+    {{ end }}{{ end }}
+
+    <div class="level-item has-text-centered">
+      <div class="content">
+        <p class="title">{{ .Params.title | default .Title }}</p>
+        <p class="subtitle">{{ .Params.description | default "" }}</p>
+      </div>
+    </div>
+
+    <div class="level-right">
+      {{ if .Params.next }}{{ with .Site.GetPage .Params.next }}
+        <a class="nav-link nav-link-next" href="{{ .RelPermalink }}">
+          <span class="nav-link-note">
+            Continue reading
+            <i class="fas fa-long-arrow-alt-right"></i>
+          </span>
+          <span class="nav-link-title">
+            {{ .Params.title | default .Title }}
+          </span>
+        </a>
+      {{ end }}{{ end }}
+    </div>
+  </div>
+</template>
+
+<script type="application/javascript">
+  BaseWebComponent.extends({
+    tag: 'll-spec-title',
+    template: 'webcomp-spec-title',
+    render() {}
+  });
+</script>

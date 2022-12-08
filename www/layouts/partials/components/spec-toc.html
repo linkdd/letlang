@@ -1,0 +1,46 @@
+<template id="webcomp-spec-toc">
+  <aside class="menu">
+    <p class="menu-label">Table of Content</p>
+
+    <ul class="menu-list">
+      <li>
+        <a href="/spec" {{ if eq .RelPermalink "/spec/" }}class="is-active"{{ end }}>
+          Preface
+        </a>
+      </li>
+
+      {{ with .Site.GetPage "/spec" }}
+        {{ range .Pages }}
+          <li>
+            <a href="{{ .RelPermalink }}" {{ if eq .RelPermalink $.RelPermalink }}class="is-active"{{ end }}>
+              {{ .Params.title | default .Title }}
+            </a>
+
+            <ul>
+              {{ range .Pages }}
+                <li>
+                  <a href="{{ .RelPermalink }}"  {{ if eq .RelPermalink $.RelPermalink }}class="is-active"{{ end }}>
+                    {{ .Params.title | default .Title }}
+                  </a>
+                </li>
+              {{ end }}
+            </ul>
+          </li>
+        {{ end }}
+      {{ end }}
+    </ul>
+  </aside>
+</template>
+
+<script type="application/javascript">
+  BaseWebComponent.extends({
+    tag: 'll-spec-toc',
+    template: 'webcomp-spec-toc',
+    render(instance) {
+      const menu = instance.find('.menu')[0]
+      const active = instance.find('.is-active')[0]
+      const top = active.offsetTop - menu.scrollTop - 64
+      menu.scrollBy({ top, left: 0, behavior: 'instant' })
+    }
+  });
+</script>

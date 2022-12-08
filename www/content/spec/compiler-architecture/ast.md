@@ -153,3 +153,6 @@ symbols having at least one type parameter.
 
 The compiler **MUST** ensure that the `val` field of a `GenericResolve` node is
 a `Symbol` node.
+
+The compiler **MUST** ensure that every `Import` nodes point to an existing
+Letlang module.

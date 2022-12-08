@@ -14,3 +14,9 @@ function.
 
 All generated Rust crates **SHOULD** be part of a Cargo workspace in the
 `.llbuild` folder.
+
+A Letlang module **MUST** define a path that will be used to generate the Rust
+crate's name. For example:
+
+ - `foo::main` will generate the crate `lldep_foo_main`
+ - `std::io` will generate the crate `lldep_std_io`

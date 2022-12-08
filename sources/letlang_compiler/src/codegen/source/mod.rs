@@ -52,6 +52,11 @@ impl<'compiler> Generator<'compiler> {
   ) -> Result<(), Box<dyn Error>> {
     let status = Command::new("rustfmt")
       .arg(format!("--edition={}", self.toolchain.rust_edition))
+      .arg("--config")
+      .arg([
+        "wrap_comments=false",
+        "max_width=65536",
+      ].join(","))
       .arg(source_path.as_ref().to_path_buf())
       .status()?;
 

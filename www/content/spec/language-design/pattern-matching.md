@@ -99,7 +99,12 @@ pattern on the left to the expression on the right.
 Syntax:
 
 ```bnf
-<pattern-match-expression> :=
+<expression> :=
+  | <expression-pattern-match>
+  | ...
+  ;
+
+<expression-pattern-match> :=
   <pattern> ":=" <expression>
   ;
 ```
@@ -148,6 +153,15 @@ form:
 Syntax:
 
 ```bnf
+<expression> :=
+  | <expression-term>
+  | ...
+
+<expression-term> :=
+  | <match-block>
+  | ...
+  ;
+
 <match-block> :=
   "match" <expression> "{"
     <match-block-branch> ("," <match-block-branch>)*
@@ -183,6 +197,15 @@ branch.
 Syntax:
 
 ```bnf
+<expression> :=
+  | <expression-term>
+  | ...
+
+<expression-term> :=
+  | <cond-block>
+  | ...
+  ;
+
 <cond-block> :=
   "cond" "{"
     <cond-block-branch> ("," <cond-block-branch>)*

@@ -1,0 +1,107 @@
+{{ $table := newScratch }}
+{{ $table.Set "prevPrec" nil }}
+{{ $table.Set "prevPrecIndex" 0 }}
+{{ $table.Set "precSpan" 0 }}
+{{ $table.Set "prevAssoc" nil }}
+{{ $table.Set "prevAssocIndex" 0 }}
+{{ $table.Set "assocSpan" 0 }}
+{{ $table.Set "rows" (slice) }}
+
+{{ range .Site.Data.operators.table }}
+  {{ $row := newScratch }}
+  {{ $row.Set "prec" .prec }}
+  {{ $row.Set "op" .op }}
+  {{ $row.Set "desc" .desc }}
+  {{ $row.Set "assoc" .assoc }}
+  {{ $row.Set "precSpan" nil }}
+  {{ $row.Set "assocSpan" nil }}
+  {{ $table.Add "rows" (slice $row) }}
+{{ end }}
+
+{{ range $i, $row := .Site.Data.operators.table }}
+  {{ $prevPrec := $table.Get "prevPrec" }}
+  {{ $prevPrecIndex := $table.Get "prevPrecIndex" }}
+  {{ $precSpan := $table.Get "precSpan" }}
+
+  {{ if (ne $prevPrec $row.prec) }}
+    {{ $firstPrecRow := index ($table.Get "rows") $prevPrecIndex }}
+    {{ $firstPrecRow.Set "precSpan" $precSpan }}
+
+    {{ $table.Set "prevPrec" $row.prec }}
+    {{ $table.Set "prevPrecIndex" $i }}
+    {{ $table.Set "precSpan" 1 }}
+  {{ else }}
+    {{ $table.Add "precSpan" 1 }}
+  {{ end }}
+
+  {{ $prevAssoc := $table.Get "prevAssoc" }}
+  {{ $prevAssocIndex := $table.Get "prevAssocIndex" }}
+  {{ $assocSpan := $table.Get "assocSpan" }}
+
+  {{ if (ne $prevAssoc $row.assoc) }}
+    {{ $firstAssocRow := index ($table.Get "rows") $prevAssocIndex }}
+    {{ $firstAssocRow.Set "assocSpan" $assocSpan }}
+
+    {{ $table.Set "prevAssoc" $row.assoc }}
+    {{ $table.Set "prevAssocIndex" $i }}
+    {{ $table.Set "assocSpan" 1 }}
+  {{ else }}
+    {{ $table.Add "assocSpan" 1 }}
+  {{ end }}
+{{ end }}
+
+{{ $lastPrecRow := index ($table.Get "rows") ($table.Get "prevPrecIndex") }}
+{{ $lastPrecRow.Set "precSpan" ($table.Get "precSpan") }}
+
+{{ $lastAssocRow := index ($table.Get "rows") ($table.Get "prevAssocIndex") }}
+{{ $lastAssocRow.Set "assocSpan" ($table.Get "assocSpan") }}
+
+
+<table class="table is-bordered">
+  <thead>
+    <tr>
+      <th class="has-text-centered is-narrow">Precedence</th>
+      <th class="is-narrow">Operator</th>
+      <th>Description</th>
+      <th class="has-text-centered is-narrow">Associativity</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{ range ($table.Get "rows") }}
+      {{ $prec := .Get "prec" }}
+      {{ $precSpan := .Get "precSpan" }}
+      {{ $assoc := .Get "assoc" }}
+      {{ $assocSpan := .Get "assocSpan" }}
+
+      {{ $op := .Get "op" }}
+      {{ $desc := .Get "desc" }}
+
+      <tr>
+        {{ if (ne $precSpan nil) }}
+          <td
+            rowspan="{{ $precSpan }}"
+            class="has-text-centered has-text-weight-bold"
+            style="vertical-align: middle;"
+          >
+            {{ $prec }}
+          </td>
+        {{ end }}
+        <td><code>{{ $op }}</code></td>
+        <td>{{ $desc }}</td>
+        {{ if (ne $assocSpan nil) }}
+          <td
+            rowspan="{{ $assocSpan }}"
+            class="has-text-centered"
+            style="vertical-align: middle;"
+          >
+            {{ if (eq $assoc "left-to-right") }}
+              Left to Right &rarr;
+            {{ else if (eq $assoc "right-to-left") }}
+              Right to Left &larr;
+              {{ end }}
+          </td>
+        {{ end }}
+      </tr>
+    {{ end }}
+  </tbody>
+</table>

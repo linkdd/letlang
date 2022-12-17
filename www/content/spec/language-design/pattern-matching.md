@@ -210,3 +210,63 @@ can_edit := cond {
   else => false,
 };
 ```
+
+# Let propositions
+
+A `let` proposition defines a constraint on the value of a variable binding.
+
+If the variable is not yet bound, the constraint **MUST** be enforced as soon as
+it is bound.
+
+If the variable is already bound to a value, the constraint **MUST** be enforced
+immediately.
+
+Every time a constrained variable is bound to a new value, the constraint
+**MUST** be enforced.
+
+If a constraint fails to be enforced (the value is not valid), the runtime
+**MUST** throw an exception of the form:
+
+> `(@type_error, (@constraint, "<variable name>"))`
+
+A `let` proposition always specify a type for the variable, and optionnaly one
+or more expressions that all must evaluate to `true` for the variable.
+
+Syntax:
+
+```bnf
+<proposition> :=
+  | <proposition-let>
+  | <proposition-expression>
+  ;
+
+<proposition-expression> :=
+  <expression>
+  ;
+
+<proposition-let> :=
+  "let" <identifier> ":" <typeref> <proposition-let-checks>? ";"
+  ;
+
+<proposition-let-checks> :=
+  "{" <expression> ("," <expression>)* "}"
+  ;
+```
+
+Examples:
+
+```letlang
+let a: int;
+
+a := 1;    # OK
+a := 2.3;  # TYPE ERROR
+```
+
+```letlang
+let a: number;
+let b: number { b > a };
+
+a := 1;
+b := 5;  # OK
+b := 0;  # TYPE ERROR
+```

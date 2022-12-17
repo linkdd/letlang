@@ -127,7 +127,7 @@ A pattern-match expression **MUST** return the matched value:
 (a, 2) := (1, b) := (1, 2);  # a is bound to 1, and b is bound to 2
 ```
 
-If a pattern-match expression can't be match, the Letlang runtime **MUST** throw
+If a pattern-match expression can't be matched, the Letlang runtime **MUST** throw
 an exception of the form:
 
 > `(@match_error, "<stringified value>")`

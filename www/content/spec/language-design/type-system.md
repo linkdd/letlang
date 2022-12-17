@@ -28,6 +28,15 @@ The Letlang runtime **MUST** provide the following types:
 
 > **NB:** An atom is a developer-defined symbol, for example: `@ok`, `@error`, `@hello_world`.
 
+Additionally, the Letlang runtime **MUST** provide the following types:
+
+ - `pid` representing Letlang process identifiers
+ - `file` representing file descriptors
+ - `socket` representing socket descriptors
+
+Those types **MUST NOT** be forgeable by the developer, only the Letlang runtime
+should be able to create values of those types.
+
 # Container types
 
 The Letlang runtime **MUST** provide the following container types:

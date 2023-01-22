@@ -174,6 +174,9 @@ Syntax:
   ;
 ```
 
+The value of the last proposition of a branch evaluates to is the return value
+of that branch.
+
 Example:
 
 ```letlang
@@ -223,6 +226,9 @@ Syntax:
   | "else" "=>" <expression>
   ;
 ```
+
+The value of the last proposition of a branch evaluates to is the return value
+of that branch.
 
 Example:
 

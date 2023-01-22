@@ -187,7 +187,7 @@ A custom type is defined using a `class`:
  - it must have a constructor parameter (defining the structure of the values it contains)
  - it may have a predicate to further restrain what values it contains
 
-The type's predicate (if present) **MUST** returns a `bool`.
+The type's predicate (if present) **MUST** return a `bool`.
 
 The `class` is defined using the following syntax:
 
@@ -228,6 +228,8 @@ The `class` is defined using the following syntax:
 > **NB:** `<proposition-let>` and `<proposition-expression>` rules will be
 > defined later.
 
+The value of the last proposition of the class's predicate evaluates to is the
+return value of the predicate.
 
 Example:
 

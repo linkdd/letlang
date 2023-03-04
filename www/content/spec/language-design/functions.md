@@ -131,3 +131,10 @@ func fizzbuzz(limit: int) -> @ok {
   fizzbuzz_impl(0, limit);
 }
 ```
+
+If a tail-recursive function does not return the special values `final[...]` or
+`recurse[...]` the following exception **MUST** be thrown:
+
+```letlang
+(@type_error, (@tailrec, wrong_value))
+```

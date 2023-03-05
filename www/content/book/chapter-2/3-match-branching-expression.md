@@ -11,21 +11,6 @@ You can use a `match{}` expression to match against a sequence of patterns.
 
 If no `match{}` clause matches, a run-time error will occur.
 
-**Syntax:**
-
-```bnf
-<match-expression> :=
-    "match" <expression> "{"
-    <match-expression-clause> ("," <match-expression-clause>)*
-    "}"
-    ;
-
-<match-expression-clause> :=
-  | <pattern> "=>" <expression>
-  | <pattern> "=>" "{" <proposition>+ "}"
-  ;
-```
-
 # Example
 
 ```letlang

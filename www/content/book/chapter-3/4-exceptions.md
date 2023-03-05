@@ -48,34 +48,3 @@ func main(pub args: list<string>) -> @ok {
 {{< /markdown >}}
 {{< /column >}}
 {{< /columns >}}
-
-# Syntax
-
-## Throw expression
-
-```bnf
-<throw-expression> :=
-    "throw" <expression>
-    ;
-```
-
-## Exception catching
-
-
-```bnf
-<do-expression> :=
-    "do" "{" <proposition>+ "}"
-    <do-expression-clause>*
-    ;
-
-<do-expression-clause> :=
-    | <do-expression-catch>
-    | <do-expression-intercept>
-    ;
-
-<do-expression-catch> :=
-    "catch" <pattern> "{"
-    <proposition>+
-    "}"
-    ;
-```

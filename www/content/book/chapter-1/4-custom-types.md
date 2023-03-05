@@ -22,37 +22,6 @@ A class is defined by:
 The constructor parameter determines the structure of the values contained in
 the class.
 
-**Syntax:**
-
-```bnf
-<class-statement> :=
-    | <class-statement-no-predicate>
-    | <class-statement-with-predicate>
-    ;
-
-<class-statement-no-predicate> :=
-    [ "pub" ] "class" <identifier>
-    [ <class-type-parameters> ]
-    "(" <class-constructor-parameter> ")"
-    ";"
-    ;
-
-<class-statement-with-predicate> :=
-    [ "pub" ] "class" <identifier>
-    [ <class-type-parameters> ]
-    "(" <class-constructor-parameter> ")"
-    "{" <proposition>+ "}"
-    ;
-
-<class-type-parameters> :=
-    "<" <identifier> ("," <identifier>)* ">"
-    ;
-
-<class-constructor-parameter> :=
-    <identifier> ":" <type-ref>
-    ;
-```
-
 # Examples
 
 ```letlang
@@ -67,7 +36,7 @@ class odd(n: int & !even);
 class vector(v: {x: number, y: number});
 
 class unit_vector(v: vector) {
-  v.x ** 2 + v.y ** 2 = 1;  # sqrt() ot needed: 1**2 = 1
+  v.x ** 2 + v.y ** 2 = 1;  # sqrt() not needed: 1**2 = 1
 }
 ```
 

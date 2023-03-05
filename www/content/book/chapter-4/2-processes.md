@@ -65,7 +65,7 @@ func main() -> @ok {
 When an exception or an unknown effect bubbles up to the runtime, the process
 crashes, **but not the whole program**.
 
-# Implementation details
+# How does it work?
 
 When starting, Letlang starts a *node* which listens for commands:
 
@@ -74,24 +74,9 @@ When starting, Letlang starts a *node* which listens for commands:
  - sending message to a process
  - notification of process termination
 
-The node is implemented with the Rust crate [tokio](https://tokio.rs).
-
 When the node spawns a process, it creates a new PID and a mailbox to exchange
-signals. Then it starts 2 asynchronous tasks as follow:
-
-```rust
-tokio::spawn(async move {
-  let process_handle = tokio::spawn(async move {
-    // run process's function
-  });
-
-  let res = process_handle.await;
-  // notify the node of the process termination
-});
-```
-
-If the process terminates normally, or panics, it is caught and the node is
-notified.
+signals. If the process terminates normally, or panics, it is caught and the
+node is notified.
 
 > **NB:** The `main` function is automatically spawned as a new process (the
 > first one).

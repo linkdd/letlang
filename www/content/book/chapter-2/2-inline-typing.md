@@ -10,25 +10,7 @@ next: /book/chapter-2/3-match-branching-expression
 It is possible to declare constraints to unbound variables in order to restrict
 the values it can match.
 
-This is done by using a `let` statement.
-
-**Syntax:**
-
-```bnf
-<let-statement> :=
-    | <let-statement-no-checks>
-    | <let-statement-with-checks>
-    ;
-
-<let-statement-no-checks> :=
-    "let" <identifier> ":" <type-ref> ";"
-    ;
-
-<let-statement-with-checks> :=
-    "let" <identifier> ":" <type-ref>
-    "{" <expression> ("," <expression>)* "}" ";"
-    ;
-```
+This is done by using a `let` proposition.
 
 # Examples
 
@@ -56,7 +38,7 @@ b := 0;  # error, `0 > 1` is false
 
 # Assertions
 
-If the variable is already bound, the `let` statement acts as an assertion:
+If the variable is already bound, the `let` proposition acts as an assertion:
 
 ```letlang
 a := 1;
@@ -72,7 +54,7 @@ let a: number {
 };  # error, `1 < 0` is false
 ```
 
-If successful, the `let` statement returns the atom `@ok`:
+If successful, the `let` proposition returns the atom `@ok`:
 
 ```letlang
 n := 1;
@@ -82,4 +64,4 @@ n := 1;
 };
 ```
 
-> **NB:** A `let` statement for an unbound variable is always successful.
+> **NB:** A `let` proposition for an unbound variable is always successful.

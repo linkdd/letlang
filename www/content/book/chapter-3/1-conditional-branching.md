@@ -13,27 +13,6 @@ A `cond` expression will evaluate the first branch whose condition is true. If
 none of the conditions are true, the `cond` expression will evaluate the default
 branch (`else`).
 
-**Syntax:**
-
-```bnf
-<cond-expression> :=
-    "cond" "{"
-    (<cond-expression-branch> ",")+
-    <cond-expression-default-branch>
-    "}"
-    ;
-
-<cond-expression-branch> :=
-    | <expression> "=>" "{" <proposition>+ "}"
-    | <expression> "=>" <expression>
-    ;
-
-<cond-expression-default-branch> :=
-    | "else" "=>" "{" <proposition>+ "}"
-    | "else" => <expression>
-    ;
-```
-
 > **NB:** The `cond` default branch is mandatory in order to always return a
 > value.
 

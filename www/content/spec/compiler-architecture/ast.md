@@ -82,6 +82,11 @@ expression =
   | TailRecRecurse(args: expression*)
   | MatchBranching(expr: expression, cases: match_branch+)
   | ConditionalBranching(cases: cond_branch*, else_case: proposition+)
+  | DoBlock(
+      body: proposition+,
+      effect_handlers: do_effect_handler+,
+      exception_handlers: do_exception_handler+,
+    )
   | Receive(cases: receive_branch+, after?: receive_timeout_branch)
 
 unary_operator = ...
@@ -89,6 +94,15 @@ binary_operator = ...
 
 match_branch = MatchBranch(pattern: pattern, body: proposition+)
 cond_branch = ConditionalBranch(cond: expression, body: proposition+)
+do_effect_handler = DoEffectHandler(
+  effect_name: identifier+,
+  effect_params: pattern+,
+  body: proposition+,
+)
+do_exception_handler = DoExceptionHandler(
+  exception: pattern,
+  body: proposition+,
+)
 receive_branch = ReceiveBranch(pattern: pattern, body: proposition+)
 receive_timeout_branch = ReceiveTimeoutBranch(timeout: expression, body: proposition+)
 
@@ -122,6 +136,9 @@ The following nodes **MUST** create a new scope:
  - `TailRecursiveFunctionDeclaration`
  - `MatchBranch`
  - `ConditionalBranch`
+ - `DoBlock`
+ - `DoEffectHandler`
+ - `DoExceptionHandler`
  - `ReceiveBranch`
  - `ReceiveTimeoutBranch`
 
@@ -137,8 +154,8 @@ The following nodes **MUST** create a new symbol in the current scope:
  - `ConsParam`
  - `VariableBinding`
 
-The compiler **MUST** ensure that `Symbol`, `TypeName` and `EffectCall` nodes
-point to a symbol that exists in the current scope.
+The compiler **MUST** ensure that `Symbol`, `TypeName`, `EffectCall` and
+`DoEffectHandler` nodes point to a symbol that exists in the current scope.
 
 The compiler **MUST** ensure that symbols are used in the right context:
 
@@ -146,7 +163,7 @@ The compiler **MUST** ensure that symbols are used in the right context:
  - symbols created by `TypeParam` nodes **MUST** be used only in a `TypeName` node
  - symbols created by `FunctionDeclaration` nodes **MUST** be used only in a `Symbol` node
  - symbols created by `TailRecursiveFunctionDeclaration` nodes **MUST** be used only in a `Symbol` node
- - symbols created by `EffectDeclaration` nodes **MUST** be used only in a `EffectCall` node
+ - symbols created by `EffectDeclaration` nodes **MUST** be used only in a `EffectCall` node or `DoEffectHandler` node
 
 The compiler **MUST** ensure that `GenericResolve` nodes are only applied to
 symbols having at least one type parameter.

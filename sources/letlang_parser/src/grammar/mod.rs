@@ -45,13 +45,13 @@ peg::parser!{
       }
 
     rule statement_import_alias() -> String
-      = [Token::KeywordAlias] [Token::Identifier(alias)] { alias.clone() }
+      = [Token::KeywordAs] [Token::Identifier(alias)] { alias.clone() }
     /* #endregion */
 
     /* #region Effect Declaration */
     rule statement_effect() -> Node<ast::Statement>
       = l:position!()
-          public:[Token::KeywordPublic]?
+          public:[Token::KeywordPub]?
           [Token::KeywordEffect] name:identifier()
           [Token::ParenthesisBegin] params:call_params() [Token::ParenthesisEnd]
           [Token::Arrow] return_type:type_ref()
@@ -77,7 +77,7 @@ peg::parser!{
 
       rule statement_class_simple() -> Node<ast::Statement>
       = l:position!()
-          public:[Token::KeywordPublic]?
+          public:[Token::KeywordPub]?
           [Token::KeywordClass] name:identifier()
           type_params:type_params_template()?
           [Token::ParenthesisBegin] cons_param:cons_param() [Token::ParenthesisEnd]
@@ -98,7 +98,7 @@ peg::parser!{
 
     rule statement_class_with_constraints() -> Node<ast::Statement>
       = l:position!()
-          public:[Token::KeywordPublic]?
+          public:[Token::KeywordPub]?
           [Token::KeywordClass] name:identifier()
           type_params:type_params_template()?
           [Token::ParenthesisBegin] cons_param:cons_param() [Token::ParenthesisEnd]
@@ -121,8 +121,8 @@ peg::parser!{
     /* #region Function Declaration */
     rule statement_function() -> Node<ast::Statement>
       = l:position!()
-          public:[Token::KeywordPublic]?
-          [Token::KeywordFunction] name:identifier()
+          public:[Token::KeywordPub]?
+          [Token::KeywordFunc] name:identifier()
           type_params:type_params_template()?
           [Token::ParenthesisBegin] call_params:call_params() [Token::ParenthesisEnd]
           [Token::Arrow] return_type:type_ref()
@@ -146,7 +146,7 @@ peg::parser!{
     /* #region Tail Recursion Function Declaration */
     rule statement_tailrec_function() -> Node<ast::Statement>
       = l:position!()
-          public:[Token::KeywordPublic]?
+          public:[Token::KeywordPub]?
           [Token::KeywordTailRec] name:identifier()
           type_params:type_params_template()?
           [Token::ParenthesisBegin] call_params:call_params() [Token::ParenthesisEnd]
@@ -315,7 +315,7 @@ peg::parser!{
       { ast::types::TypeRef::tuple_definition(members) }
 
     rule type_ref_term_function_signature() -> Box<ast::types::TypeRef>
-      = [Token::KeywordFunction]
+      = [Token::KeywordFunc]
         [Token::BracketBegin]
           [Token::ParenthesisBegin] params:type_refs() [Token::ParenthesisEnd]
           [Token::Arrow]
@@ -364,7 +364,7 @@ peg::parser!{
         Node::new((l, r), data)
       }
       --
-      lhs:pattern() [Token::OperatorAssign] rhs:(@) {
+      lhs:pattern() [Token::OperatorMatch] rhs:(@) {
         ast::expression::Expression::pattern_match(lhs, rhs)
       }
       --
@@ -472,7 +472,7 @@ peg::parser!{
         ast::expression::Expression::unary_op("~", e)
       }
       --
-      lhs:(@) [Token::OperatorAccess] rhs:identifier() {
+      lhs:(@) [Token::OperatorDot] rhs:identifier() {
         ast::expression::Expression::member_access(lhs, rhs)
       }
       func:(@) [Token::ParenthesisBegin] params:expressions() [Token::ParenthesisEnd] {

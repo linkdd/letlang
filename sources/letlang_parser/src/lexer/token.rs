@@ -58,7 +58,7 @@ pub enum Token {
   KeywordImport,
 
   #[token("as")]
-  KeywordAlias,
+  KeywordAs,
 
   #[token("class")]
   KeywordClass,
@@ -67,7 +67,7 @@ pub enum Token {
   KeywordEffect,
 
   #[token("func")]
-  KeywordFunction,
+  KeywordFunc,
 
   #[token("tailrec")]
   KeywordTailRec,
@@ -79,7 +79,7 @@ pub enum Token {
   KeywordRecurse,
 
   #[token("pub")]
-  KeywordPublic,
+  KeywordPub,
 
   #[token("do")]
   KeywordDo,
@@ -163,10 +163,10 @@ pub enum Token {
 
   // operators
   #[token(":=")]
-  OperatorAssign,
+  OperatorMatch,
 
   #[token(".")]
-  OperatorAccess,
+  OperatorDot,
 
   #[token("<")]
   OperatorCmpLT,

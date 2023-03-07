@@ -140,7 +140,7 @@ The runtime **MUST** provide handlers for the following builtin effects:
 
 ```letlang
 effect __io_println(message: string) -> @ok;
-effect __io_readline(prompt: string) -> @ok | (@error, @eof) | (@error, (@io, string));
+effect __io_readline(prompt: string) -> (@ok, string) | (@error, @eof) | (@error, (@io, string));
 ```
 
 The runtime **MAY** provide handlers for implementation-defined effects.

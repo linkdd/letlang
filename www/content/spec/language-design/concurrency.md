@@ -29,6 +29,68 @@ Every signal **MUST** include a value:
  - `message`: the value **MUST** be the data sent by the other process
  - `exited`: the value **MUST** be either `@ok` if the process terminated normally, or `(@error, string)` if the process crashed
 
+A process can block until it received a signal or after a timeout period.
+
+The timeout period **MUST** be in milliseconds.
+
+**Syntax:**
+
+```bnf
+<expression-term> :=
+  | ...
+  | <receive-block>
+  | ...
+  ;
+
+<receive-block> :=
+  "receive" "{"
+  <receive-signal-branch> ("," <receive-signal-branch>)*
+  "}"
+  [ "after" <expression> "{" <proposition>+ "}" ]
+  ;
+
+<receive-signal-branch> :=
+  | <receive-signal-branch-simple>
+  | <receive-signal-branch-block>
+  ;
+
+<receive-signal-branch-simple> :=
+  <receive-signal-branch-type> "(" <pattern> "," <pattern> ")" "=>" <expression>
+  ;
+
+<receive-signal-branch-block> :=
+  <receive-signal-branch-type> "(" <pattern> "," <pattern> ")" "=>"
+  "{" <proposition>+ "}"
+  ;
+
+<receive-signal-branch-type> :=
+  | "message"
+  | "exited"
+  ;
+```
+
+**Example:**
+
+```letlang
+receive {
+  message(from, data) => {
+    # do something with data
+  },
+  exited(source, reason) => {
+    # do something with reason
+  },
+}
+after 5000 {
+  # do something
+};
+```
+
+A `receive{}` block **MUST** evaluate to the value returned by the executed branch:
+
+ - if a `message` signal was received, it evaluates to the matching branch
+ - if an `exited` signal was received, it evaluates to the matching branch
+ - if no signal was receive within the timeout period, it evaluates to the `after` branch
+
 # Links between processes
 
 Letlang processes can be linked together.

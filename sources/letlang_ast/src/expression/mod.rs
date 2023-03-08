@@ -40,6 +40,9 @@ pub use self::{
   controlflow::{
     FlowMatch,
     FlowConditional,
+    FlowDoBlock,
+    EffectPattern,
+    EffectPatternAttributes,
   },
   tailrec::{
     TailRecFinal,
@@ -71,6 +74,7 @@ pub enum Expression {
   TailRecRecurse(TailRecRecurse),
   FlowMatch(FlowMatch),
   FlowConditional(FlowConditional),
+  FlowDoBlock(FlowDoBlock),
   Receive(Receive),
 }
 

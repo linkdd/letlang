@@ -209,6 +209,7 @@ peg::parser!{
           ast::params::CallParam::new(name, type_ref)
         )
       }
+
     /* #endregion */
 
     /* #region Proposition */
@@ -500,6 +501,7 @@ peg::parser!{
       / expression_term_tailrec_recurse()
       / expression_term_match()
       / expression_term_conditional()
+      / expression_term_do()
       / expression_term_receive()
 
     /* #region Data */
@@ -697,6 +699,72 @@ peg::parser!{
       }
     /* #endregion */
 
+    /* #region Do Block */
+    rule expression_term_do() -> Node<ast::expression::Expression>
+      = l:position!()
+        [Token::KeywordDo]
+        [Token::CurlyBracketBegin]
+        body:proposition()+
+        [Token::CurlyBracketEnd]
+        effect_handlers:expression_term_do_intercept()*
+        exception_handlers:expression_term_do_catch()*
+        r:position!()
+      {
+        Node::new(
+          (l, r),
+          ast::expression::Expression::flow_do_block(
+            body,
+            effect_handlers,
+            exception_handlers,
+          )
+        )
+      }
+
+    /* #region Effect Handler */
+    rule expression_term_do_intercept() -> (Node<ast::expression::EffectPattern>, Vec<Node<ast::statement::Proposition>>)
+      = [Token::KeywordIntercept]
+        effect_pattern:expression_term_do_intercept_pattern()
+        [Token::CurlyBracketBegin]
+        body:proposition()+
+        [Token::CurlyBracketEnd]
+      {
+        (effect_pattern, body)
+      }
+
+    rule expression_term_do_intercept_pattern() -> Node<ast::expression::EffectPattern>
+      = l:position!()
+        effect_name:symbol_path()
+        [Token::ParenthesisBegin]
+        params:patterns()
+        [Token::ParenthesisEnd]
+        r:position!()
+      {
+        Node::new(
+          (l, r),
+          ast::expression::EffectPattern::new(
+            ast::expression::Symbol(effect_name),
+            params,
+          )
+        )
+      }
+    /* #endregion */
+
+    /* #region Exception Handler */
+
+    rule expression_term_do_catch() -> (Node<ast::expression::Pattern>, Vec<Node<ast::statement::Proposition>>)
+      = [Token::KeywordCatch]
+        exception_pattern:pattern()
+        [Token::CurlyBracketBegin]
+        body:proposition()+
+        [Token::CurlyBracketEnd]
+      {
+        (exception_pattern, body)
+      }
+
+    /* #endregion */
+
+    /* #endregion */
+
     /* #region Receive */
     rule expression_term_receive() -> Node<ast::expression::Expression>
       = l:position!()
@@ -744,6 +812,11 @@ peg::parser!{
     /* #endregion */
 
     /* #region Pattern Matching */
+
+    rule patterns() -> Vec<Node<ast::expression::Pattern>>
+      = patterns:(pattern() ** [Token::Comma]) [Token::Comma]?
+      { patterns }
+
     rule pattern() -> Node<ast::expression::Pattern>
       = pattern_assign()
       / pattern_value()

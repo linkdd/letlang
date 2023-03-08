@@ -61,10 +61,10 @@ pub async fn lt(
         _ => Value::Boolean(false),
       }
     },
-    (Value::Tuple(val_a), Value::Tuple(val_b)) => {
+    (Value::Tuple(_val_a), Value::Tuple(_val_b)) => {
       todo!();
     },
-    (Value::List(val_a), Value::List(val_b)) => {
+    (Value::List(_val_a), Value::List(_val_b)) => {
       todo!();
     },
     _ => {
@@ -112,10 +112,10 @@ pub async fn lte(
         _ => Value::Boolean(false),
       }
     },
-    (Value::Tuple(val_a), Value::Tuple(val_b)) => {
+    (Value::Tuple(_val_a), Value::Tuple(_val_b)) => {
       todo!();
     },
-    (Value::List(val_a), Value::List(val_b)) => {
+    (Value::List(_val_a), Value::List(_val_b)) => {
       todo!();
     },
     _ => {
@@ -160,10 +160,10 @@ pub async fn gt(
         _ => Value::Boolean(false),
       }
     },
-    (Value::Tuple(val_a), Value::Tuple(val_b)) => {
+    (Value::Tuple(_val_a), Value::Tuple(_val_b)) => {
       todo!();
     },
-    (Value::List(val_a), Value::List(val_b)) => {
+    (Value::List(_val_a), Value::List(_val_b)) => {
       todo!();
     },
     _ => {
@@ -211,10 +211,10 @@ pub async fn gte(
         _ => Value::Boolean(false),
       }
     },
-    (Value::Tuple(val_a), Value::Tuple(val_b)) => {
+    (Value::Tuple(_val_a), Value::Tuple(_val_b)) => {
       todo!();
     },
-    (Value::List(val_a), Value::List(val_b)) => {
+    (Value::List(_val_a), Value::List(_val_b)) => {
       todo!();
     },
     _ => {

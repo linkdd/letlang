@@ -103,6 +103,8 @@ fn cargo_command<P: AsRef<Path>>(project_dir: P, cmd: &str) -> Result<()> {
   let status = std::process::Command::new("cargo")
     .current_dir(target_dir)
     .arg(cmd)
+    .arg("--quiet")
+    //.arg("--message-format=json")
     .status()?;
 
   if !status.success() {

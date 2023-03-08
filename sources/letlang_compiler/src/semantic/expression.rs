@@ -364,6 +364,52 @@ impl<'compiler> Model<'compiler> {
 
         Ok(())
       },
+      Expression::FlowDoBlock(data) => {
+        let body_scope_id = self.scope_arena.new_scope(attrs.scope_id);
+
+        for proposition in data.body.iter_mut() {
+          proposition.attrs = Some(PropositionAttributes {
+            scope_id: body_scope_id,
+          });
+          self.visit_proposition(proposition)?;
+        }
+
+        for (effect_pattern, effect_body) in data.effect_handlers.iter_mut() {
+          let handler_scope_id = self.scope_arena.new_scope(attrs.scope_id);
+
+          effect_pattern.attrs = Some(EffectPatternAttributes {
+            scope_id: handler_scope_id,
+          });
+
+          self.visit_effect_pattern(effect_pattern)?;
+
+          for proposition in effect_body.iter_mut() {
+            proposition.attrs = Some(PropositionAttributes {
+              scope_id: handler_scope_id,
+            });
+            self.visit_proposition(proposition)?;
+          }
+        }
+
+        for (exception_pattern, exception_body) in data.exception_handlers.iter_mut() {
+          let handler_scope_id = self.scope_arena.new_scope(attrs.scope_id);
+
+          exception_pattern.attrs = Some(PatternAttributes {
+            scope_id: handler_scope_id,
+          });
+
+          self.visit_pattern(exception_pattern)?;
+
+          for proposition in exception_body.iter_mut() {
+            proposition.attrs = Some(PropositionAttributes {
+              scope_id: handler_scope_id,
+            });
+            self.visit_proposition(proposition)?;
+          }
+        }
+
+        Ok(())
+      },
       Expression::Receive(data) => {
         for (pattern, branch) in data.cases.iter_mut() {
           let branch_scope_id = self.scope_arena.new_scope(attrs.scope_id);
@@ -400,5 +446,18 @@ impl<'compiler> Model<'compiler> {
         Ok(())
       }
     }
+  }
+
+  pub fn visit_effect_pattern(&mut self, node: &mut Node<EffectPattern>) -> CompilationResult<()> {
+    let attrs = node.attrs.as_ref().unwrap();
+
+    self.visit_symbol(&node.data.effect_name, attrs.scope_id)?;
+
+    for param in node.data.effect_params.iter_mut() {
+      param.attrs = Some(PatternAttributes { scope_id: attrs.scope_id });
+      self.visit_pattern(param)?;
+    }
+
+    Ok(())
   }
 }

@@ -1,0 +1,20 @@
+module hello::main;
+
+import std::io;
+
+effect log(message: string) -> @ok;
+
+pub func main() -> @ok {
+  @ok := do {
+    @ok := perform log("hello");
+    throw (@error, "world");
+  }
+  intercept log(message) {
+    std::io::println(message);
+  }
+  catch (@error, reason) {
+    std::io::println(reason);
+  };
+
+  @ok;
+}

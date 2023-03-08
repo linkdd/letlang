@@ -1,0 +1,15 @@
+[package]
+name = "effects"
+version = "0.0.0"
+description = "Effects and exception demo"
+
+[executable]
+bin = "effects"
+module = "effects::main"
+
+[toolchain]
+letlang = "0.1.0"
+rust = "2021"
+
+[dependencies]
+stdlib = { path = "../../lib" }

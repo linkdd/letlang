@@ -2,7 +2,7 @@
 title: 3.4. Exceptions
 description: Overview of exception mechanism
 prev: /book/chapter-3/3-side-effects
-next: /book/chapter-4/
+next: /book/chapter-3/5-pipeline-operator
 ---
 
 # Introduction

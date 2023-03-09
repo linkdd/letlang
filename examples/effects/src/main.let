@@ -7,12 +7,12 @@ effect log(message: string) -> @ok;
 pub func main() -> @ok {
   @ok := do {
     @ok := perform log("hello");
-    throw (@error, "world");
+    throw "world";
   }
   intercept log(message) {
     std::io::println(message);
   }
-  catch (@error, reason) {
+  catch reason {
     std::io::println(reason);
   };
 

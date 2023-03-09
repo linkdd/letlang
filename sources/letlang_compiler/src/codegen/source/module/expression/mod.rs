@@ -24,6 +24,9 @@ impl<'compiler> Generator<'compiler> {
       Expression::EffectCall(data) => {
         self.gen_effect_call(&node.location, data)
       },
+      Expression::UnaryOperation(data) => {
+        self.gen_unary_op(&node.location, data)
+      },
       Expression::BinaryOperation(data) => {
         self.gen_binary_op(&node.location, data)
       },
@@ -53,6 +56,7 @@ mod symbol;
 mod literal;
 mod function;
 mod effect;
+mod unop;
 mod binop;
 mod pattern;
 mod tailrec;

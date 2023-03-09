@@ -1,0 +1,5 @@
+async {
+  let val = {{ expr_code }};
+
+  {{ op_func_name }}(context.clone(), &co, &expr).await
+}.await

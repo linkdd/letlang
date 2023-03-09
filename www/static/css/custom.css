@@ -132,3 +132,7 @@ hr {
   border-image: linear-gradient(to right, #F5F5F5, white) 1;
   padding-bottom: 0.5em;
 }
+
+.is-full-height {
+  height: 100%;
+}

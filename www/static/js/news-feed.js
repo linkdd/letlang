@@ -1,6 +1,5 @@
-const fetch_articles = async (authors, categories) => {
-  const promises = authors
-    .map(author => `https://medium.com/feed/@${author}`)
+const fetch_articles = async (sources, categories) => {
+  const promises = sources
     .map(feed => `https://api.rss2json.com/v1/api.json?rss_url=${feed}`)
     .map(async url => {
       const res = await fetch(url)
@@ -38,11 +37,6 @@ const render_articles = (articles, div) => {
   for (const article of articles) {
     const column = $('<div/>', { class: 'column is-one-quarter' })
     const card = $('<div/>', { class: 'card is-full-height is-flex is-flex-direction-column' }).append(
-      $('<div/>', { class: 'card-image' }).append(
-        $('<figure/>', { class: 'image' }).append(
-          $('<img/>', { src: article.thumbnail, alt: 'Thumbnail' })
-        )
-      ),
       $('<div/>', { class: 'card-content' }).append(
         $('<div/>', { class: 'content' }).append(
           $('<p/>', { class: 'title is-size-4' }).append(
@@ -66,6 +60,13 @@ const render_articles = (articles, div) => {
       )
     )
 
+    if (article.thumbnail) {
+      card.prepend($('<div/>', { class: 'card-image p-1' }).append(
+        $('<figure/>', { class: 'image' }).append(
+          $('<img/>', { src: article.thumbnail, alt: 'Thumbnail' })
+        )
+      ))
+    }
     column.append(card)
     div.append(column)
   }
@@ -73,9 +74,9 @@ const render_articles = (articles, div) => {
 
 $(() => {
   const articlesDiv = $('#articles')
-  const authors = articlesDiv.data('authors')
+  const sources = articlesDiv.data('sources')
   const categories = articlesDiv.data('categories')
-  fetch_articles(authors, categories).then(
+  fetch_articles(sources, categories).then(
     articles => render_articles(articles, articlesDiv),
     console.error
   )

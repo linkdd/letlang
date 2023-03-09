@@ -1,7 +1,7 @@
 ---
 title: 3.5. Pipeline Operator
 description: Chaining computations in Letlang
-prev: /book/chapter-3/4-excpetions
+prev: /book/chapter-3/4-exceptions
 next: /book/chapter-4/
 ---
 

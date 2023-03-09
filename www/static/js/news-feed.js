@@ -6,11 +6,11 @@ const fetch_articles = async (authors, categories) => {
       const res = await fetch(url)
       const data = await res.json()
       return data.items.filter(post => {
-        const categories = post.categories.map(cat => cat.toLowerCase())
+        const postCategories = post.categories.map(cat => cat.toLowerCase())
 
-        if (categories.length > 0) {
+        if (postCategories.length > 0) {
           for (const category of categories) {
-            if (categories.indexOf(category) !== -1) {
+            if (postCategories.indexOf(category) !== -1) {
               return true
             }
           }

@@ -16,13 +16,13 @@ pub async fn dispatch(
   args: &Vec<Value>,
 ) -> Result<Value> {
   match name {
-    "__io_inspect" => {
+    "std::io::__inspect" => {
       io_inspect::run(context.clone(), args).await
     },
-    "__io_println" => {
+    "std::io::__println" => {
       io_println::run(context.clone(), args).await
     },
-    "__io_readline" => {
+    "std::io::__readline" => {
       io_readline::run(context.clone(), args).await
     },
     _ => {

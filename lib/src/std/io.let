@@ -1,12 +1,12 @@
 module std::io;
 
-effect __io_println(msg: string) -> @ok;
-effect __io_readline(prompt: string) -> (@ok, string) | (@error, @eof) | (@error, (@io, string));
+effect __println(msg: string) -> @ok;
+effect __readline(prompt: string) -> (@ok, string) | (@error, @eof) | (@error, (@io, string));
 
 pub func println(msg: string) -> @ok {
-  perform __io_println(msg);
+  perform __println(msg);
 }
 
 pub func readline(prompt: string) -> (@ok, string) | (@error, @eof) | (@error, (@io, string)) {
-  perform __io_readline(prompt);
+  perform __readline(prompt);
 }

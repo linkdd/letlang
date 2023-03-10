@@ -1,5 +1,8 @@
 pub(crate) use llcore_runtime::api::*;
 
+#[allow(dead_code)]
+static LL_MOD_PATH: &'static str = {{ module_path }};
+
 {% for statement in statements %}
   {{statement}}
 {% endfor %}

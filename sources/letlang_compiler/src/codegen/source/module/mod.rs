@@ -9,13 +9,15 @@ use askama::Template;
 #[template(path = "module.rs.j2", escape = "none")]
 struct ModuleTemplate {
   statements: Vec<String>,
+  module_path: String,
 }
 
 
 impl<'compiler> Generator<'compiler> {
   pub fn gen_lib_source(&mut self, unit_node: &Node<Unit>) -> CompilationResult<String> {
     let context = ModuleTemplate {
-      statements: self.gen_unit(unit_node)?
+      statements: self.gen_unit(unit_node)?,
+      module_path: format!("{:?}", unit_node.data.path.join("::")),
     };
 
     let source_code = context.render().map_err(|e| {

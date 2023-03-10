@@ -139,11 +139,18 @@ propagated to the runtime.
 The runtime **MUST** provide handlers for the following builtin effects:
 
 ```letlang
-effect __io_println(message: string) -> @ok;
-effect __io_readline(prompt: string) -> (@ok, string) | (@error, @eof) | (@error, (@io, string));
-effect __proc_send(proc: pid, message: any) -> @ok | (@error, @dead_process);
-effect __proc_link(proc: pid) -> @ok | (@error, @dead_process);
-effect __proc_unlink(proc: pid) -> @ok | (@error, @dead_process);
+module std::io;
+
+effect __println(message: string) -> @ok;
+effect __readline(prompt: string) -> (@ok, string) | (@error, @eof) | (@error, (@io, string));
+```
+
+```letlang
+module std::proc;
+
+effect __send(proc: pid, message: any) -> @ok | (@error, @dead_process);
+effect __link(proc: pid) -> @ok | (@error, @dead_process);
+effect __unlink(proc: pid) -> @ok | (@error, @dead_process);
 ```
 
 The runtime **MAY** provide handlers for implementation-defined effects.

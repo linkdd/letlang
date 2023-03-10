@@ -451,7 +451,39 @@ impl<'compiler> Model<'compiler> {
   pub fn visit_effect_pattern(&mut self, node: &mut Node<EffectPattern>) -> CompilationResult<()> {
     let attrs = node.attrs.as_ref().unwrap();
 
-    self.visit_symbol(&node.data.effect_name, attrs.scope_id)?;
+    let sym = self.visit_symbol(&node.data.effect_name, attrs.scope_id)?;
+
+    match sym {
+      None => {
+        return Err(CompilationError::new_located(
+          &node.location,
+          format!("Unknown symbol '{}'", node.data.effect_name.to_string()),
+        ));
+      },
+      Some(sym_kind) => {
+        match sym_kind {
+          SymbolKind::Effect { call_param_count } => {
+            if call_param_count != node.data.effect_params.len() {
+              return Err(CompilationError::new_located(
+                &node.location,
+                format!(
+                  "Effect '{}' expects {} call parameters, got {}",
+                  node.data.effect_name.to_string(),
+                  call_param_count,
+                  node.data.effect_params.len(),
+                ),
+              ));
+            }
+          },
+          _ => {
+            return Err(CompilationError::new_located(
+              &node.location,
+              format!("Invalid symbol '{}' in this context", node.data.effect_name.to_string()),
+            ));
+          }
+        }
+      }
+    }
 
     for param in node.data.effect_params.iter_mut() {
       param.attrs = Some(PatternAttributes { scope_id: attrs.scope_id });

@@ -33,7 +33,7 @@
       {% endfor %}
 
       let result = co.yield_(FunctionInterruption::Effect {
-        name: "{{ symbol_name }}".to_string(),
+        name: format!("{LL_MOD_PATH}::{{ symbol_name }}"),
         args
       }).await;
 

@@ -1,4 +1,4 @@
-module hello::main;
+module effects::main;
 
 import std::io;
 

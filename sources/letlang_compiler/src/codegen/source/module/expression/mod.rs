@@ -45,6 +45,9 @@ impl<'compiler> Generator<'compiler> {
       Expression::FlowConditional(data) => {
         self.gen_flow_cond(&node.location, data)
       },
+      Expression::FlowDoBlock(data) => {
+        self.gen_flow_do(&node.location, data)
+      }
       _ => {
         todo!();
       }
@@ -62,3 +65,4 @@ mod pattern;
 mod tailrec;
 mod flow_match;
 mod flow_cond;
+mod flow_do;

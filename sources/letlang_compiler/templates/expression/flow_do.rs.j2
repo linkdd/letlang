@@ -1,0 +1,136 @@
+async {
+  #[allow(unused_mut)]
+  let mut block_locals = Locals::new(Some(&locals));
+  let block_context = context.clone();
+
+  let mut block = Gen::new(
+    |co| async move {
+      #[allow(unused_variables)]
+      #[allow(unused_mut)]
+      let mut locals = block_locals;
+
+      #[allow(unused_variables)]
+      let context = block_context;
+
+      {% for proposition in body %}
+        {% if loop.last %}
+          {{ proposition }}
+        {% else %}
+          {{ proposition }};
+        {% endif %}
+      {% endfor %}
+    }
+  );
+
+  let ignored = Value::Boolean(bool::default());
+  let mut state = block.resume_with(ignored);
+
+  let block_result = loop {
+    let (finish, next_val) = 'continuation: {
+      match state {
+        GeneratorState::Yielded(FunctionInterruption::Effect { ref name, ref args }) => {
+          {% for effect_handler in effect_handlers %}
+            #[allow(unused_variables)]
+            #[allow(unused_mut)]
+            let mut branch_locals = Locals::new(Some(&locals));
+
+            let branch_match = 'branch_match: {
+              let branch_name = {{effect_handler.pattern.name}};
+              if !branch_name.eq(name) {
+                break 'branch_match false;
+              }
+
+              let branch_params = vec![
+                {% for param in effect_handler.pattern.params %}
+                  {{ param }},
+                {% endfor %}
+              ];
+
+              for (arg, branch_param) in std::iter::zip(args, branch_params) {
+                if branch_param.match_(context.clone(), &mut branch_locals, arg).await.is_err() {
+                  break 'branch_match false;
+                }
+              }
+
+              for constraint in branch_locals.iter_constraints() {
+                if constraint.check(&co, context.clone(), &branch_locals).await.is_err() {
+                  break 'branch_match false;
+                }
+              }
+
+              true
+            };
+
+            if branch_match {
+              let mut locals = branch_locals;
+
+              {% for proposition in effect_handler.body %}
+                {% if loop.last %}
+                  let result = {{ proposition }};
+                {% else %}
+                  {{ proposition }};
+                {% endif %}
+              {% endfor %}
+
+              break 'continuation (false, result);
+            }
+          {% endfor %}
+
+          let res = co.yield_(FunctionInterruption::Effect { name: name.clone(), args: args.clone() }).await;
+          break 'continuation (false, res);
+        },
+        GeneratorState::Yielded(FunctionInterruption::Exception(exc)) => {
+          {% for exception_handler in exception_handlers %}
+            #[allow(unused_variables)]
+            #[allow(unused_mut)]
+            let mut branch_locals = Locals::new(Some(&locals));
+
+            let branch_match = 'branch_match: {
+              let branch_pattern = {{ exception_handler.pattern_code }};
+              if branch_pattern.match_(context.clone(), &mut branch_locals, &exc).await.is_err() {
+                break 'branch_match false;
+              }
+
+              for constraint in branch_locals.iter_constraints() {
+                if constraint.check(&co, context.clone(), &branch_locals).await.is_err() {
+                  break 'branch_match false;
+                }
+              }
+
+              true
+            };
+
+            if branch_match {
+              let mut locals = branch_locals;
+
+              {% for proposition in exception_handler.body %}
+                {% if loop.last %}
+                  let result = {{ proposition }};
+                {% else %}
+                  {{ proposition }};
+                {% endif %}
+              {% endfor %}
+
+              break 'continuation (true, result);
+            }
+          {% endfor %}
+
+          co.yield_(FunctionInterruption::Exception(exc)).await;
+          unreachable!();
+        },
+        GeneratorState::Complete(res) => {
+          break 'continuation (true, res);
+        }
+      }
+    };
+
+    if finish {
+      break next_val;
+    }
+    else {
+      state = block.resume_with(next_val);
+    }
+  };
+
+  block_result
+}.await

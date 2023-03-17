@@ -245,9 +245,9 @@ pub enum Token {
 
   // comments and whitespaces
   #[regex(r"#.*\n?", logos::skip)]
-	#[regex(r"[ \t\r\n\f]+", logos::skip)]
-	#[error]
-	Error,
+  #[regex(r"[ \t\r\n\f]+", logos::skip)]
+  #[error]
+  Error,
 }
 
 impl fmt::Display for Token {

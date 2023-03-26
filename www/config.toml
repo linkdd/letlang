@@ -1,6 +1,7 @@
 baseURL = "https://letlang.dev/"
 languageCode = "en-us"
 title = "Letlang"
+enableEmoji = true
 
 [params.metadata]
 

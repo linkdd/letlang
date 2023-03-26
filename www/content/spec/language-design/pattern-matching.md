@@ -132,6 +132,13 @@ A pattern-match expression **MUST** return the matched value:
 (a, 2) := (1, b) := (1, 2);  # a is bound to 1, and b is bound to 2
 ```
 
+Variables **MUST** be bound immediatly:
+
+```letlang
+(a, a) := (1, 2);    # a is bound to 1 first, but then rebound to 2
+(a, $(a)) := (1, 1); # a is bound to 1, we then use it in the expression
+```
+
 If a pattern-match expression can't be matched, the Letlang runtime **MUST** throw
 an exception of the form:
 

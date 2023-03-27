@@ -1,0 +1,11 @@
+unit
+  = module_decl_statement statement*
+
+module_decl_statement
+  = "module" identifier ("::" identifier)* ";"
+
+statement
+  = import_statement
+  / effect_decl_statement
+  / class_decl_statement
+  / func_decl_statement

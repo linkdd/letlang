@@ -4,21 +4,9 @@ weight: 1
 ---
 
 Every Letlang module (which correspond to a source file with the extension
-`.let`) **MUST** begin with a `<module-declaration-statement>` rule.
+`.let`) **MUST** begin with a `module_decl_statement` rule.
 
-```bnf
-<module-declaration-statement> :=
-  "module" <module-path> ";"
-  ;
-
-<module-path> :=
-  <identifier> ("::" <identifier>)*
-  ;
-
-<identifier> :=
-  /[_a-zA-Z][_0-9a-zA-Z]*/
-  ;
-```
+{{< grammar-block "module" >}}
 
 Examples:
 

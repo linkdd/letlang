@@ -1,0 +1,9 @@
+{
+  "name": "letlang-www",
+  "dependencies": {
+    "grammkit": "^0.7.1"
+  },
+  "scripts": {
+    "build:grammar": "node scripts/build-grammar.js"
+  }
+}

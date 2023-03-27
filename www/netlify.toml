@@ -1,7 +1,7 @@
 [build]
 base = "www/"
 publish = "./public/"
-command = "hugo --minify"
+command = "sh build.sh"
 
 [build.environment]
 

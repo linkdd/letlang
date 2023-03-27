@@ -1,0 +1,20 @@
+{{ $grammar := .Get 0 }}
+{{ $source := path.Join "_static" "grammar" (printf "%s.peg" $grammar) | readFile }}
+{{ $diagrams := path.Join "_static" "grammar" (printf "%s.html" $grammar) | readFile | safeHTML }}
+
+<div class="box p-0 is-radiusless has-background-white-bis">
+  <div class="columns is-gapless">
+    <div class="column is-half">
+      <p class="has-text-weight-bold has-text-centered">Diagram</p>
+      <hr class="mt-0 has-background-info" />
+      <div class="px-5 mb-3">{{ $diagrams }}</div>
+    </div>
+    <div class="column is-half is-flex is-flex-direction-column ">
+      <p class="has-text-weight-bold has-text-centered">Grammar</p>
+      <hr class="mt-0 has-background-danger" />
+      <div class="grammar-source-container px-5 mb-3 is-flex-grow-1">
+        {{ highlight $source "ebnf" "style=dracula" }}
+      </div>
+    </div>
+  </div>
+</div>

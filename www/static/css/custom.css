@@ -136,3 +136,42 @@ hr {
 .is-full-height {
   height: 100%;
 }
+
+svg.railroad-diagram path {
+  stroke-width: 3;
+  stroke: black;
+  fill: none;
+}
+svg.railroad-diagram text {
+  font: bold 14px monospace;
+  text-anchor: middle;
+  cursor: pointer;
+}
+svg.railroad-diagram text.label {
+  text-anchor: start;
+}
+svg.railroad-diagram text.comment {
+  font: italic 12px monospace;
+}
+svg.railroad-diagram rect {
+  stroke-width: 3;
+  stroke: black;
+  fill: hsl(120,100%,90%);
+}
+
+.grammar-diagram-container .rule {
+  transition: all 300ms ease-in-out;
+  border: 1px solid #11118844;
+  margin-top: 1rem;
+  padding: 0.5rem;
+  overflow-y: auto;
+}
+
+.grammar-diagram-container .rule:hover {
+  background-color: #11118811;
+}
+
+.grammar-source-container .highlight,
+.grammar-source-container .highlight pre {
+  height: 100%;
+}

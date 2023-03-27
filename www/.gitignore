@@ -1,3 +1,5 @@
 public/
 resources/_gen/
 .hugo_build.lock
+content/_static/grammar/*.html
+node_modules/

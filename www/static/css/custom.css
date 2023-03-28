@@ -159,6 +159,14 @@ svg.railroad-diagram rect {
   fill: hsl(120,100%,90%);
 }
 
+.grammar-block .grammar-block-content div[data-tabid] {
+  display: none;
+}
+
+.grammar-block .grammar-block-content div[data-tabid].is-active {
+  display: block;
+}
+
 .grammar-diagram-container .rule {
   transition: all 300ms ease-in-out;
   border: 1px solid #11118844;

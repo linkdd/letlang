@@ -2,19 +2,33 @@
 {{ $source := path.Join "_static" "grammar" (printf "%s.peg" $grammar) | readFile }}
 {{ $diagrams := path.Join "_static" "grammar" (printf "%s.html" $grammar) | readFile | safeHTML }}
 
-<div class="box p-0 is-radiusless has-background-white-bis">
-  <div class="columns is-gapless">
-    <div class="column is-half">
-      <p class="has-text-weight-bold has-text-centered">Diagram</p>
-      <hr class="mt-0 has-background-info" />
-      <div class="px-5 mb-3">{{ $diagrams }}</div>
+<div class="grammar-block" data-tabid="0">
+  <div class="grammar-block-nav tabs is-centered is-boxed is-medium mb-0">
+    <ul class="p-0 m-0">
+      <li data-tabid="0">
+        <a>
+          <span class="icon is-small">
+            <i class="fas fa-image" aria-hidden="true"></i>
+          </span>
+          <span>Diagram</span>
+        </a>
+      </li>
+      <li data-tabid="1">
+        <a>
+          <span class="icon is-small">
+            <i class="fas fa-code" aria-hidden="true"></i>
+          </span>
+          <span>Sources</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div class="grammar-block-content box mt-0 is-radiusless" style="border: 1px solid #DBDBDB; border-top: 0px;">
+    <div data-tabid="0">
+      {{ $diagrams }}
     </div>
-    <div class="column is-half is-flex is-flex-direction-column ">
-      <p class="has-text-weight-bold has-text-centered">Grammar</p>
-      <hr class="mt-0 has-background-danger" />
-      <div class="grammar-source-container px-5 mb-3 is-flex-grow-1">
-        {{ highlight $source "ebnf" "style=dracula" }}
-      </div>
+    <div data-tabid="1">
+      {{ highlight $source "ebnf" "style=dracula" }}
     </div>
   </div>
 </div>

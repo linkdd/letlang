@@ -74,10 +74,12 @@ const render_articles = (articles, div) => {
 
 $(() => {
   const articlesDiv = $('#articles')
-  const sources = articlesDiv.data('sources')
-  const categories = articlesDiv.data('categories')
-  fetch_articles(sources, categories).then(
-    articles => render_articles(articles, articlesDiv),
-    console.error
-  )
+  if (articlesDiv.length > 0) {
+    const sources = articlesDiv.data('sources')
+    const categories = articlesDiv.data('categories')
+    fetch_articles(sources, categories).then(
+      articles => render_articles(articles, articlesDiv),
+      console.error
+    )
+  }
 })

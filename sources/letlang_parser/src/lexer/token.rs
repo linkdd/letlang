@@ -25,7 +25,7 @@ pub enum Token {
   })]
   IntegerBase8(f64),
 
-  #[regex(r"[1-9][_1-9]*", |lex| {
+  #[regex(r"[1-9][_0-9]*", |lex| {
     parse_int::parse::<i64>(lex.slice()).map(|i| i as f64)
   }, priority = 2)]
   IntegerBase10(f64),

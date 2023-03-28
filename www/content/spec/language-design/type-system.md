@@ -37,6 +37,10 @@ Additionally, the Letlang runtime **MUST** provide the following types:
 Those types **MUST NOT** be forgeable by the developer, only the Letlang runtime
 should be able to create values of those types.
 
+Literal values **MUST** match the following syntax:
+
+{{< grammar-block "literal" >}}
+
 # Container types
 
 The Letlang runtime **MUST** provide the following container types:
@@ -84,100 +88,7 @@ Every function is a value whose type is its signature, for example:
 
 A type reference is defined using the following syntax:
 
-```bnf
-<typeref> :=
-  | <typeref-value>
-  | <typeref-name>
-  | <typeref-struct>
-  | <typeref-tuple>
-  | <typeref-function>
-  | <typeref-oneof>
-  | <typeref-allof>
-  | <typeref-not>
-  ;
-
-<typeref-value> :=
-  <literal>
-  ;
-
-<typeref-name> :=
-  <identifier> ("<" <typeref-name-generic-params> ">")?
-  ;
-<typeref-name-generic-params> :=
-  <identifier> ("," <identifier>)*
-  ;
-
-<typeref-struct> :=
-  "{" <typeref-struct-members> "}"
-  ;
-<typeref-struct-members> :=
-  <typeref-struct-member> ("," <typeref-struct-member>)*
-  ;
-<typeref-struct-member> :=
-  <identifier> ":" <typeref>
-  ;
-
-<typeref-tuple> :=
-  "(" <typeref-tuple-members> ")"
-  ;
-<typeref-tuple-members> :=
-  <typeref> ("," <typeref>)*
-  ;
-
-<typeref-function> :=
-  "func" "[" "(" <typeref-function-params ")" "->" <typeref-function-return> "]"
-  ;
-<typeref-function-params> :=
-  <typeref> ("," <typeref>)*
-  ;
-<typeref-function-return> :=
-  <typeref>
-  ;
-
-<typeref-oneof> :=
-  <typeref> "|" <typeref>
-  ;
-
-<typeref-allof> :=
-  <typeref> "&" <typeref>
-  ;
-
-<typeref-not> :=
-  "!" <typeref>
-  ;
-
-<literal> :=
-  | <literal-bool>
-  | <literal-number>
-  | <literal-string>
-  | <literal-atom>
-  ;
-
-<literal-bool> :=
-  | "true"
-  | "false"
-  ;
-
-<literal-number> :=
-  | /0b_*[01][_01]*/
-  | /0o_*[0-7][_0-7]*/
-  | /[1-9][_1-9]*/
-  | /0x_*[0-9a-fA-F][_0-9a-fA-F]*/
-  | /((\d+\.?\d*)|(\.\d+))(([eE][+-]?)?\d+)?/
-  ;
-
-<literal-string> :=
-  /"(?:[^"]|\\")*"/
-  ;
-
-<literal-atom> :=
-  /@(('(?:[^']|\\')+')|([_a-zA-Z][_a-zA-Z0-9]*))/
-  ;
-
-<identifier> :=
-  /[_a-zA-Z][_0-9a-zA-Z]*/
-  ;
-```
+{{< grammar-block "typeref" >}}
 
 # Defining types
 
@@ -191,42 +102,9 @@ The type's predicate (if present) **MUST** return a `bool`.
 
 The `class` is defined using the following syntax:
 
-```bnf
-<class-statement> :=
-  | <class-statement-no-predicate>
-  | <class-statement-with-predicate>
-  ;
+{{< grammar-block "class" >}}
 
-<class-statement-no-predicate> :=
-  [ "pub" ] "class" <identifier>
-  [ <class-type-parameters> ]
-  "(" <class-constructor-parameter> ")"
-  ";"
-  ;
-
-<class-statement-with-predicate> :=
-  [ "pub" ] "class" <identifier>
-  [ <class-type-parameters> ]
-  "(" <class-constructor-parameter> ")"
-  "{" <proposition>+ "}"
-  ;
-
-<class-type-parameters> :=
-  "<" <identifier> ("," <identifier>)* ">"
-  ;
-
-<class-constructor-parameter> :=
-  <identifier> ":" <type-ref>
-  ;
-
-<proposition> :=
-  | <proposition-let>
-  | <proposition-expression>
-  ;
-```
-
-> **NB:** `<proposition-let>` and `<proposition-expression>` rules will be
-> defined later.
+> **NB:** `proposition_let` and `proposition_expr` rules will be defined later.
 
 The value of the last proposition of the class's predicate evaluates to is the
 return value of the predicate.

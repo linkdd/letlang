@@ -1,0 +1,39 @@
+typeref
+  = typeref_val
+  / typeref_name
+  / typeref_struct
+  / typeref_tuple
+  / typeref_func
+  / typeref_oneof
+  / typeref_allof
+  / typeref_not
+
+typeref_val
+  = literal
+
+typeref_name
+  = name:identifier
+    type_params:("<" identifier ("," identifier)* ","? ">")?
+
+typeref_struct
+  = "{" members:(typeref_struct_member ("," typeref_struct_member)* ","?)? "}"
+typeref_struct_member
+  = field:identifier ":" type:typeref
+
+typeref_tuple
+  = "(" members:(typeref ("," typeref)* ","?)? ")"
+
+typeref_func
+  = "func" "[" "(" params:(typeref ("," typeref)* ","?)? ")" "->" return_type:typeref "]"
+
+typeref_oneof
+  = typeref "|" typeref
+
+typeref_allof
+  = typeref "&" typeref
+
+typeref_not
+  = "!" typeref
+
+identifier
+  = [_a-zA-Z][_0-9a-zA-Z]*

@@ -1,0 +1,9 @@
+class_decl_statement
+  = "pub"? "class" name:identifier
+    type_params:("<" identifier ("," identifier)* ","? ">")?
+    "(" cons_param:(variable:identifier ":" typename:typeref) ")"
+    (";" / predicate:("{" proposition+ "}"))
+
+proposition
+  = proposition_let
+  / proposition_expr

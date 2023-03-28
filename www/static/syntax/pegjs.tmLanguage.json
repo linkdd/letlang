@@ -1,0 +1,121 @@
+{
+  "fileTypes": [
+      "pegjs"
+  ],
+  "name": "PEG.js File",
+  "patterns": [
+      {
+          "include": "#comment"
+      },
+      {
+          "include": "#label"
+      },
+      {
+          "include": "#defRule"
+      },
+      {
+          "include": "#rule"
+      },
+      {
+          "include": "#literal"
+      },
+      {
+          "include": "#charclass"
+      },
+      {
+          "include": "#operators"
+      },
+      {
+          "include": "#inlinejs"
+      }
+  ],
+  "repository": {
+      "comment": {
+          "patterns": [
+              {
+                  "begin": "/\\*",
+                  "end": "\\*/",
+                  "name": "comment.block.pegjs"
+              },
+              {
+                  "match": "//.*$\\n?",
+                  "name": "comment.line.double-slash.pegjs"
+              }
+          ]
+      },
+      "label": {
+          "match": "(\\w+)\\s*(?=:)",
+          "captures": {
+              "1": {
+                  "name": "entity.other.attribute-name.attribute.pegjs"
+              }
+          }
+      },
+      "rule": {
+          "match": "[a-zA-Z_][a-zA-Z_0-9]*",
+          "name": "entity.name.function.pegjs"
+      },
+      "literal": {
+          "patterns": [
+              {
+                  "begin": "\"",
+                  "end": "\"",
+                  "name": "string.quoted.double.pegjs",
+                  "patterns": [
+                      {
+                          "match": "\\\\(x\\h{2}|[0-2][0-7]{0,2}|3[0-6][0-7]|37[0-7]?|[4-7][0-7]?|.)",
+                          "name": "constant.character.escape.pegjs"
+                      },
+                      {
+                          "match": "[^\"]*[^\\n\\r\"\\\\]$",
+                          "name": "invalid.illegal.string.pegjs"
+                      }
+                  ]
+              },
+              {
+                  "begin": "'",
+                  "end": "'",
+                  "name": "string.quoted.single.pegjs",
+                  "patterns": [
+                      {
+                          "match": "\\\\(x\\h{2}|[0-2][0-7]{0,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.)",
+                          "name": "constant.character.escape.pegjs"
+                      },
+                      {
+                          "match": "[^']*[^\\n\\r'\\\\]$",
+                          "name": "invalid.illegal.string.pegjs"
+                      }
+                  ]
+              }
+          ]
+      },
+      "charclass": {
+          "begin": "\\[",
+          "end": "\\]",
+          "name": "declaration.keyword.pegjs"
+      },
+      "defRule": {
+          "match": "(\\w+)\\s*(?=\\=)",
+          "captures": {
+              "1": {
+                  "name": "entity.name.function.pegjs"
+              }
+          }
+      },
+      "operators": {
+          "match": "[*?/.$!=+&]",
+          "name": "keyword.operator.pegjs"
+      },
+      "inlinejs": {
+          "begin": "{",
+          "end": "}",
+          "name": "meta.embedded.block.javascript",
+          "patterns": [
+              {
+                  "include": "source.js"
+              }
+          ]
+      }
+  },
+  "scopeName": "source.pegjs"
+}

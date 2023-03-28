@@ -2,7 +2,7 @@
 {{ $source := path.Join "_static" "grammar" (printf "%s.peg" $grammar) | readFile }}
 {{ $diagrams := path.Join "_static" "grammar" (printf "%s.html" $grammar) | readFile | safeHTML }}
 
-<div class="grammar-block" data-tabid="0">
+<div class="grammar-block my-5" data-tabid="0">
   <div class="grammar-block-nav tabs is-centered is-boxed is-medium mb-0">
     <ul class="p-0 m-0">
       <li data-tabid="0">

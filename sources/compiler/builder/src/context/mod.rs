@@ -1,10 +1,13 @@
 use std::{
   path::PathBuf,
-  fs::{create_dir_all, File},
+  fs::{create_dir_all, set_permissions, File, Permissions},
   io::{copy, prelude::*},
-  process::{Command, Stdio},
+  process::{Command, Stdio, exit},
   str,
 };
+
+#[cfg(unix)]
+use std::os::unix::fs::PermissionsExt;
 
 use ar::Archive;
 
@@ -86,18 +89,27 @@ impl BuildContext {
           .args(["-L", self.runtime_path.display().to_string().as_str()])
           .args(["--crate-type", "bin"])
           .args(["--crate-name", &crate_name])
-          .args(["-l", "llruntime"])
           .args(["-o", "-"])
           .arg("-")
           .stdin(Stdio::piped())
           .stdout(Stdio::piped())
-          //.stderr(Stdio::piped())
+          .stderr(Stdio::piped())
           .spawn()?;
 
-        rustc.stdin.unwrap().write_all(code.as_bytes())?;
-        let mut exe: Vec<u8> = vec![];
-        rustc.stdout.unwrap().read_to_end(&mut exe)?;
-        todo!("build exe");
+        rustc.stdin.as_ref().unwrap().write_all(code.as_bytes())?;
+        let output = rustc.wait_with_output()?;
+        if !output.status.success() {
+          eprintln!("Something went wrong");
+          exit(2);
+        }
+
+        let mut target = File::create(&self.output)?;
+        target.write_all(&output.stdout)?;
+
+        #[cfg(unix)]
+        set_permissions(&self.output, Permissions::from_mode(0o755))?;
+
+        Ok(())
       }
     }
   }

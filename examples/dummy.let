@@ -1,0 +1,5 @@
+module dummy::main;
+
+let main: func[() -> @ok] {
+  () -> @ok,
+};

@@ -1,0 +1,13 @@
+[package]
+name = "letlang-builder"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+llfront = { package = "letlang-frontend", path = "../frontend" }
+llback = { package = "letlang-backend", path = "../backend" }
+llbmi = { package = "letlang-bmi", path = "../bmi" }
+
+serde = { version = "1.0", features=["derive"] }
+nonempty = { version = "0.8", features=["serialize"] }
+ar = "0.9"

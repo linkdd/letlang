@@ -1,0 +1,7 @@
+module std::io;
+
+let __println: effect[(str) -> @ok];
+
+let println: func[(str) -> @ok] {
+  (msg) -> perform __println(msg),
+};

@@ -1,0 +1,9 @@
+module hello::main;
+
+from std::io import { println };
+
+let main: func[() -> @ok] {
+  () -> {
+    println("hello world");
+  },
+};

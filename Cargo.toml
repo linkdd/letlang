@@ -1,0 +1,13 @@
+[workspace]
+
+resolver = "2"
+members = [
+  "sources/utils/ast-core",
+  "sources/utils/ast-macros",
+  "sources/compiler/bmi",
+  "sources/compiler/frontend",
+  "sources/compiler/backend",
+  "sources/compiler/builder",
+  "sources/compiler/cli",
+  "sources/runtime",
+]

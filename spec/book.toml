@@ -1,0 +1,6 @@
+[book]
+authors = ["David Delassus"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Letlang Language Specification"

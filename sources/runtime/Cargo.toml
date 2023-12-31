@@ -1,0 +1,13 @@
+[package]
+name = "letlang-runtime"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "llruntime"
+
+[dependencies]
+genawaiter = "0.99"
+async-trait = "0.1"
+siphasher = "1.0"
+tokio = { version = "1.35", features = ["full"] }

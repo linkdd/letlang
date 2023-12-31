@@ -1,0 +1,16 @@
+[package]
+name = "letlang-frontend"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ast-core = { package = "letlang-ast-core", path = "../../utils/ast-core" }
+
+nonempty = "0.8"
+ariadne = "0.3"
+
+logos = "0.13"
+parse_int = "0.6"
+snailquote = "0.3"
+
+peg = "0.8"

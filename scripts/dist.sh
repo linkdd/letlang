@@ -26,8 +26,8 @@ function build_compiler() {
     --target-dir ${CACHEDIR}/cli-target
 }
 
-function copy_runtime() {
-  for ext in rlib a dll so
+function copy_runtime_linux() {
+  for ext in rlib a so
   do
     deps=$(find ${CACHEDIR}/runtime-target/debug/deps -name "*.${ext}")
 
@@ -53,13 +53,62 @@ function copy_runtime() {
   done
 }
 
-function copy_toolchain() {
-  echo "  COPY     letlangc.exe"
+function copy_runtime_windows() {
+  for ext in rlib a dll
+  do
+    deps=$(find ${CACHEDIR}/runtime-target/debug/deps -name "*.${ext}")
+
+    for dep in $deps
+    do
+      depdir=$(dirname $dep)
+      depbase=$(basename $dep)
+      deppat=${depbase%.${ext}}
+      deppat=$(echo $deppat | cut -d- -f1)
+
+      dest=$(basename $dep)
+      dest=${dest%.${ext}}
+      dest=$(echo $dest | cut -d- -f1)
+      dest="${dest}.${ext}"
+
+      dep=$(find $depdir -type f -name "${deppat}-*.${ext}" | head -n1)
+      if [ ! -z "$dep" ]
+      then
+        echo "  COPY     ${dest}"
+        cp $dep ${LIBDIR}/${dest}
+      fi
+    done
+  done
+
+  echo "  COPY    libwindows.0.48.5.a"
+  find $HOME/.cargo/registry -name "libwindows.0.48.5.a" -exec cp {} ${LIBDIR}/ \;
+}
+
+function copy_toolchain_linux() {
+  echo "  COPY     letlangc"
+  cp ${CACHEDIR}/cli/letlangc ${BINDIR}/letlangc
+
+  echo "  COPY     rustc"
+  rustc=$(which rustc)
+  cp ${rustc} ${BINDIR}/rustc
+
+  echo "  COPY     rustlib"
+  RUSTUP_HOME=$(rustup show home)
+  RUSTUP_TOOLCHAIN=$(rustup show active-toolchain | cut -d '' -f1)
+  cp -r ${RUSTUP_HOME}/toolchains/${RUSTUP_TOOLCHAIN}/lib/* ${LIBDIR}/*
+}
+
+function copy_toolchain_windows() {
+  echo "  COPY     letlangc"
   cp ${CACHEDIR}/cli/letlangc.exe ${BINDIR}/letlangc.exe
 
-  echo "  COPY     rustc.exe"
+  echo "  COPY     rustc"
   rustc=$(which rustc)
   cp ${rustc} ${BINDIR}/rustc.exe
+
+  echo "  COPY     rustlib"
+  RUSTUP_HOME=$(rustup show home)
+  RUSTUP_TOOLCHAIN=$(rustup show active-toolchain | cut -d '' -f1)
+  cp -r ${RUSTUP_HOME}/toolchains/${RUSTUP_TOOLCHAIN}/lib/* ${LIBDIR}/*
 }
 
 rm -rf $DISTDIR
@@ -68,5 +117,18 @@ mkdir -p $DISTDIR $BINDIR $LIBDIR $CACHEDIR
 build_runtime
 build_compiler
 
-copy_runtime
-copy_toolchain
+case "$OSTYPE" in
+  linux*)
+    copy_runtime_linux
+    copy_toolchain_linux
+    ;;
+  msys*)
+    copy_runtime_windows
+    copy_toolchain_windows
+    ;;
+
+  *)
+    echo "Unsupported OS: $OSTYPE"
+    exit 1
+    ;;
+esac

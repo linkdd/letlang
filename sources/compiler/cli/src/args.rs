@@ -1,7 +1,7 @@
 use std::{
-  env::current_dir,
   ffi::OsString,
-  path::PathBuf,
+  path::{absolute, PathBuf},
+  fs::canonicalize,
 };
 
 use clap::{Parser, ValueEnum, ValueHint};
@@ -10,14 +10,23 @@ use crate::prelude::*;
 use llbuild::context::{BuildType, BuildContext};
 
 trait ToAbsolute {
-  fn as_absolute(self) -> Self;
+  fn as_absolute(&self) -> Self;
+  fn as_canonical(&self) -> Self;
 }
 
 impl ToAbsolute for PathBuf {
-  fn as_absolute(self) -> PathBuf {
-    match self {
-      path if path.is_absolute() => path,
-      path => current_dir().expect("unable to read PWD").join(path),
+
+  fn as_absolute(&self) -> PathBuf {
+    match absolute(&self) {
+      Ok(path) => path,
+      Err(err) => panic!("ERROR: Could not absolutize path: {}\n{:?}", self.display(), err),
+    }
+  }
+
+  fn as_canonical(&self) -> PathBuf {
+    match canonicalize(&self) {
+      Ok(path) => path,
+      Err(err) => panic!("ERROR: Could not canonicalize path: {}\n{:?}", self.display(), err),
     }
   }
 }
@@ -71,7 +80,7 @@ pub struct Args {
 
 impl Args {
   pub fn to_build_context(self) -> Result<BuildContext> {
-    let input = self.input.as_absolute();
+    let input = self.input.as_canonical();
     let output = self.output.unwrap_or_else(|| {
       let unit_name = input.file_name().expect("unable to get input filename");
 
@@ -94,11 +103,11 @@ impl Args {
       .unwrap_or_else(|| PathBuf::from(".lltarget"))
       .as_absolute();
 
-    let runtime_path = self.runtime_path.as_absolute();
+    let runtime_path = self.runtime_path.as_canonical();
 
     let library_paths: Vec<PathBuf> = self.library_path
       .into_iter()
-      .map(|p| p.as_absolute())
+      .map(|p| p.as_canonical())
       .collect();
 
     let dependency_names = self.link_lib;

@@ -1,4 +1,4 @@
-/target
-/.lltarget
-/dist
-/cache
+/target/
+/.lltarget/
+/www/node_modules/
+/www/public/

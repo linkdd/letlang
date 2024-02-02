@@ -36,5 +36,71 @@
     <section class="markdown">
       {{ content|raw }}
     </section>
+
+    <section class="border-t-4 border-gray-300">
+      <h1 class="my-6 text-center text-4xl font-semibold">📰 News Feed</h1>
+
+      <script type="application/javascript" src="./js/news.js"></script>
+
+      <div
+        class="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-x-3 gap-y-8"
+        data-sources="{{ site.data.news.sources|json_encode|escape }}"
+        data-categories="{{ site.data.news.categories|json_encode|escape }}"
+        x-data="{ news: [] }"
+        x-init="
+          news = await fetchNews(
+            JSON.parse($el.dataset.sources),
+            JSON.parse($el.dataset.categories),
+          )
+        "
+      >
+        <template x-for="item in news">
+          <article
+            class="
+              p-3
+              flex flex-col
+              shadow-md rounded-sm
+              border border-gray-200
+            "
+          >
+            <p class="text-xl">
+              <a
+                class="text-indigo-500 hover:text-red-600 font-semibold"
+                x-bind:href="item.link"
+                x-text="item.title"
+                target="_blank"
+              >
+              </a>
+            </p>
+            <p class="flex-grow text-xs" x-text="'@' + item.author"></p>
+
+            <div
+              class="
+                mt-6 pt-3
+                flex flex-row flex-wrap gap-1 justify-center
+                border-t-2 border-gray-300
+              "
+            >
+              <template x-for="category in item.categories">
+                <span
+                  class="
+                    py-1 px-2
+                    shadow-sm rounded-sm
+                    bg-teal-400
+                    text-white text-xs
+                  "
+                  x-text="category"
+                ></span>
+              </template>
+            </div>
+
+            <p
+              class="mt-3 text-right text-xs text-gray-500 uppercase font-semibold"
+              x-text="moment(item.pubDate).format('dddd, MMMM Do, YYYY')"
+            ></p>
+          </article>
+        </template>
+      </div>
+    </section>
   </main>
 {% endblock %}

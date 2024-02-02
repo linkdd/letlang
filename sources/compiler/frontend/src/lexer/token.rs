@@ -10,7 +10,7 @@ pub enum Token<'source> {
   #[regex(r#""([^"\\]|\\.)*""#, string)]
   String(String),
 
-  #[regex(r"@(('(?:[^']|\\')+')|([_a-zA-Z][_a-zA-Z0-9]*))")]
+  #[regex(r"@(('(?:[^']|\\')+')|([_a-zA-Z0-9]+))")]
   Atom(&'source str),
 
   #[token("true", |_| true)]

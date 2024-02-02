@@ -1,14 +1,12 @@
-.PHONY: dist
-dist:
-	@bash scripts/dist.sh
+LETLANGC := cargo run --bin letlangc --
 
-.PHONY: examples/dummy
-examples/dummy: dist
-	@./dist/bin/letlangc.exe --type=exe -r ./dist/lib ./examples/dummy.let
+.PHONY: dummy
+dummy:
+	@$(LETLANGC) --type=exe --rpath ./sources/runtime ./examples/dummy.let
 	@./dummy.exe
 
-.PHONY: examples/hello
-examples/hello: dist
-	@./dist/bin/letlangc.exe --type=lib -r ./dist/lib ./lib/stdio.let
-	@./dist/bin/letlangc.exe --type=exe -r ./dist/lib ./examples/hello.let -L. -lstdio
+.PHONY: hello
+hello:
+	@$(LETLANGC) --type=lib --rpath ./sources/runtime ./lib/stdio.let
+	@$(LETLANGC) --type=exe --rpath ./sources/runtime ./examples/hello.let -L. -lstdio
 	@./hello.exe

@@ -10,7 +10,7 @@
     "watch": "concurrently \"npm run watch:css\" \"npm run watch:content\""
   },
   "dependencies": {
-    "gin": "linkdd/gin#semver:v0.4.0"
+    "gin": "linkdd/gin#semver:v0.4.1"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",

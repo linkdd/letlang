@@ -4,9 +4,9 @@ title: Homepage
 
 <div class="[&>p]:flex [&>p]:items-center [&>p]:justify-center [&>p]:gap-3 mb-8">
 
-![status: WIP](https://img.shields.io/badge/status-WIP-red)
-![version: 0.0.0](https://img.shields.io/badge/version-v0.0.0-brightgreen)
-![license: MIT](https://img.shields.io/badge/license-MIT-blue)
+![status: WIP](https://img.shields.io/badge/status-WIP-red?style=flat-square)
+![version: 0.0.0](https://img.shields.io/badge/version-v0.0.0-brightgreen?style=flat-square)
+![license: MIT](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
 
 </div>
 

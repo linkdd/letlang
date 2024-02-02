@@ -1,0 +1,15 @@
+{% extends "layouts/spec/base.html" %}
+
+{% block toc %}
+<div class="mt-6 p-3 border border-gray-300">
+  <p><b>Table of Contents:</b></p>
+
+  <ul>
+    {% for child in page.children %}
+      <li>
+        <a href=".{{ child.url }}">{{ child.title }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

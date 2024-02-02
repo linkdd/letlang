@@ -1,0 +1,167 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply transition-all duration-150 ease-in-out;
+  }
+}
+
+@layer components {
+  .markdown h1 {
+    @apply first:mt-0 my-6;
+    @apply text-5xl font-semibold;
+  }
+
+  .markdown h2 {
+    @apply first:mt-0 my-6;
+    @apply text-4xl font-semibold;
+  }
+
+  .markdown h3 {
+    @apply first:mt-0 my-6;
+    @apply text-3xl font-semibold;
+  }
+
+  .markdown h4 {
+    @apply first:mt-0 my-6;
+    @apply text-2xl font-semibold;
+  }
+
+  .markdown h5 {
+    @apply first:mt-0 my-6;
+    @apply text-xl font-semibold;
+  }
+
+  .markdown h6 {
+    @apply first:mt-0 my-6;
+    @apply text-lg font-semibold;
+  }
+
+  .markdown p {
+    @apply first:mt-0 my-3;
+    @apply text-base;
+  }
+
+  .markdown a {
+    @apply text-indigo-500 hover:text-red-600;
+  }
+
+  .markdown ul {
+    @apply my-3 ml-6;
+    @apply list-disc list-inside;
+  }
+
+  .markdown ol {
+    @apply my-3 ml-6;
+    @apply list-decimal list-inside;
+  }
+
+  .markdown pre {
+    @apply p-3 my-6 mx-3;
+    @apply overflow-x-auto;
+    @apply shadow-md;
+  }
+
+  .markdown :not(pre) > code {
+    @apply px-1 py-0.5;
+    @apply bg-gray-200 text-red-500;
+  }
+
+  .markdown hr {
+    @apply h-1;
+    @apply bg-gray-300;
+  }
+
+  .markdown table {
+    @apply w-full;
+    @apply border border-collapse border-gray-300;
+    @apply shadow-md;
+  }
+
+  .markdown table.table-hoverable tr {
+    @apply hover:bg-gray-100;
+  }
+
+  .markdown table th {
+    @apply px-4 py-2;
+    @apply bg-gray-100;
+    @apply border border-gray-300;
+  }
+
+  .markdown table td {
+    @apply px-4 py-2;
+    @apply border border-gray-300;
+  }
+
+  .markdown blockquote {
+    @apply px-4 py-2 my-6;
+    @apply border-l-4 border-gray-300;
+    @apply bg-gray-100;
+    @apply shadow-md;
+  }
+
+  .markdown blockquote p {
+    @apply first:mt-0 last:mb-0;
+  }
+
+  .grammkit-diagram {
+    @apply my-6;
+    @apply flex flex-col items-stretch;
+    @apply border border-emerald-500;
+    @apply shadow-sm hover:shadow-md;
+  }
+
+  .grammkit-diagram .grammkit-diagram-title {
+    @apply px-2 py-1;
+    @apply text-white text-lg font-mono;
+    @apply bg-emerald-500;
+  }
+
+  .grammkit-diagram .grammkit-diagram-svg {
+    @apply overflow-x-auto;
+  }
+
+  .grammkit-diagram .grammkit-diagram-src > details {
+    @apply bg-gray-100;
+    @apply transition duration-150 ease-in-out;
+  }
+
+  .grammkit-diagram .grammkit-diagram-src > details > summary {
+    @apply p-3;
+    @apply text-indigo-500 hover:text-red-600;
+    @apply hover:cursor-pointer;
+  }
+}
+
+@layer utilities {
+  .leading-16 {
+    line-height: 64px;
+  }
+
+  .left-4\/5 {
+    left: 80%;
+  }
+
+  table th,
+  table td {
+    @apply text-center;
+  }
+
+  table.table-col0-minw th:first-child,
+  table.table-col0-minw td:first-child {
+    @apply w-0;
+    @apply whitespace-nowrap;
+  }
+
+  table.table-col0-left th:first-child,
+  table.table-col0-left td:first-child {
+    @apply text-left;
+  }
+
+  table.table-col1-left th:nth-child(2),
+  table.table-col1-left td:nth-child(2) {
+    @apply text-left;
+  }
+}

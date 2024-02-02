@@ -1,0 +1,12 @@
+{% extends "layouts/base.html" %}
+
+{% block main %}
+  <main class="grow flex items-stretch overflow-y-hidden">
+    <div class="w-full p-3 lg:p-12 mt-6 lg:mt-0 markdown overflow-y-auto">
+      {{ content|raw }}
+
+      {% block toc %}
+      {% endblock %}
+    </div>
+  </main>
+{% endblock %}

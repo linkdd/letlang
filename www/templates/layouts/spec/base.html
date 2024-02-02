@@ -1,0 +1,124 @@
+{% extends "layouts/base.html" %}
+
+{% block mobilenav %}
+  <button
+    id="offcanvas-btn-open"
+    class="
+      px-6 py-3
+      lg:hidden
+      flex items-center
+      text-lg font-semibold
+      hover:bg-emerald-600
+    "
+  >
+    <i class="fas fa-bars"></i>
+  </button>
+{% endblock %}
+
+{% block main %}
+  <main class="grow flex items-stretch overflow-y-hidden">
+    <div
+      id="offcanvas-bg"
+      class="
+        lg:hidden
+        fixed top-0 bottom-0 left-0 right-0
+        bg-black/50
+
+        opacity-0 -z-10
+      "
+      data-transition-enter="transition-opacity ease-linear duration-300"
+      data-transition-enter-start="opacity-0 -z-10"
+      data-transition-enter-end="opacity-100 z-10"
+      data-transition-leave="transition-opacity ease-linear duration-300"
+      data-transition-leave-start="opacity-100 z-10"
+      data-transition-leave-end="opacity-0 -z-10"
+    ></div>
+    <aside
+      id="offcanvas-content"
+      class="
+        lg:hidden
+        fixed top-0 bottom-0 z-50
+        w-4/5
+        p-3
+        overflow-y-auto
+        bg-white
+        shadow-lg
+
+        -translate-x-full
+      "
+      data-transition-enter="transition ease-in-out duration-300 transform"
+      data-transition-enter-start="-translate-x-full"
+      data-transition-enter-end="translate-x-0"
+      data-transition-leave="transition ease-in-out duration-300 transform"
+      data-transition-leave-start="translate-x-0"
+      data-transition-leave-end="-translate-x-full"
+    >
+      {% set section = site.pages["/spec/"] %}
+      {% include "partials/sidenav-menu.html" with { "root": section } %}
+    </aside>
+    <button
+      id="offcanvas-btn-close"
+      class="
+        lg:hidden
+        absolute top-2 left-4/5
+        ml-4 p-2
+        text-2xl text-white
+        hover:text-gray-300
+
+        opacity-0 -z-50
+      "
+      data-transition-enter="transition-opacity ease-linear duration-300"
+      data-transition-enter-start="opacity-0 -z-50"
+      data-transition-enter-end="opacity-100 z-50"
+      data-transition-leave="transition-opacity ease-linear duration-300"
+      data-transition-leave-start="opacity-100 z-50"
+      data-transition-leave-end="opacity-0 -z-50"
+    >
+      <i class="fas fa-times"></i>
+    </button>
+
+    <aside class="hidden lg:block lg:w-1/5 xl:w-1/4 px-3 lg:px-6 py-3 overflow-y-auto shadow-lg">
+      {% set section = site.pages["/spec/"] %}
+      {% include "partials/sidenav-menu.html" with { "root": section } %}
+    </aside>
+
+    <div class="lg:w-4/5 xl:w-3/4 p-3 lg:p-12 mt-6 lg:mt-0 markdown overflow-y-auto">
+      {{ content|raw }}
+
+      {% block toc %}
+      {% endblock %}
+    </div>
+  </main>
+{% endblock %}
+
+{% block scripts %}
+  <script type="module">
+    import { enter, leave } from './js/el-transition.js'
+
+    const offcanvasBtnOpen = document.getElementById('offcanvas-btn-open')
+    const offcanvasBtnClose = document.getElementById('offcanvas-btn-close')
+    const offcanvasBg = document.getElementById('offcanvas-bg')
+    const offcanvasContent = document.getElementById('offcanvas-content')
+
+    offcanvasBtnOpen.addEventListener('click', () => {
+      enter(offcanvasBg)
+      enter(offcanvasContent)
+      enter(offcanvasBtnClose)
+    })
+
+    offcanvasBtnClose.addEventListener('click', () => {
+      leave(offcanvasBg)
+      leave(offcanvasContent)
+      leave(offcanvasBtnClose)
+    })
+
+    offcanvasBg.addEventListener('click', () => {
+      leave(offcanvasBg)
+      leave(offcanvasContent)
+      leave(offcanvasBtnClose)
+    })
+
+    document.querySelectorAll('[data-menu-item-active="true"]')
+      .forEach((el) => el.scrollIntoView({ block: 'center', behavior: 'smooth' }))
+  </script>
+{% endblock %}

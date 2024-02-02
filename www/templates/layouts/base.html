@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="{{ site.languageCode }}" class="h-screen">
+  <head>
+    <title>{{ site.title }} - {{ page.title }}</title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <base href="{{ site.baseURL }}" />
+
+    <link rel="icon" type="image/svg" href="./img/favicon.svg" />
+
+    <meta name="title" content="{{ site.title }}" />
+    <meta name="author" content="{{ site.data.meta.author }}" />
+    <meta name="description" content="{{ site.data.meta.description }}" />
+
+    <meta name="og:title" content="{{ site.title }}" />
+    <meta name="og:logo" content="/img/favicon.svg" />
+    <meta name=""og:description" content="{{ site.data.meta.description }}" />
+
+    <meta name="twitter:title" content="{{ site.title }}" />
+
+    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="./css/fontawesome.min.css" />
+
+    <script type="application/javascript" src="./js/fontawesome.min.js"></script>
+  </head>
+  <body class="h-screen flex flex-col overflow-hidden">
+    {% if block("mobilenav") is defined %}
+      {% include "partials/nav.html" with { mobilenav: block("mobilenav") } %}
+    {% else %}
+      {% include "partials/nav.html" with { mobilenav: null } %}
+    {% endif %}
+
+    {% block main %}
+    {% endblock %}
+
+    {% include "partials/footer.html" %}
+
+    {% block scripts %}
+    {% endblock %}
+  </body>
+</html>

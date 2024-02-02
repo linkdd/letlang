@@ -1,0 +1,10 @@
+items:
+  - href: "./book/"
+    tooltip: "Handbook"
+    icon: "fas fa-book"
+  - href: "./spec/"
+    tooltip: "Specification"
+    icon: "fas fa-code"
+  - href: "https://github.com/linkdd/letlang"
+    tooltip: "Github"
+    icon: "fab fa-github"

@@ -1,0 +1,40 @@
+{% extends "layouts/base.html" %}
+
+{% block main %}
+  <main class="grow space-y-6 px-3 md:px-6 lg:px-24 pb-8 overflow-y-auto">
+    <section class="mt-6">
+      <div class="pt-2 pb-6 mb-6 text-center border-b-4 border-gray-300">
+        <div
+          class="inline-block w-16 h-16"
+        >
+          <svg
+            viewBox="0 0 256 256"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              width="256"
+              height="256"
+              style="fill:#48C78E"
+              transform="matrix(0, -1, 1, 0, 0, 256)"
+            ></rect>
+
+            <text
+              transform="matrix(0.833141, 0, 0, 1.139783, 23.629536, -5.292274)"
+              style="fill:#FFFFFF;font-family:arial;font-size:128px;white-space:pre;"
+              x="10.061"
+              y="166.768"
+              bx:origin="0.5 0.500695"
+            >LET</text>
+          </svg>
+        </div>
+        <span class="inline-block text-5xl leading-16 align-top">
+          lang
+        </span>
+      </div>
+    </section>
+
+    <section class="markdown">
+      {{ content|raw }}
+    </section>
+  </main>
+{% endblock %}

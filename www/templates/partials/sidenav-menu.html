@@ -1,0 +1,59 @@
+{% macro menuitem(page, item) %}
+  {% import _self as macros %}
+
+  <li class="mb-2">
+    {% if page.url == item.url %}
+      <a
+        class="
+          inline-block w-full
+          px-2 py-1
+          bg-sky-700 hover:bg-sky-600
+          text-white text-lg font-semibold
+        "
+        href="{{ item.url }}"
+        data-menu-item-active="true"
+      >
+        {{ item.title }}
+      </a>
+    {% elseif item.isSection %}
+      <a
+        class="
+          inline-block w-full
+          px-2 py-1
+          border-l border-l-gray-300
+          bg-gray-100 hover:bg-sky-600
+          text-gray-800 hover:text-white text-lg font-semibold
+        "
+        href="{{ item.url }}"
+      >
+        {{ item.title }}
+      </a>
+    {% else %}
+      <a
+        class="
+          inline-block w-full
+          px-2 py-1
+          hover:bg-sky-600
+          text-gray-800 hover:text-white text-lg font-semibold
+        "
+        href="{{ item.url }}"
+      >
+        {{ item.title }}
+      </a>
+    {% endif %}
+
+    {% if item.isSection %}
+      <ul class="pl-6 pt-2 border-l border-l-gray-300">
+        {% for child in item.children %}
+          {{ macros.menuitem(page, child) }}
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </li>
+{% endmacro %}
+
+{% import _self as macros %}
+
+<ul>
+  {{ macros.menuitem(page, root) }}
+</ul>

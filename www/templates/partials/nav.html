@@ -1,0 +1,38 @@
+<nav
+  class="
+    shrink flex items-stretch
+    bg-emerald-500
+    text-white
+    shadow-lg
+  "
+>
+  {% if mobilenav is not empty %}
+    {{ mobilenav }}
+  {% endif %}
+
+  <a
+    class="
+      px-6 py-3
+      flex items-center
+      text-lg uppercase font-semibold tracking-wider
+      hover:bg-emerald-600
+    "
+    href="."
+  >
+    Letlang
+  </a>
+
+  <ul class="grow flex items-stretch justify-end">
+    {% for menuitem in site.data.menu.items %}
+      <li class="flex items-stretch">
+        <a
+          class="px-4 py-3 hover:bg-emerald-600"
+          href="{{ menuitem.href }}"
+          title="{{ menuitem.tooltip }}"
+        >
+          <i class="{{ menuitem.icon }}"></i>
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</nav>

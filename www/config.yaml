@@ -1,0 +1,14 @@
+---
+title: Letlang
+baseURL: "https://letlang.dev/"
+
+highlighter:
+  theme: monokai
+  extraLanguages:
+    - id: letlang
+      scopeName: source.letlang
+      aliases: [letlang]
+      grammarPath: assets/languages/letlang.tmLanguage.json
+
+plugins:
+  - '../contrib/grammkit'

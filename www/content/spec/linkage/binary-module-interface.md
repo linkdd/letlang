@@ -22,6 +22,7 @@ The file format MAY be a JSON document satisfying the following JSON schema:
     "interface": {
       "type": "object",
       "properties": {
+        "crate_name": { "$ref": "#/$defs/crate-name" },
         "module": { "$ref": "#/$defs/module-path" },
         "symbols": {
           "type": "array",
@@ -29,6 +30,10 @@ The file format MAY be a JSON document satisfying the following JSON schema:
         }
       },
       "required": ["module", "symbols"]
+    },
+    "crate-name": {
+      "type": "string",
+      "minLength": 1
     },
     "module-path": {
       "type": "string",

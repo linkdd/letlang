@@ -15,7 +15,6 @@ trait ToAbsolute {
 }
 
 impl ToAbsolute for PathBuf {
-
   fn as_absolute(&self) -> PathBuf {
     match absolute(&self) {
       Ok(path) => path,
@@ -65,8 +64,8 @@ pub struct Args {
   #[arg(short = 'b', value_name = "DIR", value_hint = ValueHint::DirPath)]
   build_dir: Option<PathBuf>,
 
-  /// Path to the Letlang runtime libraries
-  #[arg(short = 'r', value_name = "DIR", value_hint = ValueHint::DirPath)]
+  /// Path to the Letlang runtime Cargo project
+  #[arg(long = "rpath", value_name = "DIR", value_hint = ValueHint::DirPath)]
   runtime_path: PathBuf,
 
   /// Add folder to library paths, this is where the compiler will look for dependencies

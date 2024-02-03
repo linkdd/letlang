@@ -13,3 +13,4 @@ llback = { package = "letlang-backend", path = "../backend" }
 llbuild = { package = "letlang-builder", path = "../builder" }
 
 clap = { version = "4.4", features = ["derive"] }
+anyhow = "1.0"

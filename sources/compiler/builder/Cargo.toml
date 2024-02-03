@@ -9,5 +9,10 @@ llback = { package = "letlang-backend", path = "../backend" }
 llbmi = { package = "letlang-bmi", path = "../bmi" }
 
 serde = { version = "1.0", features=["derive"] }
+serde_json = "1.0"
+toml = "0.8"
+
 nonempty = { version = "0.8", features=["serialize"] }
 ar = "0.9"
+
+anyhow = "1.0"

@@ -20,12 +20,13 @@ use self::{
 pub fn eval<'source>(
   /* bmi */
   ast: &AST<(EnvRef, SourceLocation<'source>)>
-) -> Result<'source, (String, llbmi::BinaryModuleInterface, TokenStream)> {
+) -> Result<'source, (llbmi::BinaryModuleInterface, TokenStream)> {
   let mut context = CodeGenerator::new(/* bmi */);
   let (crate_name, code) = context.visit(&ast.0, ())?;
 
   let bmi = llbmi::BinaryModuleInterface {
-    path: NonEmpty::from_vec(context.bmi_modpath).unwrap(),
+    crate_name,
+    module: NonEmpty::from_vec(context.bmi_modpath).unwrap(),
     symbols: context.bmi_syms.into_iter().map(|(name, sym)| {
       match sym {
         SymbolKind::Class { type_arity, .. } => {
@@ -44,5 +45,5 @@ pub fn eval<'source>(
     }).collect(),
   };
 
-  Ok((crate_name, bmi, code))
+  Ok((bmi, code))
 }

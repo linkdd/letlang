@@ -55,7 +55,7 @@ model!{
       let sym_mod_name = format_ident!("symbol_{sym_name}");
       let sym_mod_tokens = quote!{
         #[allow(non_snake_case)]
-        mod #sym_mod_name {
+        #visibility_tokens mod #sym_mod_name {
           extern crate llruntime;
           use llruntime::*;
           use super::*;
@@ -71,7 +71,7 @@ model!{
       let (loc_start, loc_end) = (location.span.start, location.span.end);
       let tokens = quote!{
         sourcemap_begin!(#loc_start, #loc_end);
-        #visibility_tokens #sym_mod_tokens
+        #sym_mod_tokens
         sourcemap_end!(#loc_start, #loc_end);
       };
 

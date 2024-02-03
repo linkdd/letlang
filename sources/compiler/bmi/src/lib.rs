@@ -21,6 +21,7 @@ pub enum Symbol {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct BinaryModuleInterface {
-  pub path: NonEmpty<String>,
+  pub crate_name: String,
+  pub module: NonEmpty<String>,
   pub symbols: Vec<Symbol>,
 }

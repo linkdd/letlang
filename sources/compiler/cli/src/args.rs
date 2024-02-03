@@ -5,8 +5,8 @@ use std::{
 };
 
 use clap::{Parser, ValueEnum, ValueHint};
+use anyhow::{bail, Result};
 
-use crate::prelude::*;
 use llbuild::context::{BuildType, BuildContext};
 
 trait ToAbsolute {
@@ -83,19 +83,16 @@ impl Args {
     let output = self.output.unwrap_or_else(|| {
       let unit_name = input.file_name().expect("unable to get input filename");
 
-      let (target_name, ext) = match self.unit_type {
+      match self.unit_type {
         UnitType::Lib => {
           let mut name = OsString::from("lib");
           name.push(unit_name);
-          (name, "lla")
+          PathBuf::from(name).with_extension("lla")
         },
         UnitType::Exe => {
-          let name = OsString::from(unit_name);
-          (name, "exe")
+          PathBuf::from(unit_name).with_extension("")
         },
-      };
-
-      PathBuf::from(target_name).with_extension(ext)
+      }
     }).as_absolute();
 
     let build_dir = self.build_dir
@@ -112,26 +109,18 @@ impl Args {
     let dependency_names = self.link_lib;
 
     if !input.exists() {
-      return Err(CliError {
-        message: format!("No such file or directory: {}", input.display()),
-      });
+      bail!("No such file or directory: {}", input.display());
     }
     else if !input.is_file() {
-      return Err(CliError {
-        message: format!("Expected a file at: {}", input.display()),
-      });
+      bail!("Expected a file at: {}", input.display());
     }
 
     for library_path in library_paths.iter() {
       if !library_path.exists() {
-        return Err(CliError {
-          message: format!("No such file or directory: {}", library_path.display()),
-        });
+        bail!("No such file or directory: {}", library_path.display());
       }
       else if !library_path.is_dir() {
-        return Err(CliError {
-          message: format!("Expected a directory at: {}", library_path.display()),
-        });
+        bail!("Expected a directory at: {}", library_path.display());
       }
     }
 
@@ -148,17 +137,13 @@ impl Args {
 
       match deppaths.as_slice() {
         [] => {
-          return Err(CliError {
-            message: format!("Could not find {libname} in any library path."),
-          });
+          bail!("Could not find {libname} in any library path.");
         },
         [deppath] => {
           dependency_paths.push(deppath.clone())
         },
         _ => {
-          return Err(CliError {
-            message: format!("Multiple {libname} were found in library paths."),
-          });
+          bail!("Multiple {libname} were found in library paths.");
         },
       };
     }

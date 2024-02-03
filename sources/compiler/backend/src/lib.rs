@@ -11,17 +11,17 @@ use llbmi::BinaryModuleInterface;
 
 pub fn compile_lib<'source>(
   ast: AST<SourceLocation<'source>>,
-) -> Result<(String, BinaryModuleInterface, String)> {
+) -> Result<(BinaryModuleInterface, String)> {
   let (root_env, ast) = steps::scope::transform(&ast)?;
-  let (crate_name, bmi, code) = steps::codegen::eval(&ast)?;
-  Ok((crate_name, bmi, format!("{code}")))
+  let (bmi, code) = steps::codegen::eval(&ast)?;
+  Ok((bmi, format!("{code}")))
 }
 
 pub fn compile_exe<'source>(
   ast: AST<SourceLocation<'source>>,
-) -> Result<(String, BinaryModuleInterface, String)> {
+) -> Result<(BinaryModuleInterface, String)> {
   let (root_env, ast) = steps::scope::transform(&ast)?;
-  let (crate_name, bmi, code) = steps::codegen::eval(&ast)?;
+  let (bmi, code) = steps::codegen::eval(&ast)?;
 
   let code = quote!{
     #code
@@ -31,5 +31,5 @@ pub fn compile_exe<'source>(
     }
   };
 
-  Ok((crate_name, bmi, format!("{code}")))
+  Ok((bmi, format!("{code}")))
 }

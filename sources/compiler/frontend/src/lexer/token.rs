@@ -159,6 +159,7 @@ pub enum Token<'source> {
   #[token("import")]
   #[token("as")]
   #[token("let")]
+  #[token("pub")]
   #[token("class")]
   #[token("func")]
   #[token("tailrec")]

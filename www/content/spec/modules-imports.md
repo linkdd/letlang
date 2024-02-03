@@ -69,7 +69,7 @@ stdio::println("hello world");
 import std::io as stdio;
 import std::proc;
 
-let main: func[() -> @ok] {
+let pub main: func[() -> @ok] {
   () -> {
     stdio::println(std::proc::self());
     @ok;

@@ -106,7 +106,7 @@ let task: func[() -> @ok] {
   () -> @ok,
 };
 
-let main: func[() -> @ok] {
+let pub main: func[() -> @ok] {
   () -> {
     (@ok, proc_id) := spawn task();
     # do something

@@ -47,6 +47,7 @@ are classified in the following subcategories:
 **Symbol declaration:**
 
   - `let`
+  - `pub`
   - `class`
   - `func`
   - `tailrec`

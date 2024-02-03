@@ -1,5 +1,5 @@
 module dummy::main;
 
-let main: func[() -> @ok] {
+let pub main: func[() -> @ok] {
   () -> @ok,
 };

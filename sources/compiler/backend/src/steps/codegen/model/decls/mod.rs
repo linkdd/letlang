@@ -112,13 +112,13 @@ model!{
             impl LLFunction for Object {
               fn call(
                 &self,
-                ctx: LLContext,
+                ctx: LLProcessContext,
                 type_params: Vec<LLClassInstance>,
                 call_params: Vec<LLValue>,
               ) -> LLContinuation {
                 async fn code_block(
                   co: LLCoroutine,
-                  ctx: LLContext,
+                  ctx: LLProcessContext,
                   type_params: Vec<LLClassInstance>,
                   call_params: Vec<LLValue>,
                 ) -> LLValue {

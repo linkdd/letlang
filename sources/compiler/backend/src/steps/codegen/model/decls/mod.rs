@@ -125,7 +125,7 @@ model!{
                   ctx.assert_type_arity(&co, #type_arity, type_params.len()).await;
                   ctx.assert_func_arity(&co, #call_arity, call_params.len()).await;
 
-                  todo!()
+                  todo!("function body")
                 }
 
                 LLContinuation::new_boxed(

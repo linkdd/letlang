@@ -1,11 +1,11 @@
 mod int;
 mod coroutine;
 mod continuation;
-mod context;
+mod task;
 
 pub use self::{
   int::*,
   coroutine::*,
   continuation::*,
-  context::*,
+  task::*,
 };

@@ -1,9 +1,13 @@
-use crate::{LLValue, LLInterrupt};
+use crate::{
+  data::LLValue,
+  thread::LLInterrupt,
+};
 
 use genawaiter::{
   GeneratorState,
   sync::Gen,
 };
+
 use std::{
   pin::Pin,
   future::Future,

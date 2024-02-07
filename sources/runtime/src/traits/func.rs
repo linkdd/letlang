@@ -1,9 +1,16 @@
-use crate::{LLContext, LLContinuation, LLClassInstance, LLValue};
+use crate::{
+  data::LLValue,
+  concurrency::LLProcessContext,
+  thread::LLContinuation,
+  traits::LLClassInstance,
+};
+
+pub type LLFunctionInstance = Box<dyn LLFunction>;
 
 pub trait LLFunction: Sync + Send {
   fn call(
     &self,
-    ctx: LLContext,
+    ctx: LLProcessContext,
     type_params: Vec<LLClassInstance>,
     call_params: Vec<LLValue>,
   ) -> LLContinuation;

@@ -1,4 +1,4 @@
-use crate::LLValue;
+use crate::data::LLValue;
 
 #[derive(Clone)]
 pub enum LLInterrupt {

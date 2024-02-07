@@ -1,4 +1,7 @@
-use crate::{LLValue, LLInterrupt};
+use crate::{
+  data::LLValue,
+  thread::LLInterrupt,
+};
 
 use genawaiter::sync::Co;
 

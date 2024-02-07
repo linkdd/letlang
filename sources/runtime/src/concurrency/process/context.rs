@@ -1,16 +1,38 @@
-use crate::{LLPid, LLInterrupt, LLValue, LLException, LLClassInstance, LLCoroutine};
+use crate::{
+  data::{
+    LLPid,
+    LLValue,
+    LLException,
+  },
+  thread::{
+    LLInterrupt,
+    LLCoroutine,
+  },
+  concurrency::signal::LLSignalReceiver,
+  traits::LLClassInstance,
+};
 
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
 #[derive(Clone)]
-pub struct LLContext(Arc<Mutex<ContextData>>);
+pub struct LLProcessContext(Arc<Mutex<ContextData>>);
 
 struct ContextData {
   pid: LLPid,
+  mbox_rx: LLSignalReceiver,
 }
 
-impl LLContext {
+impl LLProcessContext {
+  pub fn new(pid: LLPid, mbox_rx: LLSignalReceiver) -> Self {
+    let data = ContextData { pid, mbox_rx };
+    Self(Arc::new(Mutex::new(data)))
+  }
+
+  pub async fn pid(&self) -> LLPid {
+    self.0.lock().await.pid.clone()
+  }
+
   pub async fn throw(
     &self,
     co: &LLCoroutine,

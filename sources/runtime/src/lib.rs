@@ -1,10 +1,13 @@
+mod prelude;
 mod data;
 mod thread;
+mod concurrency;
 mod traits;
 
 pub use self::{
   data::*,
   thread::*,
+  concurrency::*,
   traits::*,
 };
 

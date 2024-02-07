@@ -1,4 +1,10 @@
-use crate::{LLContext, LLCoroutine, LLValue, async_trait};
+use crate::{
+  data::LLValue,
+  concurrency::LLProcessContext,
+  thread::LLCoroutine,
+};
+
+use async_trait::async_trait;
 
 pub type LLClassInstance = Box<dyn LLClass>;
 
@@ -6,7 +12,7 @@ pub type LLClassInstance = Box<dyn LLClass>;
 pub trait LLClass: Sync + Send {
   async fn has(
     &self,
-    ctx: LLContext,
+    ctx: LLProcessContext,
     co: &LLCoroutine,
     val: &LLValue,
   ) -> bool;

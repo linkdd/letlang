@@ -1,4 +1,4 @@
-use crate::{LLValue, LLAtom};
+use crate::data::{LLValue, LLAtom};
 
 #[derive(Clone)]
 pub enum LLException {

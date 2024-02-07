@@ -43,11 +43,15 @@ model!{
       };
 
       let mut type_params_tokens = vec![];
+      let mut type_params_names = vec![];
 
       for type_param_node in data.type_params.iter() {
         let name = type_param_node.get_data().0.clone();
-        let tokens = quote!{#name : LLClassInstance};
+        let tokens = quote!{#name : LLClassInstance,};
         type_params_tokens.push(tokens);
+
+        let tokens = quote!{#name,};
+        type_params_names.push(tokens);
       }
 
       let decl_tokens = visit!(&data.declaration, sym_kind.clone());
@@ -58,10 +62,17 @@ model!{
         #visibility_tokens mod #sym_mod_name {
           extern crate llruntime;
           use llruntime::*;
+          #[allow(unused_imports)]
           use super::*;
 
           pub struct Object {
             #(#type_params_tokens)*
+          }
+
+          impl Object {
+            pub fn new(#(#type_params_names)*) -> Box<Self> {
+              Box::new(Self { #(#type_params_names)* })
+            }
           }
 
           #decl_tokens

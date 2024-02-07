@@ -28,7 +28,7 @@ pub fn compile_exe<'source>(
 
     pub fn main() {
       use llruntime::*;
-      let entrypoint = Box::new(symbol_main::Object{});
+      let entrypoint = symbol_main::Object::new();
       LLProcessGroup::new(0).run(entrypoint).unwrap();
     }
   };

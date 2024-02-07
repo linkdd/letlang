@@ -72,6 +72,10 @@ impl LLProcessGroup {
       while let Some(req) = self.request_rx.receive().await {
         let res = self.handle_command(req.command).await;
         req.respond_to.send(res).unwrap();
+
+        if self.process_registry.is_empty() {
+          break;
+        }
       }
     });
 
